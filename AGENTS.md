@@ -26,9 +26,11 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Scenes/Map/MapScreen.tscn`：地图 UI 面板（占位色块 + 地点按钮 `BtnClassroom` / `BtnPlayground`）。
 - `Scenes/Locations/`：`Classroom.tscn`（两房间：教室 / 器材室）、`Playground.tscn`（demo 占位地点）。
 - `Resources/MapConfig.tres`：初始解锁地点 `["classroom"]`。
-- `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Demo/`（`PickupItem`、`ReadDocument`）。
+- `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Audio/`（`AudioManager`）、`Demo/`（`PickupItem`、`ReadDocument`）。
 - `Dialogue/day1.dialogue`：占位剧本，**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
 - `ArtRes/`：美术素材（当前为空）。
+- `Audio/Sfx/`：Kenney UI Audio 音效，按 `Click`(5) / `Rollover`(6) / `Switch`(38) / `Mouse`(2) 分组，保留 `License.txt`；`Audio/Bgm/` 目前为空。
+- `default_bus_layout.tres`：音频总线 `SFX` / `BGM`（`send = Master`），播放器按总线独立控音量。
 - `addons/dialogue_manager/`：Dialogue Manager 4.2.0；`export_presets.cfg` 已有 Windows Desktop 预设（`export_path` 为空）。
 
 ## 对话系统
@@ -38,6 +40,14 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - C# API 在 `DialogueManagerRuntime` 命名空间：快速验证用 `DialogueManager.ShowExampleDialogueBalloon(resource)`，正式 UI 用 `ShowDialogueBalloonScene(自己的 balloon, resource)`。
 - `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue`（目前是占位内容）；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
 
+## 音频
+
+- autoload `AudioManager`（`Scripts/Audio/AudioManager.cs`）：8 个 `AudioStreamPlayer` 轮转池，同组多个 ogg 随机播放，可叠加不互相打断。
+- 接口：`AudioManager.Instance.PlayClick()` / `PlayHover()` / `PlaySwitch()` / `PlayMouseClick()` / `PlayMouseRelease()`；通用入口 `PlaySfx(SfxId)`；BGM 用 `PlayBgm(stream, loop: true)` / `StopBgm()`。
+- 音量：`SfxVolumeDb` / `BgmVolumeDb`（分贝，改对应的 `SFX` / `BGM` 总线）。
+- 音效按 `Audio/Sfx/{Click,Rollover,Switch,Mouse}/<name><n>.ogg` 约定加载；增删变体时同步 `AudioManager.LoadSfxGroup` 的数量。
+- 资源缺失、分组为空、总线缺失都会 `PushError`，不会静默兜底。
+
 ## 工具链
 
 - 引擎：`D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe`（项目 features=4.7；C# 目标框架 net8.0，本机 .NET SDK 10 + 运行时 8 构建正常）。同目录 `_console.exe` 便于在终端看输出。
@@ -46,6 +56,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
   - 编译 C#：`& $godot --headless --path . --build-solutions --quit`（或 `dotnet build`）
   - 无头跑主场景并立刻退出：`& $godot --headless --path . --quit-after 120`（需先在项目设置指定主场景）
 - `*.csproj` / `*.sln` 已存在且可编译；它们由 Godot 首次创建 C# 脚本时生成。
+- `.vscode/settings.json`：已把 `.godot/`、`*.import`、`*.uid`、`*.translation`、`bin/`、`obj/`、`mono_crash.*.json` 从资源管理器与搜索中排除，并跳过 `.godot`/`bin`/`obj` 的文件监听；仅隐藏，不影响 git 与 Godot。
 - godot MCP 已配在 `opencode.json`（`mcp.servers.godot`，源码构建于 `%USERPROFILE%\.local\share\godot-mcp`，`GODOT_PATH` 指向上面的 exe）。优先用它做反馈闭环：`launch_editor`、`run_project` + `get_debug_output`、`stop_project`；项目相关工具要传绝对 `projectPath`。场景用 `create_scene` / `add_node` / `save_scene` 生成，手写 `.tscn` 容易破坏资源引用。
 
 ## 开发约定（48h jam）

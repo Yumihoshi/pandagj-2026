@@ -14,6 +14,14 @@ config/name="pandagj-2026"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+DialogueManager="*uid://c3rodes2l3gxb"
+
+[dialogue_manager]
+
+runtime/advanced/uses_dotnet=true
+
 [display]
 
 window/stretch/mode="canvas_items"
@@ -22,6 +30,10 @@ window/stretch/aspect="expand"
 [dotnet]
 
 project/assembly_name="pandagj-2026"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg")
 
 [physics]
 

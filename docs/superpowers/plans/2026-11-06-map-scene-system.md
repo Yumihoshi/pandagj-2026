@@ -1,6 +1,6 @@
 # 地图 & 场景系统 实现计划
 
-> **面向 AI 代理的工作者：** 必需子技能：使用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现此计划。步骤使用复选框（`- [ ]`）语法来跟踪进度。
+> **面向 AI 代理的工作者：** 必需子技能：使用 superpowers:subagent-driven-development（推荐）或 superpowers:executing-plans 逐任务实现此计划。步骤使用复选框（`- [x]`）语法来跟踪进度。
 
 **目标：** 做出可点击的大地图 UI、地点场景装载/卸载、地点内多房间切换、以及「信息解锁大地点 + 钥匙开房间门」两条通行权链路。
 
@@ -115,14 +115,14 @@ sequenceDiagram
 - 移动：`Scripts/Player.cs` → `Scripts/Player/Player.cs`
 - 修改：`project.godot`
 
-- [ ] **步骤 1：建目录并移动玩家脚本**
+- [x] **步骤 1：建目录并移动玩家脚本**
 
 ```powershell
 New-Item -ItemType Directory -Force Scripts/Core, Scripts/Map, Scripts/Location, Scripts/Player, Scripts/Demo, Scenes/Map, Scenes/Locations, Resources | Out-Null
 Move-Item Scripts/Player.cs Scripts/Player/Player.cs
 ```
 
-- [ ] **步骤 2：给 Player 加相机导出**
+- [x] **步骤 2：给 Player 加相机导出**
 
 `Scripts/Player/Player.cs` 全文：
 
@@ -146,7 +146,7 @@ public partial class Player : CharacterBody2D
 }
 ```
 
-- [ ] **步骤 3：注册 `interact` 输入（F 键）**
+- [x] **步骤 3：注册 `interact` 输入（F 键）**
 
 在 `project.godot` 的 `[input]` 段追加（保持与 `move_right` 同级）：
 
@@ -158,7 +158,7 @@ interact={
 }
 ```
 
-- [ ] **步骤 4：注册 autoload 与主场景**
+- [x] **步骤 4：注册 autoload 与主场景**
 
 `project.godot` 的 `[autoload]` 段改为：
 
@@ -176,7 +176,7 @@ DialogueManager="*uid://c3rodes2l3gxb"
 run/main_scene="res://Scenes/Root/GameScene.tscn"
 ```
 
-- [ ] **步骤 5：编译验证**
+- [x] **步骤 5：编译验证**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --build-solutions --quit
@@ -193,7 +193,7 @@ run/main_scene="res://Scenes/Root/GameScene.tscn"
 **文件：**
 - 创建：`Scripts/Core/GameState.cs`
 
-- [ ] **步骤 1：写实现**
+- [x] **步骤 1：写实现**
 
 ```csharp
 using Godot;
@@ -295,7 +295,7 @@ public partial class GameState : Node
 }
 ```
 
-- [ ] **步骤 2：编译**
+- [x] **步骤 2：编译**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --build-solutions --quit
@@ -312,7 +312,7 @@ public partial class GameState : Node
 - 创建：`Scripts/Core/Interactable.cs`
 - 创建：`Scripts/Player/PlayerInteractor.cs`
 
-- [ ] **步骤 1：写 `ScreenFade`**
+- [x] **步骤 1：写 `ScreenFade`**
 
 ```csharp
 using Godot;
@@ -365,7 +365,7 @@ public partial class ScreenFade : CanvasLayer
 }
 ```
 
-- [ ] **步骤 2：写 `Interactable`**
+- [x] **步骤 2：写 `Interactable`**
 
 ```csharp
 using Godot;
@@ -389,7 +389,7 @@ public partial class Interactable : Area2D
 
 用 `_EnterTree` 注册组，子类不必再调 `base._Ready()`。
 
-- [ ] **步骤 3：写 `PlayerInteractor`**
+- [x] **步骤 3：写 `PlayerInteractor`**
 
 ```csharp
 using Godot;
@@ -418,7 +418,7 @@ public partial class PlayerInteractor : Area2D
 }
 ```
 
-- [ ] **步骤 4：编译**
+- [x] **步骤 4：编译**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --build-solutions --quit
@@ -435,7 +435,7 @@ public partial class PlayerInteractor : Area2D
 - 创建：`Scripts/Map/MapLocationButton.cs`
 - 创建：`Scripts/Map/MapScreen.cs`
 
-- [ ] **步骤 1：`MapConfig`**
+- [x] **步骤 1：`MapConfig`**
 
 ```csharp
 using Godot;
@@ -449,7 +449,7 @@ public partial class MapConfig : Resource
 }
 ```
 
-- [ ] **步骤 2：`MapLocationButton`**
+- [x] **步骤 2：`MapLocationButton`**
 
 ```csharp
 using Godot;
@@ -465,7 +465,7 @@ public partial class MapLocationButton : Button
 }
 ```
 
-- [ ] **步骤 3：`MapScreen`**
+- [x] **步骤 3：`MapScreen`**
 
 ```csharp
 using Godot;
@@ -550,7 +550,7 @@ public partial class MapScreen : Control
 }
 ```
 
-- [ ] **步骤 4：编译**
+- [x] **步骤 4：编译**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --build-solutions --quit
@@ -568,7 +568,7 @@ public partial class MapScreen : Control
 - 创建：`Scripts/Location/LocationExit.cs`
 - 创建：`Scripts/Location/LocationRoot.cs`
 
-- [ ] **步骤 1：`Room`**
+- [x] **步骤 1：`Room`**
 
 ```csharp
 using Godot;
@@ -606,7 +606,7 @@ public partial class Room : Node2D
 }
 ```
 
-- [ ] **步骤 2：`RoomDoor`**
+- [x] **步骤 2：`RoomDoor`**
 
 ```csharp
 using Godot;
@@ -668,7 +668,7 @@ public partial class RoomDoor : Interactable
 }
 ```
 
-- [ ] **步骤 3：`LocationExit`**
+- [x] **步骤 3：`LocationExit`**
 
 ```csharp
 using Godot;
@@ -679,7 +679,7 @@ public partial class LocationExit : Interactable
 }
 ```
 
-- [ ] **步骤 4：`LocationRoot`**
+- [x] **步骤 4：`LocationRoot`**
 
 ```csharp
 using Godot;
@@ -793,7 +793,7 @@ public partial class LocationRoot : Node2D
 }
 ```
 
-- [ ] **步骤 5：编译**
+- [x] **步骤 5：编译**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --build-solutions --quit
@@ -808,7 +808,7 @@ public partial class LocationRoot : Node2D
 **文件：**
 - 创建：`Scripts/Map/GameScene.cs`
 
-- [ ] **步骤 1：写实现**
+- [x] **步骤 1：写实现**
 
 ```csharp
 using Godot;
@@ -950,7 +950,7 @@ public partial class GameScene : Node2D
 }
 ```
 
-- [ ] **步骤 2：编译**
+- [x] **步骤 2：编译**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --build-solutions --quit
@@ -968,7 +968,7 @@ public partial class GameScene : Node2D
 - 改写：`Scenes/Root/GameScene.tscn`
 - 创建：`Resources/MapConfig.tres`
 
-- [ ] **步骤 1：改 `Scenes/player.tscn`（加相机与交互范围）**
+- [x] **步骤 1：改 `Scenes/player.tscn`（加相机与交互范围）**
 
 全文：
 
@@ -1004,7 +1004,7 @@ shape = SubResource("RectangleShape2D_range")
 
 > 原 `player.tscn` 里的 `uid://` 与 `unique_id=` 属性手写时可以省略，Godot 导入时会按路径重新解析；如果不放心，先用编辑器打开一次再保存。
 
-- [ ] **步骤 2：创建 `Scenes/Map/MapScreen.tscn`**
+- [x] **步骤 2：创建 `Scenes/Map/MapScreen.tscn`**
 
 全文（占位色块 + 两颗文字按钮）：
 
@@ -1073,7 +1073,7 @@ LocationId = "playground"
 
 > `Buttons` 是 `Control` 数组，手写 `.tscn` 里的 `Array[NodePath](...)` 是否被接受由 Godot 4.7 的序列化决定。如果导入时报错，改用编辑器/MCP 打开场景后手动拖入两颗按钮再保存——这比继续猜序列化格式快。
 
-- [ ] **步骤 3：创建 `Resources/MapConfig.tres`**
+- [x] **步骤 3：创建 `Resources/MapConfig.tres`**
 
 ```ini
 [gd_resource type="Resource" script_class="MapConfig" format=3]
@@ -1085,7 +1085,7 @@ script = ExtResource("1_config")
 InitialUnlockedLocationIds = PackedStringArray("classroom")
 ```
 
-- [ ] **步骤 4：改写 `Scenes/Root/GameScene.tscn`**
+- [x] **步骤 4：改写 `Scenes/Root/GameScene.tscn`**
 
 全文：
 
@@ -1110,7 +1110,7 @@ layer = 10
 [node name="MapScreen" parent="UILayer" instance=ExtResource("2_map")]
 ```
 
-- [ ] **步骤 5：导入资源**
+- [x] **步骤 5：导入资源**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --import
@@ -1118,7 +1118,7 @@ layer = 10
 
 预期：无 `ERROR`。若 `MapScreen.tscn` 的 `Buttons` 行报错，按步骤 2 的提示改用编辑器。
 
-- [ ] **步骤 6：起一次空跑，确认场景能加载**
+- [x] **步骤 6：起一次空跑，确认场景能加载**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --quit-after 120
@@ -1137,7 +1137,7 @@ layer = 10
 - 创建：`Scenes/Locations/Playground.tscn`
 - 修改：`Scenes/Root/GameScene.tscn`（填 `StartLocation`）
 
-- [ ] **步骤 1：`PickupItem`**
+- [x] **步骤 1：`PickupItem`**
 
 ```csharp
 using Godot;
@@ -1167,7 +1167,7 @@ public partial class PickupItem : Interactable
 }
 ```
 
-- [ ] **步骤 2：`ReadDocument`**
+- [x] **步骤 2：`ReadDocument`**
 
 ```csharp
 using Godot;
@@ -1193,7 +1193,7 @@ public partial class ReadDocument : Interactable
 }
 ```
 
-- [ ] **步骤 3：创建 `Scenes/Locations/Classroom.tscn`**
+- [x] **步骤 3：创建 `Scenes/Locations/Classroom.tscn`**
 
 两个房间：`Room_Classroom`（起点，含出口、钥匙、通往器材室的门）、`Room_Equip`（含文档、回门）。
 
@@ -1313,7 +1313,7 @@ position = Vector2(200, 520)
 
 > `Room_Equip` 里那道不锁的门 `RequiredKeyId` 默认是空字符串，不用写。
 
-- [ ] **步骤 4：创建 `Scenes/Locations/Playground.tscn`**
+- [x] **步骤 4：创建 `Scenes/Locations/Playground.tscn`**
 
 ```ini
 [gd_scene format=3]
@@ -1364,7 +1364,7 @@ shape = SubResource("RectangleShape2D_zone")
 position = Vector2(200, 520)
 ```
 
-- [ ] **步骤 5：给 `GameScene.tscn` 填起点地点**
+- [x] **步骤 5：给 `GameScene.tscn` 填起点地点**
 
 `GameScene.tscn` 头部加：
 
@@ -1378,7 +1378,7 @@ position = Vector2(200, 520)
 StartLocation = ExtResource("4_start")
 ```
 
-- [ ] **步骤 6：导入并编译**
+- [x] **步骤 6：导入并编译**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --headless --path . --import
@@ -1393,7 +1393,7 @@ StartLocation = ExtResource("4_start")
 
 **文件：** 无（只跑与观察）
 
-- [ ] **步骤 1：跑起来**
+- [x] **步骤 1：跑起来**
 
 ```powershell
 & "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe" --path .
@@ -1401,23 +1401,23 @@ StartLocation = ExtResource("4_start")
 
 或走 MCP `run_project` + `get_debug_output`。
 
-- [ ] **步骤 2：逐条对照规格 §10.2**
+- [x] **步骤 2：逐条对照规格 §10.2**
 
 按顺序走完，括号里是当时应有的 `TimeStep`：
 
-- [ ] 启动直接进「教室」，地图不出现（0）
-- [ ] 右侧门前按 F：门上方出现「锁着」，1.5 秒后消失，人没进器材室（**仍是 0**——撞锁不耗时间）
-- [ ] 钥匙处按 F：日志 `[Item] 获得 equipment_key`（0）
-- [ ] 再到右侧门按 F：黑屏 0.25 秒，落在器材室左侧，日志 `[Time] TimeStep = 1`（1）
-- [ ] 器材室内按 F 读文档：日志 `[Doc] 读完...` + `[Map] 解锁地点 playground`（1）
-- [ ] 器材室回门按 F 回教室：日志 `[Time] TimeStep = 2`（2）
-- [ ] 教室左侧出口按 F：回到地图，地图上出现「操场」（2）
-- [ ] 点「操场」：日志 `[Time] TimeStep = 3`，进入操场（3）
-- [ ] 操场左侧出口按 F 回地图（3）
-- [ ] 点「教室」再进：日志 `[Time] TimeStep = 4`，器材室**又锁上**（同一轮内也复原）（4）
-- [ ] 控制台执行 `GameState.Instance.ResetLoop()`（或临时加 F9 调试键）：回到教室、`[Loop] 重置`（0），地图上操场**仍在**
+- [x] 启动直接进「教室」，地图不出现（0）
+- [x] 右侧门前按 F：门上方出现「锁着」，1.5 秒后消失，人没进器材室（**仍是 0**——撞锁不耗时间）
+- [x] 钥匙处按 F：日志 `[Item] 获得 equipment_key`（0）
+- [x] 再到右侧门按 F：黑屏 0.25 秒，落在器材室左侧，日志 `[Time] TimeStep = 1`（1）
+- [x] 器材室内按 F 读文档：日志 `[Doc] 读完...` + `[Map] 解锁地点 playground`（1）
+- [x] 器材室回门按 F 回教室：日志 `[Time] TimeStep = 2`（2）
+- [x] 教室左侧出口按 F：回到地图，地图上出现「操场」（2）
+- [x] 点「操场」：日志 `[Time] TimeStep = 3`，进入操场（3）
+- [x] 操场左侧出口按 F 回地图（3）
+- [x] 点「教室」再进：日志 `[Time] TimeStep = 4`，器材室**又锁上**（同一轮内也复原）（4）
+- [x] 控制台执行 `GameState.Instance.ResetLoop()`（或临时加 F9 调试键）：回到教室、`[Loop] 重置`（0），地图上操场**仍在**
 
-- [ ] **步骤 3：故意破坏一次，确认报错不静默**
+- [x] **步骤 3：故意破坏一次，确认报错不静默**
 
 把 `GameScene.tscn` 里 `StartLocation` 改回 `null`，重跑。
 

@@ -21,10 +21,13 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 当前结构
 
-- `Scenes/Root/GameScene.tscn`：根场景，目前是空 `Node2D`；`project.godot` **尚未指定 run/main_scene**，无头运行会报 `no main scene defined`。
-- `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D`，暂无脚本和贴图。
-- `Scripts/`：C# 脚本（当前为空）。
-- `Dialogue/`：`.dialogue` 剧本（当前为空）。
+- `Scenes/Root/GameScene.tscn`：主场景（`run/main_scene` 已指向它），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset`。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`。
+- `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D` + `InteractionRange`（`PlayerInteractor`）；贴图暂用 `icon.svg`。
+- `Scenes/Map/MapScreen.tscn`：地图 UI 面板（占位色块 + 地点按钮 `BtnClassroom` / `BtnPlayground`）。
+- `Scenes/Locations/`：`Classroom.tscn`（两房间：教室 / 器材室）、`Playground.tscn`（demo 占位地点）。
+- `Resources/MapConfig.tres`：初始解锁地点 `["classroom"]`。
+- `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Demo/`（`PickupItem`、`ReadDocument`）。
+- `Dialogue/day1.dialogue`：占位剧本，**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
 - `ArtRes/`：美术素材（当前为空）。
 - `addons/dialogue_manager/`：Dialogue Manager 4.2.0；`export_presets.cfg` 已有 Windows Desktop 预设（`export_path` 为空）。
 
@@ -33,7 +36,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - Dialogue Manager 4.2.0（Nathan Hoad），已启用编辑器插件并设置 `runtime/advanced/uses_dotnet=true`，autoload 名 `DialogueManager`（`uid://c3rodes2l3gxb`）。
 - 剧本写在 `Dialogue/*.dialogue`，不要把对白硬编码进 C#；对话 UI 从 `addons/dialogue_manager/example_balloon/ExampleBalloon.tscn`（C# 版）起步，不要自己写解析器。
 - C# API 在 `DialogueManagerRuntime` 命名空间：快速验证用 `DialogueManager.ShowExampleDialogueBalloon(resource)`，正式 UI 用 `ShowDialogueBalloonScene(自己的 balloon, resource)`。
-- `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue`（文件还没建）；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
+- `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue`（目前是占位内容）；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
 
 ## 工具链
 

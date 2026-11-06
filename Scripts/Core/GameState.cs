@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-/// <summary>跨场景共享的游戏状态：解锁、背包、线索、时间步。</summary>
+/// <summary>跨场景共享的游戏状态：解锁、背包、线索、时间步、NPC 本轮状态。</summary>
 public partial class GameState : Node
 {
 	/// <summary>全局唯一实例，由 autoload 保证在 _Ready 时赋值。</summary>
@@ -18,6 +18,12 @@ public partial class GameState : Node
 
 	/// <summary>本轮的时间推进计数，每轮归零。</summary>
 	public int TimeStep { get; private set; }
+
+	/// <summary>本轮 NPC 状态覆盖：npcId → stateId。</summary>
+	private readonly Dictionary<string, string> _npcLoopStates = new();
+
+	/// <summary>本轮已选的一次性选项：npcId → staticId 集合。</summary>
+	private readonly Dictionary<string, HashSet<string>> _npcUsedChoices = new();
 
 	[Signal] public delegate void LocationUnlockedEventHandler(string locationId);
 	[Signal] public delegate void TimeAdvancedEventHandler(int timeStep);
@@ -78,6 +84,68 @@ public partial class GameState : Node
 		GD.Print($"[Item] 获得 {itemId}");
 	}
 
+	/// <summary>手机里是否记录了某条线索。</summary>
+	public bool HasClue(string clueId)
+	{
+		if (string.IsNullOrEmpty(clueId))
+		{
+			GD.PushError("GameState.HasClue: 线索 id 为空");
+			return false;
+		}
+		return Clues.Contains(clueId);
+	}
+
+	/// <summary>本轮某个 NPC 的状态覆盖；没有时返回空字符串。</summary>
+	public string GetNpcLoopState(string npcId)
+	{
+		if (string.IsNullOrEmpty(npcId))
+		{
+			GD.PushError("GameState.GetNpcLoopState: NPC id 为空");
+			return "";
+		}
+		return _npcLoopStates.TryGetValue(npcId, out string stateId) ? stateId : "";
+	}
+
+	/// <summary>写入某个 NPC 的本轮状态覆盖。</summary>
+	public void SetNpcLoopState(string npcId, string stateId)
+	{
+		if (string.IsNullOrEmpty(npcId) || string.IsNullOrEmpty(stateId))
+		{
+			GD.PushError("GameState.SetNpcLoopState: NPC id 或状态 id 为空");
+			return;
+		}
+		_npcLoopStates[npcId] = stateId;
+		GD.Print($"[Npc] {npcId} 本轮状态覆盖 -> {stateId}");
+	}
+
+	/// <summary>某个 NPC 的一次性选项是否已选过。</summary>
+	public bool IsChoiceUsed(string npcId, string staticId)
+	{
+		if (string.IsNullOrEmpty(npcId) || string.IsNullOrEmpty(staticId))
+		{
+			GD.PushError("GameState.IsChoiceUsed: NPC id 或选项 id 为空");
+			return false;
+		}
+		return _npcUsedChoices.TryGetValue(npcId, out HashSet<string> used) && used.Contains(staticId);
+	}
+
+	/// <summary>记录某个 NPC 的一次性选项已选。</summary>
+	public void MarkChoiceUsed(string npcId, string staticId)
+	{
+		if (string.IsNullOrEmpty(npcId) || string.IsNullOrEmpty(staticId))
+		{
+			GD.PushError("GameState.MarkChoiceUsed: NPC id 或选项 id 为空");
+			return;
+		}
+		if (!_npcUsedChoices.TryGetValue(npcId, out HashSet<string> used))
+		{
+			used = new HashSet<string>();
+			_npcUsedChoices[npcId] = used;
+		}
+		used.Add(staticId);
+		GD.Print($"[Npc] {npcId} 已选 {staticId}");
+	}
+
 	/// <summary>从大地图进入地点、或房间之间切换时推进一格时间。</summary>
 	public void AdvanceTime()
 	{
@@ -91,6 +159,8 @@ public partial class GameState : Node
 	{
 		Inventory.Clear();
 		TimeStep = 0;
+		_npcLoopStates.Clear();
+		_npcUsedChoices.Clear();
 		GD.Print("[Loop] 重置");
 		EmitSignal(SignalName.LoopReset);
 	}

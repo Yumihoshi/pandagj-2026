@@ -43,6 +43,17 @@ public partial class LocationRoot : Node2D
 			return;
 		}
 
+		List<Npc> npcs = FindAll<Npc>(this);
+		HashSet<string> npcIds = new();
+		foreach (Npc npc in npcs)
+		{
+			if (string.IsNullOrEmpty(npc.NpcId)) continue; // Npc 自己会报错
+			if (!npcIds.Add(npc.NpcId))
+			{
+				GD.PushError($"LocationRoot {Name}: NpcId {npc.NpcId} 重复");
+			}
+		}
+
 		foreach (Room room in rooms) room.SetActive(false);
 
 		foreach (RoomDoor door in doors)

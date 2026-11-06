@@ -1,0 +1,24 @@
+~ start
+if npc.IsInState("sleeping")
+	同学: （趴在桌上睡着了。）
+	- 叫醒她 [#repeatable] => wake
+	- 算了 [#repeatable] => END
+else
+	同学: 有什么事吗？
+	- 关于器材室 [ID:ask_equipment] => ask_equipment
+	- 关于昨天 [ID:ask_yesterday] => ask_yesterday
+	- 算了 [#repeatable] => END
+
+~ ask_equipment
+同学: 器材室的钥匙好像掉在教室中间。
+=> END
+
+~ ask_yesterday
+同学: 昨天……我好像做了一个很长的梦。
+=> END
+
+~ wake
+同学: 唔……我睡着了？
+do npc.SetLoopState("standing")
+同学: 谢谢你叫醒我。
+=> END

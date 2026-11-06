@@ -24,10 +24,12 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Scenes/Root/GameScene.tscn`：主场景（`run/main_scene` 已指向它），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset`。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`。
 - `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D` + `InteractionRange`（`PlayerInteractor`）；贴图暂用 `icon.svg`。
 - `Scenes/Map/MapScreen.tscn`：地图 UI 面板（占位色块 + 地点按钮 `BtnClassroom` / `BtnPlayground`）。
-- `Scenes/Locations/`：`Classroom.tscn`（两房间：教室 / 器材室）、`Playground.tscn`（demo 占位地点）。
+- `Scenes/Locations/`：`Classroom.tscn`（两房间：教室 / 器材室；教室里有 demo NPC「同学」）、`Playground.tscn`（demo 占位地点）。
+- `Scenes/Dialogue/DialogueBalloon.tscn`：NPC 对话 balloon（从 `ExampleBalloon` 复制改造，`layer = 50`；名字 / 正文 / 选项 / 进度点）。
 - `Resources/MapConfig.tres`：初始解锁地点 `["classroom"]`。
-- `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Audio/`（`AudioManager`）、`Demo/`（`PickupItem`、`ReadDocument`）。
+- `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Npc/`（`Npc`、`NpcStateFrame`）、`Dialogue/`（`DialogueBalloon`）、`Audio/`（`AudioManager`）、`Demo/`（`PickupItem`、`ReadDocument`）。
 - `Dialogue/day1.dialogue`：占位剧本，**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
+- `Dialogue/Npc/student.dialogue`：教室 NPC「同学」的 demo 剧本。
 - `ArtRes/`：美术素材（当前为空）。
 - `Audio/Sfx/`：Kenney UI Audio 音效，按 `Click`(5) / `Rollover`(6) / `Switch`(38) / `Mouse`(2) 分组，保留 `License.txt`；`Audio/Bgm/` 目前为空。
 - `default_bus_layout.tres`：音频总线 `SFX` / `BGM`（`send = Master`），播放器按总线独立控音量。
@@ -36,9 +38,21 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 ## 对话系统
 
 - Dialogue Manager 4.2.0（Nathan Hoad），已启用编辑器插件并设置 `runtime/advanced/uses_dotnet=true`，autoload 名 `DialogueManager`（`uid://c3rodes2l3gxb`）。
-- 剧本写在 `Dialogue/*.dialogue`，不要把对白硬编码进 C#；对话 UI 从 `addons/dialogue_manager/example_balloon/ExampleBalloon.tscn`（C# 版）起步，不要自己写解析器。
-- C# API 在 `DialogueManagerRuntime` 命名空间：快速验证用 `DialogueManager.ShowExampleDialogueBalloon(resource)`，正式 UI 用 `ShowDialogueBalloonScene(自己的 balloon, resource)`。
-- `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue`（目前是占位内容）；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
+- 剧本写在 `Dialogue/*.dialogue`，不要把对白硬编码进 C#；对话 UI 用 `Scenes/Dialogue/DialogueBalloon.tscn`（从 `ExampleBalloon` 复制改造），不要直接改 addon 目录。
+- C# API 在 `DialogueManagerRuntime` 命名空间：快速验证用 `DialogueManager.ShowExampleDialogueBalloon(resource)`；正式对话用 `DialogueManager.ShowDialogueBalloon(resource)`（默认 balloon 由 `GameScene` 注册）或 `ShowDialogueBalloonScene`。
+- 默认 balloon 注册：`GameScene._Ready` 调 `DialogueManager.SetDefaultBalloon(DialogueBalloonScene)` 之后，必须再 `ProjectSettings.SetSetting("dialogue_manager/runtime/balloon_path", DialogueBalloonScene.ResourcePath)`；addon 的 `set_default_balloon` 写的是 `runtime/balloon_path`，读的是 `dialogue_manager/runtime/balloon_path`，只调它会静默回退到 `ExampleBalloon`。
+- `.dialogue` 语法：标签写 `[#repeatable]` / `[#show_if=true]` / `[#hide_if=true]`（裸 `#tag` 不解析）；`~ cue` 下的台词/`do`/`=> END` 顶格，只有 `if/else` 分支缩进；选项正文不要加方括号，一次性选项必须写 `[ID:]`。
+- `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue` 与 `res://Dialogue/Npc/student.dialogue`；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
+
+## NPC 系统
+
+- `Npc`（`Area2D`，继承 `Interactable`）：导出 `NpcId`（建议 `地点.名字`）、`Dialogue`、`NpcStateFrame[] Frames`、`Sprite`。`Frames` 首帧 `FromStep=0`、严格递增；`Visible=true` 的帧必须有 `Texture`；同一 `StateId` 跨帧贴图必须一致。
+- 有效状态：优先取 `GameState.GetNpcLoopState(NpcId)`（本轮覆盖，`SetLoopState` 写入），没有覆盖时取当前时间帧的 `StateId`；**在场只看当前时间帧的 `Visible`，覆盖不改在场**。
+- 在场用 `Area2D.Monitorable` 切换，不要用 `CollisionShape2D.Disabled`（`Room.SetActive` 会覆盖它）。
+- `Npc` 给 `.dialogue` 暴露 `IsPresent()` / `IsInState("...")` / `SetLoopState("...")`；状态动作必须在帧表里有对应状态。
+- `GameState` 新增本轮 `NpcLoopStates` / `NpcUsedChoices`；`ResetLoop()` 清空它们，`UnlockedLocations` / `Clues` 保留。
+- `DialogueBalloon`：`Start` 置 `Player.InputLocked=true`，`_ExitTree` 复位；选项过滤顺序是 `hide_if` → 已选灰显 → `IsAllowed` / `show_if`；一次性选项必须写 `[ID:]`，`[#repeatable]` 不记录；过滤后没有任何可选选项时报错并关闭。
+- `LocationRoot` 在 `_Ready` 里检查同地点 `NpcId` 重复；`NpcId` 跨地点唯一靠 `地点.名字` 命名约定。
 
 ## 音频
 

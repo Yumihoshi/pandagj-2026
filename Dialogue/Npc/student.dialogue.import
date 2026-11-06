@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://cg51v8doxhdor"
+path="res://.godot/imported/student.dialogue-045e5e30815630f239fbc32e884d0286.tres"
+
+[deps]
+
+source_file="res://Dialogue/Npc/student.dialogue"
+dest_files=["res://.godot/imported/student.dialogue-045e5e30815630f239fbc32e884d0286.tres"]
+
+[params]
+
+defaults=true

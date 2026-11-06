@@ -5,6 +5,16 @@ using System.Linq;
 public partial class PlayerInteractor : Area2D
 {
 	private Interactable _current;
+	private Player _player;
+
+	public override void _Ready()
+	{
+		_player = GetParent<Player>();
+		if (_player == null)
+		{
+			GD.PushError("PlayerInteractor: 父节点不是 Player");
+		}
+	}
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -16,6 +26,7 @@ public partial class PlayerInteractor : Area2D
 
 	public override void _UnhandledInput(InputEvent @event)
 	{
+		if (_player == null || _player.InputLocked) return;
 		if (_current == null || !@event.IsActionPressed("interact")) return;
 
 		_current.Interact();

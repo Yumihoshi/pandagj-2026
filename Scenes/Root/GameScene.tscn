@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Map/MapScreen.tscn" id="2_map"]
 [ext_resource type="Resource" path="res://Resources/MapConfig.tres" id="3_config"]
 [ext_resource type="PackedScene" path="res://Scenes/Locations/Classroom.tscn" id="4_start"]
+[ext_resource type="PackedScene" path="res://Scenes/Dialogue/DialogueBalloon.tscn" id="5_balloon"]
 
 [node name="GameScene" type="Node2D" unique_id=1828415781 node_paths=PackedStringArray("MapScreen", "LocationHost")]
 script = ExtResource("1_game")
@@ -11,6 +12,7 @@ MapConfig = ExtResource("3_config")
 StartLocation = ExtResource("4_start")
 MapScreen = NodePath("UILayer/MapScreen")
 LocationHost = NodePath("LocationHost")
+DialogueBalloonScene = ExtResource("5_balloon")
 
 [node name="LocationHost" type="Node2D" parent="." unique_id=715923502]
 

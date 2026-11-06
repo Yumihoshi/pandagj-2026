@@ -1,5 +1,6 @@
 using Godot;
 using System.Threading.Tasks;
+using DialogueManagerRuntime;
 
 /// <summary>常驻根场景：装载/卸载地点、显隐地图、衔接过渡、响应循环重置。</summary>
 public partial class GameScene : Node2D
@@ -16,6 +17,9 @@ public partial class GameScene : Node2D
 	/// <summary>当前地点的挂载点。</summary>
 	[Export] public Node2D LocationHost { get; set; }
 
+	/// <summary>本游戏的对话 balloon 场景。</summary>
+	[Export] public PackedScene DialogueBalloonScene { get; set; }
+
 	private LocationRoot _currentLocation;
 	private bool _transitioning;
 
@@ -23,12 +27,25 @@ public partial class GameScene : Node2D
 
 	public override async void _Ready()
 	{
-		if (MapConfig == null || StartLocation == null || MapScreen == null || LocationHost == null)
+		if (MapConfig == null || StartLocation == null || MapScreen == null
+			|| LocationHost == null || DialogueBalloonScene == null)
 		{
 			GD.PushError("GameScene: 有导出引用为空，停止启动");
 			return;
 		}
 		if (!ValidateConfigIds()) return;
+
+		Error balloonError = DialogueManager.SetDefaultBalloon(DialogueBalloonScene);
+		if (balloonError != Error.Ok)
+		{
+			GD.PushError($"GameScene: 设置默认对话 balloon 失败（{balloonError}）");
+			return;
+		}
+
+		// set_default_balloon 写的是 runtime/balloon_path，而 DMSettings.get_setting
+		// 读的是 dialogue_manager/runtime/balloon_path；直接写读取键，
+		// 否则 show_dialogue_balloon 会回退到 addon 的示例 balloon。
+		ProjectSettings.SetSetting("dialogue_manager/runtime/balloon_path", DialogueBalloonScene.ResourcePath);
 
 		GameState.Instance.SeedInitialUnlocks(MapConfig);
 		GameState.Instance.LoopReset += OnLoopReset;

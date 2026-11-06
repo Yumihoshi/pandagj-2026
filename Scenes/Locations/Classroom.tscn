@@ -7,9 +7,61 @@
 [ext_resource type="Script" uid="uid://clgv303el6rvo" path="res://Scripts/Demo/PickupItem.cs" id="5_pickup"]
 [ext_resource type="Script" uid="uid://2g7qv27gk0y6" path="res://Scripts/Demo/ReadDocument.cs" id="6_doc"]
 [ext_resource type="PackedScene" uid="uid://cijlhrgfnh804" path="res://Scenes/player.tscn" id="7_player"]
+[ext_resource type="Script" uid="uid://c3su5mw6h1kl4" path="res://Scripts/Npc/Npc.cs" id="8_npc"]
+[ext_resource type="Script" uid="uid://bprjrbj35gc5c" path="res://Scripts/Npc/NpcStateFrame.cs" id="9_frame"]
+[ext_resource type="Resource" uid="uid://cg51v8doxhdor" path="res://Dialogue/Npc/student.dialogue" id="10_dialogue"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
 size = Vector2(120, 200)
+
+[sub_resource type="Gradient" id="Gradient_stand"]
+colors = PackedColorArray(0.4, 0.6, 0.95, 1, 0.1, 0.2, 0.5, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_stand"]
+gradient = SubResource("Gradient_stand")
+width = 120
+height = 200
+fill_from = Vector2(0.5, 0)
+fill_to = Vector2(0.5, 1)
+
+[sub_resource type="Resource" id="NpcStateFrame_0"]
+script = ExtResource("9_frame")
+StateId = "standing"
+Texture = SubResource("GradientTexture2D_stand")
+
+[sub_resource type="Resource" id="NpcStateFrame_1"]
+script = ExtResource("9_frame")
+FromStep = 1
+StateId = "standing"
+Texture = SubResource("GradientTexture2D_stand")
+
+[sub_resource type="Gradient" id="Gradient_sleep"]
+colors = PackedColorArray(0.55, 0.5, 0.6, 1, 0.25, 0.22, 0.3, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_sleep"]
+gradient = SubResource("Gradient_sleep")
+width = 120
+height = 200
+fill_from = Vector2(0.5, 0)
+fill_to = Vector2(0.5, 1)
+
+[sub_resource type="Resource" id="NpcStateFrame_2"]
+script = ExtResource("9_frame")
+FromStep = 2
+StateId = "sleeping"
+Texture = SubResource("GradientTexture2D_sleep")
+
+[sub_resource type="Resource" id="NpcStateFrame_3"]
+script = ExtResource("9_frame")
+FromStep = 3
+StateId = "sleeping"
+Texture = SubResource("GradientTexture2D_sleep")
+
+[sub_resource type="Resource" id="NpcStateFrame_4"]
+script = ExtResource("9_frame")
+FromStep = 4
+StateId = "absent"
+Visible = false
 
 [node name="Classroom" type="Node2D" unique_id=960984291 node_paths=PackedStringArray("StartingRoom", "PlayerNode")]
 script = ExtResource("1_root")
@@ -102,6 +154,29 @@ offset_top = -150.0
 offset_right = 60.0
 offset_bottom = -110.0
 text = "锁着"
+
+[node name="Npc_Student" type="Area2D" parent="Room_Classroom" unique_id=590332753 node_paths=PackedStringArray("Sprite")]
+position = Vector2(1200, 520)
+script = ExtResource("8_npc")
+NpcId = "classroom.student"
+Dialogue = ExtResource("10_dialogue")
+Frames = [SubResource("NpcStateFrame_0"), SubResource("NpcStateFrame_1"), SubResource("NpcStateFrame_2"), SubResource("NpcStateFrame_3"), SubResource("NpcStateFrame_4")]
+Sprite = NodePath("Sprite")
+
+[node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Student" unique_id=140218607]
+position = Vector2(0, -100)
+texture = SubResource("GradientTexture2D_stand")
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Student" unique_id=1057096801]
+position = Vector2(0, -100)
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="DebugLabel" type="Label" parent="Room_Classroom/Npc_Student" unique_id=393418124]
+offset_left = -80.0
+offset_top = 10.0
+offset_right = 80.0
+offset_bottom = 50.0
+text = "classroom.student:standing"
 
 [node name="Room_Equip" type="Node2D" parent="." unique_id=363304186 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")

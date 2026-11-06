@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 DialogueManager="*uid://c3rodes2l3gxb"
 GameState="*res://Scripts/Core/GameState.cs"
 ScreenFade="*res://Scripts/Core/ScreenFade.cs"
+AudioManager="*res://Scripts/Audio/AudioManager.cs"
 
 [dialogue_manager]
 

@@ -1,0 +1,164 @@
+[gd_scene format=3 uid="uid://47uoowgt8ywv"]
+
+[ext_resource type="Script" uid="uid://ufdnpwm7qrj4" path="res://Scripts/Location/LocationRoot.cs" id="1_root"]
+[ext_resource type="Script" uid="uid://d26l5mnemjkl" path="res://Scripts/Location/Room.cs" id="2_room"]
+[ext_resource type="Script" uid="uid://burkcfqxunta0" path="res://Scripts/Location/RoomDoor.cs" id="3_door"]
+[ext_resource type="Script" uid="uid://dmr2d5m5twca8" path="res://Scripts/Location/LocationExit.cs" id="4_exit"]
+[ext_resource type="Script" uid="uid://clgv303el6rvo" path="res://Scripts/Demo/PickupItem.cs" id="5_pickup"]
+[ext_resource type="Script" uid="uid://2g7qv27gk0y6" path="res://Scripts/Demo/ReadDocument.cs" id="6_doc"]
+[ext_resource type="PackedScene" uid="uid://cijlhrgfnh804" path="res://Scenes/player.tscn" id="7_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
+size = Vector2(120, 200)
+
+[node name="Classroom" type="Node2D" unique_id=960984291 node_paths=PackedStringArray("StartingRoom", "PlayerNode")]
+script = ExtResource("1_root")
+StartingRoom = NodePath("Room_Classroom")
+PlayerNode = NodePath("Player")
+
+[node name="Room_Classroom" type="Node2D" parent="." unique_id=1727361504 node_paths=PackedStringArray("DefaultSpawn")]
+script = ExtResource("2_room")
+DefaultSpawn = NodePath("DefaultSpawn")
+CameraBounds = Rect2i(0, 0, 1920, 600)
+
+[node name="Bg" type="ColorRect" parent="Room_Classroom" unique_id=1023161454]
+offset_right = 1920.0
+offset_bottom = 600.0
+color = Color(0.35, 0.4, 0.45, 1)
+
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Classroom" unique_id=536396040]
+position = Vector2(350, 520)
+
+[node name="ExitToMap" type="Area2D" parent="Room_Classroom" unique_id=29815568]
+position = Vector2(80, 500)
+script = ExtResource("4_exit")
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/ExitToMap" unique_id=1817466691]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_Classroom/ExitToMap" unique_id=559351763]
+offset_left = -40.0
+offset_top = -100.0
+offset_right = 40.0
+offset_bottom = 100.0
+color = Color(0.2, 0.5, 0.8, 1)
+
+[node name="Caption" type="Label" parent="Room_Classroom/ExitToMap" unique_id=1782695125]
+offset_left = -40.0
+offset_top = 105.0
+offset_right = 60.0
+offset_bottom = 145.0
+text = "出口"
+
+[node name="Key" type="Area2D" parent="Room_Classroom" unique_id=588082221]
+position = Vector2(900, 500)
+script = ExtResource("5_pickup")
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Key" unique_id=263920243]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_Classroom/Key" unique_id=104124481]
+offset_left = -30.0
+offset_top = -30.0
+offset_right = 30.0
+offset_bottom = 30.0
+color = Color(0.95, 0.8, 0.2, 1)
+
+[node name="Caption" type="Label" parent="Room_Classroom/Key" unique_id=1337962985]
+offset_left = -30.0
+offset_top = 35.0
+offset_right = 70.0
+offset_bottom = 75.0
+text = "钥匙"
+
+[node name="DoorToEquip" type="Area2D" parent="Room_Classroom" unique_id=1263987606 node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
+position = Vector2(1800, 500)
+script = ExtResource("3_door")
+TargetRoom = NodePath("../../Room_Equip")
+TargetSpawn = NodePath("../../Room_Equip/DefaultSpawn")
+RequiredKeyId = "equipment_key"
+LockedHint = NodePath("LockedHint")
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/DoorToEquip" unique_id=1358412497]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_Classroom/DoorToEquip" unique_id=1896582244]
+offset_left = -40.0
+offset_top = -100.0
+offset_right = 40.0
+offset_bottom = 100.0
+color = Color(0.45, 0.3, 0.2, 1)
+
+[node name="Caption" type="Label" parent="Room_Classroom/DoorToEquip" unique_id=650680620]
+offset_left = -40.0
+offset_top = 105.0
+offset_right = 60.0
+offset_bottom = 145.0
+text = "门"
+
+[node name="LockedHint" type="Label" parent="Room_Classroom/DoorToEquip" unique_id=1062468504]
+offset_left = -60.0
+offset_top = -150.0
+offset_right = 60.0
+offset_bottom = -110.0
+text = "锁着"
+
+[node name="Room_Equip" type="Node2D" parent="." unique_id=363304186 node_paths=PackedStringArray("DefaultSpawn")]
+script = ExtResource("2_room")
+DefaultSpawn = NodePath("DefaultSpawn")
+CameraBounds = Rect2i(0, 0, 1920, 600)
+
+[node name="Bg" type="ColorRect" parent="Room_Equip" unique_id=865076437]
+offset_right = 1920.0
+offset_bottom = 600.0
+color = Color(0.3, 0.32, 0.28, 1)
+
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Equip" unique_id=1637155651]
+position = Vector2(350, 520)
+
+[node name="DoorToClassroom" type="Area2D" parent="Room_Equip" unique_id=1702649522 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+position = Vector2(80, 500)
+script = ExtResource("3_door")
+TargetRoom = NodePath("../../Room_Classroom")
+TargetSpawn = NodePath("../../Room_Classroom/DefaultSpawn")
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Equip/DoorToClassroom" unique_id=93510137]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_Equip/DoorToClassroom" unique_id=658323045]
+offset_left = -40.0
+offset_top = -100.0
+offset_right = 40.0
+offset_bottom = 100.0
+color = Color(0.45, 0.3, 0.2, 1)
+
+[node name="Caption" type="Label" parent="Room_Equip/DoorToClassroom" unique_id=1692562073]
+offset_left = -40.0
+offset_top = 105.0
+offset_right = 60.0
+offset_bottom = 145.0
+text = "门"
+
+[node name="Notice" type="Area2D" parent="Room_Equip" unique_id=2130046697]
+position = Vector2(1000, 500)
+script = ExtResource("6_doc")
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Equip/Notice" unique_id=1420247306]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_Equip/Notice" unique_id=1772211437]
+offset_left = -30.0
+offset_top = -40.0
+offset_right = 30.0
+offset_bottom = 40.0
+color = Color(0.9, 0.9, 0.85, 1)
+
+[node name="Caption" type="Label" parent="Room_Equip/Notice" unique_id=29730359]
+offset_left = -30.0
+offset_top = 45.0
+offset_right = 70.0
+offset_bottom = 85.0
+text = "文件"
+
+[node name="Player" parent="." unique_id=1012417990 instance=ExtResource("7_player")]
+position = Vector2(350, 520)

@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Location/LocationRoot.cs" id="1_root"]
+[ext_resource type="Script" path="res://Scripts/Location/Room.cs" id="2_room"]
+[ext_resource type="Script" path="res://Scripts/Location/LocationExit.cs" id="4_exit"]
+[ext_resource type="PackedScene" path="res://Scenes/player.tscn" id="7_player"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
+size = Vector2(120, 200)
+
+[node name="Playground" type="Node2D" node_paths=PackedStringArray("StartingRoom", "PlayerNode")]
+script = ExtResource("1_root")
+StartingRoom = NodePath("Room_Playground")
+PlayerNode = NodePath("Player")
+
+[node name="Room_Playground" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+script = ExtResource("2_room")
+DefaultSpawn = NodePath("DefaultSpawn")
+CameraBounds = Rect2i(0, 0, 1920, 600)
+
+[node name="Bg" type="ColorRect" parent="Room_Playground"]
+offset_right = 1920.0
+offset_bottom = 600.0
+color = Color(0.25, 0.35, 0.25, 1)
+
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Playground"]
+position = Vector2(350, 520)
+
+[node name="ExitToMap" type="Area2D" parent="Room_Playground"]
+position = Vector2(80, 500)
+script = ExtResource("4_exit")
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Playground/ExitToMap"]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_Playground/ExitToMap"]
+offset_left = -40.0
+offset_top = -100.0
+offset_right = 40.0
+offset_bottom = 100.0
+color = Color(0.2, 0.5, 0.8, 1)
+
+[node name="Caption" type="Label" parent="Room_Playground/ExitToMap"]
+offset_left = -40.0
+offset_top = 105.0
+offset_right = 60.0
+offset_bottom = 145.0
+text = "出口"
+
+[node name="Player" parent="." instance=ExtResource("7_player")]
+position = Vector2(350, 520)

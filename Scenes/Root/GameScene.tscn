@@ -1,3 +1,20 @@
 [gd_scene format=3 uid="uid://dygalmbastn81"]
 
-[node name="GameScene" type="Node2D" unique_id=12456875]
+[ext_resource type="Script" uid="uid://1va4eg0g6usd" path="res://Scripts/Map/GameScene.cs" id="1_game"]
+[ext_resource type="PackedScene" path="res://Scenes/Map/MapScreen.tscn" id="2_map"]
+[ext_resource type="Resource" path="res://Resources/MapConfig.tres" id="3_config"]
+[ext_resource type="PackedScene" path="res://Scenes/Locations/Classroom.tscn" id="4_start"]
+
+[node name="GameScene" type="Node2D" unique_id=1828415781 node_paths=PackedStringArray("MapScreen", "LocationHost")]
+script = ExtResource("1_game")
+MapConfig = ExtResource("3_config")
+StartLocation = ExtResource("4_start")
+MapScreen = NodePath("UILayer/MapScreen")
+LocationHost = NodePath("LocationHost")
+
+[node name="LocationHost" type="Node2D" parent="." unique_id=715923502]
+
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=121584597]
+layer = 10
+
+[node name="MapScreen" parent="UILayer" unique_id=1539145619 instance=ExtResource("2_map")]

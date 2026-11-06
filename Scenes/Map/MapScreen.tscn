@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Map/MapScreen.cs" id="1_screen"]
+[ext_resource type="Script" path="res://Scripts/Map/MapLocationButton.cs" id="2_button"]
+[ext_resource type="PackedScene" path="res://Scenes/Locations/Classroom.tscn" id="3_classroom"]
+[ext_resource type="PackedScene" path="res://Scenes/Locations/Playground.tscn" id="4_playground"]
+
+[node name="MapScreen" type="Control" node_paths=PackedStringArray("Buttons")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_screen")
+Buttons = Array[NodePath]([NodePath("LocationButtons/BtnClassroom"), NodePath("LocationButtons/BtnPlayground")])
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.25, 0.3, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+offset_left = 60.0
+offset_top = 40.0
+offset_right = 660.0
+offset_bottom = 100.0
+text = "学校地图（占位）"
+theme_override_font_sizes/font_size = 42
+
+[node name="LocationButtons" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BtnClassroom" type="Button" parent="LocationButtons"]
+layout_mode = 0
+offset_left = 320.0
+offset_top = 260.0
+offset_right = 520.0
+offset_bottom = 340.0
+text = "教室"
+script = ExtResource("2_button")
+LocationId = "classroom"
+LocationScene = ExtResource("3_classroom")
+
+[node name="BtnPlayground" type="Button" parent="LocationButtons"]
+layout_mode = 0
+offset_left = 320.0
+offset_top = 620.0
+offset_right = 520.0
+offset_bottom = 700.0
+text = "操场"
+script = ExtResource("2_button")
+LocationId = "playground"
+LocationScene = ExtResource("4_playground")

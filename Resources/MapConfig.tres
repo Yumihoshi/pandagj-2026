@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="MapConfig" format=3 uid="uid://dm375lq5bf84h"]
+
+[ext_resource type="Script" uid="uid://bc7lhgq51tsl1" path="res://Scripts/Map/MapConfig.cs" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+InitialUnlockedLocationIds = PackedStringArray("classroom")

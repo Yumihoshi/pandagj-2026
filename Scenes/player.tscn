@@ -1,10 +1,42 @@
 [gd_scene format=3 uid="uid://cijlhrgfnh804"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ogq8d"]
+[ext_resource type="Script" uid="uid://cupnmch46w0gi" path="res://Scripts/Player/Player.cs" id="1_player"]
+[ext_resource type="Script" uid="uid://dnjwlnyt674ag" path="res://Scripts/Player/PlayerInteractor.cs" id="2_interactor"]
+[ext_resource type="Texture2D" uid="uid://b5buqxf1d6n5i" path="res://icon.svg" id="3_icon"]
 
-[node name="Player" type="CharacterBody2D" unique_id=967657488]
+[sub_resource type="SpriteFrames" id="SpriteFrames_icon"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_icon")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1669897155]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(40, 80)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1350799779]
-shape = SubResource("RectangleShape2D_ogq8d")
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_range"]
+size = Vector2(120, 120)
+
+[node name="Player" type="CharacterBody2D" unique_id=1248814557 node_paths=PackedStringArray("Camera")]
+script = ExtResource("1_player")
+Camera = NodePath("Camera2D")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1501031974]
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_icon")
+autoplay = "default"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=117072567]
+shape = SubResource("RectangleShape2D_body")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1258448375]
+
+[node name="InteractionRange" type="Area2D" parent="." unique_id=304796731]
+script = ExtResource("2_interactor")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionRange" unique_id=2001912824]
+shape = SubResource("RectangleShape2D_range")

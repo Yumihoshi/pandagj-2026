@@ -22,6 +22,7 @@
 [ext_resource type="Resource" path="res://Dialogue/Objects/equipment_water.dialogue" id="16_water_dialogue"]
 [ext_resource type="Resource" path="res://Dialogue/Objects/underground_wait.dialogue" id="17_wait_dialogue"]
 [ext_resource type="Resource" path="res://Dialogue/Npc/yamada_underground.dialogue" id="18_yamada_underground"]
+[ext_resource type="Resource" path="res://Dialogue/Objects/manhole_locked.dialogue" id="19_manhole_locked"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
 size = Vector2(120, 200)
@@ -231,14 +232,14 @@ offset_right = 60.0
 offset_bottom = -110.0
 text = "锁着"
 
-[node name="DoorToUnderground" type="Area2D" parent="Room_Behind" node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
+[node name="DoorToUnderground" type="Area2D" parent="Room_Behind" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(1600, 500)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Underground")
 TargetSpawn = NodePath("../../Room_Underground/DefaultSpawn")
 RequiredClueId = "underground_access"
 TravelMinutes = 5
-LockedHint = NodePath("LockedHint")
+LockedDialogue = ExtResource("19_manhole_locked")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Behind/DoorToUnderground"]
 shape = SubResource("RectangleShape2D_zone")
@@ -255,14 +256,7 @@ offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
-text = "门（地下空间）"
-
-[node name="LockedHint" type="Label" parent="Room_Behind/DoorToUnderground"]
-offset_left = -90.0
-offset_top = -150.0
-offset_right = 90.0
-offset_bottom = -110.0
-text = "（还不知道怎么下去）"
+text = "井盖"
 
 [node name="Room_Equipment" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")

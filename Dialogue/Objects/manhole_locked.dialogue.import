@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://dxcwwq5o84wgu"
+path="res://.godot/imported/manhole_locked.dialogue-662bbf2d78539471b0bc61782aec3042.tres"
+
+[deps]
+
+source_file="res://Dialogue/Objects/manhole_locked.dialogue"
+dest_files=["res://.godot/imported/manhole_locked.dialogue-662bbf2d78539471b0bc61782aec3042.tres"]
+
+[params]
+
+defaults=true

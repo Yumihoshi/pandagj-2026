@@ -1,6 +1,6 @@
 using Godot;
 
-/// <summary>山田笔记本密码面板：4 位输入，正确后获取笔记本文档并解锁地下空间。</summary>
+/// <summary>山田电脑密码面板：4 位输入，正确后把电脑日志记进手机（地下空间改由在日志里点击高亮文字解锁）。</summary>
 public partial class PasswordPanel : CanvasLayer
 {
 	/// <summary>正确密码；剧本设定 0721。</summary>
@@ -8,9 +8,6 @@ public partial class PasswordPanel : CanvasLayer
 
 	/// <summary>解锁后获取的文档 id。</summary>
 	[Export] public string DocumentId { get; set; } = "yamada_notebook";
-
-	/// <summary>解锁后写入的线索 id。</summary>
-	[Export] public string UnlockClueId { get; set; } = "underground_access";
 
 	private Control _overlay;
 	private LineEdit _input;
@@ -104,9 +101,8 @@ public partial class PasswordPanel : CanvasLayer
 		}
 
 		bool added = GameState.Instance.AcquireDocument(DocumentId);
-		GameState.Instance.AddClue(UnlockClueId);
 		_error.Hide();
-		_message.Text = added ? "解锁成功。笔记本的内容已记录到手机。" : "已经解锁过了。";
+		_message.Text = added ? "解锁成功。电脑日志的内容已记录到手机。" : "已经解锁过了。";
 		_message.Show();
 		_input.Editable = false;
 

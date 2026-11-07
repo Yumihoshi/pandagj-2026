@@ -45,6 +45,7 @@ public partial class PhoneScreen : CanvasLayer
 	private bool _docPointerPressed;
 	private Vector2 _docPressPosition;
 	private Tween _docCopyTween;
+	private DocumentData _currentDoc;
 
 	public override void _Ready()
 	{
@@ -89,6 +90,7 @@ public partial class PhoneScreen : CanvasLayer
 		NotebookBack.Pressed += BackToMainMenu;
 		NotebookEdit.TextChanged += OnNotebookTextChanged;
 		DocReadBody.GuiInput += OnDocReadGuiInput;
+		DocReadBody.MetaClicked += OnDocMetaClicked;
 
 		Overlay.Hide();
 		DocListPanel.Hide();
@@ -349,7 +351,8 @@ public partial class PhoneScreen : CanvasLayer
 		DocReadPanel.Show();
 		GD.Print($"[Phone] 阅读文档 {document.Id}");
 		DocReadTitle.Text = document.Title;
-		DocReadBody.Text = document.Body;
+		_currentDoc = document;
+		DocReadBody.Text = ApplyClueStyle(document.Body);
 		DocReadBody.SelectionEnabled = true;
 		DocReadBody.GrabFocus();
 		Callable.From(() => DocReadScroll.ScrollVertical = 0).CallDeferred();
@@ -378,6 +381,33 @@ public partial class PhoneScreen : CanvasLayer
 	{
 		if (GameState.Instance == null) return;
 		GameState.Instance.NotebookText = NotebookEdit.Text;
+	}
+
+	private void OnDocMetaClicked(Variant meta)
+	{
+		if (meta.VariantType != Variant.Type.String) return;
+		string value = meta.AsString();
+		if (!value.StartsWith("clue:")) return;
+		string clueId = value.Substring("clue:".Length);
+		if (string.IsNullOrEmpty(clueId) || GameState.Instance == null) return;
+
+		GameState.Instance.AddClue(clueId);
+		if (_currentDoc != null)
+		{
+			DocReadBody.Text = ApplyClueStyle(_currentDoc.Body);
+		}
+	}
+
+	/// <summary>已解锁的线索链接在正文里变灰。</summary>
+	private static string ApplyClueStyle(string body)
+	{
+		if (string.IsNullOrEmpty(body) || GameState.Instance == null) return body;
+		return System.Text.RegularExpressions.Regex.Replace(
+			body,
+			@"\[url=clue:([^\]]+)\]\[color=#ffd866\]",
+			m => GameState.Instance.HasClue(m.Groups[1].Value)
+				? $"[url=clue:{m.Groups[1].Value}][color=#8a8a8a]"
+				: m.Value);
 	}
 
 	private void OnDocReadGuiInput(InputEvent @event)

@@ -1,4 +1,5 @@
 using Godot;
+using DialogueManagerRuntime;
 
 /// <summary>房间之间的门。可配线索锁与钥匙锁，锁着时显示提示。</summary>
 public partial class RoomDoor : Interactable
@@ -21,6 +22,9 @@ public partial class RoomDoor : Interactable
 	/// <summary>锁着时闪一下的提示。</summary>
 	[Export] public Label LockedHint { get; set; }
 
+	/// <summary>锁着时播的对话；设置后优先于 LockedHint。</summary>
+	[Export] public Resource LockedDialogue { get; set; }
+
 	private Timer _hintTimer;
 
 	public override void _Ready()
@@ -37,9 +41,9 @@ public partial class RoomDoor : Interactable
 		{
 			GD.PushError($"RoomDoor {Name}: GameState 未就绪");
 		}
-		if (IsLocked() && LockedHint == null)
+		if (IsLocked() && LockedHint == null && LockedDialogue == null)
 		{
-			GD.PushError($"RoomDoor {Name}: 已上锁但 LockedHint 为空");
+			GD.PushError($"RoomDoor {Name}: 已上锁但 LockedHint 与 LockedDialogue 都为空");
 		}
 		if (TravelMinutes < 0)
 		{
@@ -63,18 +67,35 @@ public partial class RoomDoor : Interactable
 			return;
 		}
 
-		if (!string.IsNullOrEmpty(RequiredClueId) && !GameState.Instance.HasClue(RequiredClueId))
+		if (IsCurrentlyLocked())
 		{
-			ShowLockedHint();
-			return;
-		}
-		if (!string.IsNullOrEmpty(RequiredKeyId) && !GameState.Instance.HasItem(RequiredKeyId))
-		{
-			ShowLockedHint();
+			HandleLocked();
 			return;
 		}
 
 		base.Interact();
+	}
+
+	/// <summary>当前是否因线索或钥匙不足而锁着。</summary>
+	private bool IsCurrentlyLocked()
+	{
+		if (!string.IsNullOrEmpty(RequiredClueId) && !GameState.Instance.HasClue(RequiredClueId)) return true;
+		if (!string.IsNullOrEmpty(RequiredKeyId) && !GameState.Instance.HasItem(RequiredKeyId)) return true;
+		return false;
+	}
+
+	/// <summary>锁着时的反馈：有对话播对话，否则闪提示。</summary>
+	private void HandleLocked()
+	{
+		if (LockedDialogue != null)
+		{
+			if (DialogueManager.ShowDialogueBalloon(LockedDialogue, "start") == null)
+			{
+				GD.PushError($"RoomDoor {Name}: ShowDialogueBalloon 返回空");
+			}
+			return;
+		}
+		ShowLockedHint();
 	}
 
 	/// <summary>显示锁定提示并在 1.5 秒后隐藏。</summary>

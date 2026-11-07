@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://wncbns55g750"
+path="res://.godot/imported/office_kick_out.dialogue-9b5e0bcd1806be4aa6de9966ec4497f1.tres"
+
+[deps]
+
+source_file="res://Dialogue/Objects/office_kick_out.dialogue"
+dest_files=["res://.godot/imported/office_kick_out.dialogue-9b5e0bcd1806be4aa6de9966ec4497f1.tres"]
+
+[params]
+
+defaults=true

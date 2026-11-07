@@ -14,6 +14,8 @@
 [ext_resource type="Script" path="res://Scripts/Location/OfficeDoor.cs" id="11_office_door"]
 [ext_resource type="Script" path="res://Scripts/Location/KeyedDrawer.cs" id="12_drawer"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/PasswordPanel.tscn" id="13_password"]
+[ext_resource type="Script" path="res://Scripts/Location/OfficeKickOut.cs" id="14_office_kick_out"]
+[ext_resource type="Resource" path="res://Dialogue/Objects/office_kick_out.dialogue" id="15_kick_out"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
 size = Vector2(120, 200)
@@ -180,6 +182,11 @@ offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "门（行政楼入口）"
+
+[node name="OfficeKickOut" type="Node" parent="Room_Office" node_paths=PackedStringArray("ExitDoor")]
+script = ExtResource("14_office_kick_out")
+ExitDoor = NodePath("../DoorToLobby")
+KickDialogue = ExtResource("15_kick_out")
 
 [node name="Npc_Yamada" type="Area2D" parent="Room_Office" node_paths=PackedStringArray("Sprite")]
 position = Vector2(1200, 520)

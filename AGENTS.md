@@ -29,9 +29,9 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Resources/MapConfig.tres`：初始解锁地点 `["classroom"]`。
 - `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Npc/`（`Npc`、`NpcStateFrame`）、`Dialogue/`（`DialogueBalloon`）、`Documents/`（`DocumentData`、`DocumentLibrary`）、`Phone/`（`PhoneScreen`）、`Audio/`（`AudioManager`）、`UI/`（`TimeLabel`）、`Demo/`（`PickupItem`、`ReadDocument`，当前未挂场景）。
 - `Scenes/UI/`：`PasswordPanel.tscn`（办公桌密码面板，`CanvasLayer.layer=60`）、`EndingOverlay.tscn`（真结局黑屏 / The End，layer 46）、`LoopEndNotice.tscn`（17:30 闪白，layer 90）。
-- `Scripts/Location/` 新增 `ClassroomDoor`（一周目教室门阻挡）、`LabDoor`（实验室两小时等待）、`OfficeDoor`（办公室 14:00-14:59 时间窗）、`BookDesk`（看书）、`KeyedDrawer`（抽屉钥匙）、`BombInteractable`（炸药）、`WaterPipe`（接水）、`WaitSpot`（等到 17:00）。
+- `Scripts/Location/` 新增 `ClassroomDoor`（一周目教室门阻挡）、`LabDoor`（实验室两小时等待）、`OfficeDoor`（办公室 13:30-16:59 开放，14:00-14:59 山田午睡）、`BookDesk`（看书）、`KeyedDrawer`（抽屉钥匙）、`BombInteractable`（炸药）、`WaterPipe`（接水）、`WaitSpot`（等到 17:00）。
 - `Scripts/UI/` 新增 `PasswordPanel`、`EndingOverlay`、`LoopEndNotice`。
-- `Dialogue/Objects/`：座位 / 教室门阻挡 / 炸药 / 水管 / 等待点 5 个物体剧本；`Dialogue/Npc/shinji_lab.dialogue` 与 `yamada_underground.dialogue` 是两个新 NPC 剧本。
+- `Dialogue/Objects/`：座位 / 教室门阻挡 / 炸药 / 水管 / 等待点 / 办公室赶人 6 个物体剧本；`Dialogue/Npc/shinji_lab.dialogue` 与 `yamada_underground.dialogue` 是两个新 NPC 剧本。
 - `Scenes/Locations/Classroom.tscn` 新增化学实验室房间 `Room_ChemLab`（背景暂用 `next_classroom.png`）。
 - `Dialogue/day1.dialogue`：占位剧本，**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
 - `Dialogue/Npc/student.dialogue`：旧「同学」demo 剧本，当前未挂到任何 NPC；`yuka.dialogue` / `yamada.dialogue` / `shinji.dialogue` 是三个 NPC 的正式剧本；`shinji_lab.dialogue` / `yamada_underground.dialogue` 是新 NPC 剧本；`Dialogue/Objects/` 是物体剧本。
@@ -50,7 +50,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - C# API 在 `DialogueManagerRuntime` 命名空间：快速验证用 `DialogueManager.ShowExampleDialogueBalloon(resource)`；正式对话用 `DialogueManager.ShowDialogueBalloon(resource)`（默认 balloon 由 `GameScene` 注册）或 `ShowDialogueBalloonScene`。
 - 默认 balloon 注册：`GameScene._Ready` 调 `DialogueManager.SetDefaultBalloon(DialogueBalloonScene)` 之后，必须再 `ProjectSettings.SetSetting("dialogue_manager/runtime/balloon_path", DialogueBalloonScene.ResourcePath)`；addon 的 `set_default_balloon` 写的是 `runtime/balloon_path`，读的是 `dialogue_manager/runtime/balloon_path`，只调它会静默回退到 `ExampleBalloon`。
 - `.dialogue` 语法：标签写 `[#repeatable]` / `[#show_if=true]` / `[#hide_if=true]`（裸 `#tag` 不解析）；响应条件写 `[if 表达式 /]`（末尾斜杠）；`~ cue` 下的台词/`do`/`=> END` 顶格，只有 `if/elif/else` 分支缩进；同一文件里 `[ID:]` 必须唯一；选项正文不要加方括号，一次性选项必须写 `[ID:]`。
-- `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue`、`res://Dialogue/Npc/student.dialogue`、`yuka` / `yamada` / `shinji` / `shinji_lab` / `yamada_underground` 五个 NPC 剧本、`Dialogue/Objects/` 的 5 个物体剧本与 `res://Dialogue/phone.dialogue`；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
+- `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue`、`res://Dialogue/Npc/student.dialogue`、`yuka` / `yamada` / `shinji` / `shinji_lab` / `yamada_underground` 五个 NPC 剧本、`Dialogue/Objects/` 的 6 个物体剧本与 `res://Dialogue/phone.dialogue`；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
 - 对白正文支持鼠标拖拽选择：打字完成后打开 `RichTextLabel` 原生选区（主题 `selection_color`），松开时若有选中文本则自动写入系统剪贴板并显示「已复制」；原地单击仍推进对话，判定阈值 `DialogueBalloon.ClickDragThreshold`（默认 6px）。`Balloon/CenterContainer` 必须保持 `mouse_filter = 2`，否则全屏容器会抢走正文的鼠标事件。
 
 ## 手机系统
@@ -93,6 +93,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 三周目：抽屉 + 密码面板 0721 → `yamada_notebook` + `underground_access` → 地下取样 → 新井分析两小时 → `bomb_weakness`。
 - 四周目：器材准备室接水 → 地下湿炸药 → 等待点到 17:00 → 真结局；未湿则 `FailLoop`。
 - 本轮标记：`chose_reading` / `chose_going_out` / `yuka_briefed` / `shinji_analyzing` / `bomb_sample_taken` / `bomb_wet` / `water_taken` / `office_key_taken`；每轮清空。
+- 办公室（行政楼）：门在 13:30-16:59 开放（`OfficeDoor`）；不在 14:00-14:59 时，玩家在办公室里与门 / 出口以外的任何东西交互，都会由 `OfficeKickOut` 播 `Dialogue/Objects/office_kick_out.dialogue` 并赶回入口（走 `DoorToLobby`，5 分钟）。偷 `office_key` 仍只限 14:00-14:59 山田午睡时。
 - 跨轮线索：`yuka_likes_yamada` / `saw_laptop` / `laptop_password` / `chem_lab_unlocked` / `bomb_weakness` / `underground_access`。
 - 8 篇文档的高亮语法与位置见 `docs/superpowers/specs/2026-11-07-formal-main-flow-design.md` §7。
 

@@ -1,7 +1,7 @@
 using Godot;
 using DialogueManagerRuntime;
 
-/// <summary>教室→走廊的门：一周目选了看书后挡住，并播 BL 小说独白。</summary>
+/// <summary>教室→走廊的门：一周目始终挡住（只能看书），并播 BL 小说独白。</summary>
 public partial class ClassroomDoor : RoomDoor
 {
 	/// <summary>被挡住时播放的剧本。</summary>
@@ -14,7 +14,7 @@ public partial class ClassroomDoor : RoomDoor
 			GD.PushError($"ClassroomDoor {Name}: GameState 未就绪");
 			return;
 		}
-		if (GameState.Instance.IsFirstLoop() && GameState.Instance.HasLoopFlag("chose_reading"))
+		if (GameState.Instance.IsFirstLoop())
 		{
 			if (BlockingDialogue == null)
 			{

@@ -34,7 +34,7 @@
 | Q14 | 保健室在剧本里只有场景名、没有内容，本轮不做；不新增地图地点 |
 | Q15 | 原占位文档 `club_notice` 从 `DocumentLibrary` 移除；`student.dialogue` 不再挂场景，但文件保留，避免 POT 登记文件缺失 |
 | Q16 | 项目约定 git 只读：本规格与实现都不执行 commit / branch / checkout / push |
-| Q17 | 办公室门只在 14:00-14:59（山田睡着）开放，其余时间锁着并提示「晚点再来」；用门锁近似剧本的「交互后请鸣子出去」，防止玩家在办公室内等到 14:00 |
+| Q17 | 办公室门在山田待在办公室的时段（13:30-16:59）开放，其余时间锁着并提示「晚点再来」；「13:30 / 15:00 交互后请鸣子出去」由 `OfficeKickOut` 执行——非午睡时段在办公室里与门 / 出口以外的任何东西交互都会被请回入口。偷钥匙仍只限 14:00-14:59（他午睡时），这段限制由 NPC 状态保证 |
 
 ---
 
@@ -156,7 +156,7 @@ graph TD
 | `Npc` | 时间帧状态、贴图、在场判定（时间帧 + 可选本轮标记）、发起对话 | 剧情分支、物品发放 |
 | `Room` | 房间互斥激活 | 门锁 / 时间 |
 | `RoomDoor` | 房间切换、钥匙锁、线索锁、锁定提示 | 剧情台词 |
-| `ClassroomDoor` | 一周目选看书后挡住教室→走廊，播 BL 独白 | 其它房间 |
+| `ClassroomDoor` | 一周目始终挡住教室→走廊（只能看书），播 BL 独白 | 其它房间 |
 | `LabDoor` | 首次进化学实验室时跳到分析完成时间 | 房门锁（交给基类） |
 | `BookDesk` | 一周目看书 +60 分钟；第 5 次播 `last` 并推进 30 分钟 | 剧情文本 |
 | `KeyedDrawer` | 检查办公室钥匙；打开密码面板 | 密码校验（交给面板） |
@@ -280,7 +280,7 @@ public void SetLoopFlag(string flag)
 
 | 标记 | 写入 | 含义 |
 |---|---|---|
-| `chose_reading` | 小优香 `choose_read` | 一周目选了看书；教室门据此阻挡 |
+| `chose_reading` | 小优香 `choose_read` | 一周目选了看书 |
 | `chose_going_out` | 小优香 `choose_out` | 选了出去逛逛 |
 | `yuka_briefed` | 小优香两个选择分支 | 已经听完小优香的开场，再次搭话只说最后一句 |
 | `shinji_analyzing` | 新井 `ask_bomb` | 新井本轮在化学实验室分析；教室新井隐藏、实验室新井出现 |
@@ -441,19 +441,19 @@ private void OnLoopFlagsChanged() => RefreshVisual();
 
 | 门 | 所在房间 | 目标 | 锁 |
 |---|---|---|---|
-| `DoorToHallway`（教室） | Room_Classroom | Room_Hallway | `ClassroomDoor`；一周目 + `chose_reading` 播 BL 独白 |
+| `DoorToHallway`（教室） | Room_Classroom | Room_Hallway | `ClassroomDoor`；一周目始终播 BL 独白 |
 | `DoorToLab` | Room_Hallway | Room_ChemLab | `LabDoor`；`RequiredClueId = chem_lab_unlocked`；`TravelMinutes = 0` |
 | `DoorToHallway`（实验室） | Room_ChemLab | Room_Hallway | `TravelMinutes = 0` |
 | `DoorToEquipment` | Room_Behind | Room_Equipment | `RequiredKeyId = equipment_key`（现有） |
 | `DoorToUnderground` | Room_Behind | Room_Underground | `RequiredClueId = underground_access` |
-| `DoorToOffice` | Room_Lobby | Room_Office | `OfficeDoor`；只在 60-119（14:00-14:59）开放 |
+| `DoorToOffice` | Room_Lobby | Room_Office | `OfficeDoor`；只在 30-239（13:30-16:59）开放 |
 
 ### 4.4 新增交互物脚本
 
 #### 4.4.1 `ClassroomDoor`
 
 ```csharp
-/// <summary>教室→走廊的门：一周目选了看书后挡住，播 BL 小说独白。</summary>
+/// <summary>教室→走廊的门：一周目始终挡住（只能看书），播 BL 小说独白。</summary>
 public partial class ClassroomDoor : RoomDoor
 {
     /// <summary>被挡住时播放的剧本。</summary>
@@ -461,7 +461,7 @@ public partial class ClassroomDoor : RoomDoor
 
     public override void Interact()
     {
-        if (GameState.Instance.IsFirstLoop() && GameState.Instance.HasLoopFlag("chose_reading"))
+        if (GameState.Instance.IsFirstLoop())
         {
             if (BlockingDialogue == null)
             {
@@ -477,7 +477,7 @@ public partial class ClassroomDoor : RoomDoor
 ```
 
 - 不调用 `base.Interact()` 时不发 `Interacted`，`LocationRoot` 不会切房间。
-- 一周目没选看书时门是开的；玩家可以提前离开，但「出去逛逛」选项灰显，不会解锁操场以外的新内容。
+- 一周目门始终挡着，玩家只能回去看书（未与小优香对话也挡，播放同一段独白）；二周目起门常开。
 
 #### 4.4.2 `LabDoor`
 
@@ -636,13 +636,16 @@ public partial class WaitSpot : Interactable
 #### 4.4.8 `OfficeDoor`
 
 ```csharp
-/// <summary>办公室门：只在 14:00-14:59 山田睡着时开放，其余时间锁着。</summary>
+/// <summary>办公室门：山田在办公室的时段（13:30-16:59）开放；14:00-14:59 他午睡时才能偷钥匙。</summary>
 public partial class OfficeDoor : RoomDoor
 {
+    private const int OpensAtMinute = 30;    // 13:30 山田回到办公室
+    private const int ClosesAtMinute = 240;  // 17:00 山田去地下
+
     public override void Interact()
     {
         int minute = GameState.Instance.ElapsedMinutes;
-        bool open = minute >= 60 && minute < 120;   // 14:00-14:59
+        bool open = minute >= OpensAtMinute && minute < ClosesAtMinute;
         if (!open)
         {
             ShowLockedHint();
@@ -653,10 +656,39 @@ public partial class OfficeDoor : RoomDoor
 }
 ```
 
-- 目的是防止玩家在办公室内从 13:30 等到 14:00，绕开「必须在午睡窗口来」的时间压力。
-- 剧本的「13:30 / 15:00 交互会让鸣子出去」用门锁 + `LockedHint`（「（办公室的门关着。晚点再来吧。）」）近似；如果之后要严格演出「进去再被赶出来」，再补 kick-out，本轮不做。
+- 门的开放窗口对齐剧本的「13:30 老师会回到办公室办公」与「17:00 老师会前往操场地下的服务器空间」；13:00-13:29（山田还在教室）与 17:00 后锁着。
+- 剧本的三周目路线 `出教室门(15) → 去行政楼(25) → 进办公室(5)` 到达时是 13:45，必须能进门；锁到 14:00 会让剧本路线直接走不通。
+- 「必须在午睡窗口来」的压力由 NPC 状态承担：`administration.yamada` 在 30-59 / 120-239 是 `working`，交互只会说「晚点再来吧」，拿不到钥匙；只有 60-119 的 `sleeping` 分支发 `office_key`。
+- 剧本的「13:30 / 15:00 交互会让鸣子出去」由 `OfficeKickOut`（§4.4.9）执行：非午睡时段在办公室里点任何东西都会被请回入口。
 - `RoomDoor` 把现有的锁定提示抽成 `protected void ShowLockedHint()`（`LockedHint.Visible = true` + 1.5 秒 Timer），供 `RequiredClueId` / `RequiredKeyId` / `OfficeDoor` 共用。
-- 玩家在 14:59 进入后待过 15:00，门不会把人弹出去；此时山田切到 `working`，交互会播「晚点再来」，玩家可以自行离开。钥匙已经到手，不影响后续。
+- 玩家在 14:59 进入后待过 15:00，门不会把人弹出去；此时山田切到 `working`，再交互就会触发 `OfficeKickOut` 被赶回入口。钥匙已经到手，不影响后续。
+
+#### 4.4.9 `OfficeKickOut`
+
+```csharp
+/// <summary>办公室看门人：山田在办公的时段，玩家在办公室里碰任何东西都会被他请出办公室。</summary>
+public partial class OfficeKickOut : Node
+{
+    private const int SleepFromMinute = 60;   // 14:00
+    private const int SleepToMinute = 120;    // 15:00
+    private const int LeavesAtMinute = 240;   // 17:00 山田去地下
+
+    /// <summary>被赶出去时走的门，负责黑幕与 5 分钟路程。</summary>
+    [Export] public RoomDoor ExitDoor { get; set; }
+
+    /// <summary>赶人时播的对白。</summary>
+    [Export] public Resource KickDialogue { get; set; }
+
+    /// <summary>目标是办公室里的东西、山田又在办公时，赶人并返回 true。</summary>
+    public bool TryIntercept(Interactable target) { ... }
+}
+```
+
+- 挂在 `Room_Office` 下，`_EnterTree` 注册进 `office_kick_out` 分组；`PlayerInteractor` 在 `Interact()` 之前调 `OfficeKickOut.TryInterceptAny(...)`，返回 true 就不再执行目标对象。
+- 拦截条件**必须先判房间**：目标在 `Room_Office` 下、当前不在 60-119、当前 < 240；`RoomDoor` / `LocationExit` 不拦（自己走出去不算碰东西）。顺序错了会把地图出口、办公室门这些门外交互一起吞掉（曾导致「被赶出去后再也点不动任何东西」）。
+- 赶人流程：播 `Dialogue/Objects/office_kick_out.dialogue`（山田「晚点再来吧」+ 旁白），同时调 `DoorToLobby.Interact()` —— 复用门的 5 分钟与黑幕把玩家送回入口，对白在入口继续显示。
+- 不保留「正在赶人」的布尔状态：对白打开时 `Player.InputLocked` 已经挡住重复交互，状态标记反而容易卡死。
+- 这样 13:30-13:59 / 15:00-16:59 玩家可以进门看一眼、走动，但**任何交互都会被赶出去**，无法靠待在里面磨到 14:00。
 
 ### 4.5 `PasswordPanel`
 
@@ -786,7 +818,7 @@ LoopEndNotice（CanvasLayer, layer = 90, 脚本 LoopEndNotice.cs）
 ```mermaid
 flowchart TD
     A["13:00 小优香（教室）"] -->|"任一选择"| B["解锁操场"]
-    A -->|"选看书"| C["chose_reading：教室门锁 + 看书"]
+    A -->|"一周目"| C["教室门始终锁着：只能看书"]
     B --> D["13:45 小优香（操场）"]
     D -->|"关于田径部"| E["equipment_key + 器材准备室"]
     D -->|"关于山田老师（需 yuka_likes_yamada）"| F["解锁行政楼"]
@@ -829,7 +861,7 @@ flowchart TD
 3. `choose_read`：鸣子说 BL 小说没看完 → 小优香说去田径部、17:30 一起回家 → 写 `chose_reading` / `yuka_briefed` → 解锁操场 → END。
 4. `choose_out`：鸣子说想逛逛 → 小优香同样道别 → 写 `chose_going_out` / `yuka_briefed` → 解锁操场 → END。
 5. 再次搭话：`yuka_briefed` 为真 → 只说「那我一会去田径部啦，17:30 一起回家哦」。这个分支只在教室 `talking` 状态生效；`start` 必须先判断 `npc.IsInState("running")`，否则 13:45 后的操场对话会被一句道别吞掉。
-6. 教室门 `ClassroomDoor`：`IsFirstLoop && HasLoopFlag("chose_reading")` → 播 `classroom_block.dialogue`：
+6. 教室门 `ClassroomDoor`：`IsFirstLoop` → 播 `classroom_block.dialogue`（不要求先选看书）：
    - 鸣子：「（刚看到最关键的地方……BL 小说还没看完，还是回去继续看吧。）」
    - 鸣子：「（反正今天也没什么特别的事。）」
 7. 座位 `BookDesk`：
@@ -877,10 +909,11 @@ flowchart TD
 
 ### 5.7 办公室时间窗
 
-- `OfficeDoor` 只在 60-119（14:00-14:59）开放；0-59 与 120-269 都锁着。
+- `OfficeDoor` 在 30-239（13:30-16:59）开放；0-29（山田还在教室）与 240-269（他去地下）锁着。
 - 锁着时 `LockedHint` 显示「（办公室的门关着。晚点再来吧。）」1.5 秒。
-- 这样玩家必须在 14:00 前后到达行政楼：进办公室（5 分钟）→ 山田睡着 → 偷钥匙 → 抽屉 / 密码面板。
-- 15:00 后门重新锁上；如果玩家在 14:59 已进入，不强制弹出，山田切到 `working` 后交互只会被赶。
+- 进门不消耗额外的门禁时间，只有 `RoomDoor.TravelMinutes = 5`；剧本三周目路线 13:45 进门、14:55 再进一次偷钥匙。
+- 偷钥匙只发生在 60-119（14:00-14:59）山田 `sleeping` 时；其余时段进办公室可以走动，但**碰任何东西**（抽屉 / 山田 / 其它交互物）都会被 `OfficeKickOut` 播 `office_kick_out.dialogue` 并赶回入口。
+- 15:00 后门继续开放（山田在里面办公），如果玩家在 14:59 已进入，不强制弹出，山田切到 `working` 后一交互就会被赶。
 - 密码与小优香的情报可能跨轮：先在一轮里看过笔记本（`saw_laptop`），下一轮问小优香 0721，再下一轮 14:00 开电脑；线索与文档跨轮保留，不要求一轮内完成。
 
 ---
@@ -1309,7 +1342,8 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 - [ ] 操场小优香三个选项同屏；「关于山田老师」在拿到线索后出现
 - [ ] 田径部 → 拿钥匙 → 高亮「操场后的准备室」→ 手机出现 `equipment_room`
 - [ ] 山田老师 → 解锁行政楼 → 高亮「放学之后自己一个人来操场后面」→ `yamada_tracks`
-- [ ] 行政楼办公室门 13:30 / 15:00 锁着，提示「晚点再来」；14:00-14:59 可进
+- [ ] 行政楼办公室门 13:00 / 17:00 锁着，提示「晚点再来」；13:30-16:59 可进；14:00-14:59 山田睡着才能偷钥匙
+- [ ] 非 14:00-14:59 在办公室里与抽屉 / 山田交互 → 播「晚点再来吧」+ 旁白，被送回行政楼入口（5 分钟）
 - [ ] 14:00 山田睡着，交互拿到 `office_key`；15:00 后交互被赶
 
 **三周目**
@@ -1357,7 +1391,9 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | `Scripts/Map/GameScene.cs` | 修改 | 结局信号转发、`LoopEndNotice`、重置收尾 |
 | `Scripts/Location/ClassroomDoor.cs` | 新增 | 一周目教室门阻挡 |
 | `Scripts/Location/LabDoor.cs` | 新增 | 实验室两小时等待 |
-| `Scripts/Location/OfficeDoor.cs` | 新增 | 办公室 14:00-14:59 时间窗 |
+| `Scripts/Location/OfficeDoor.cs` | 新增 | 办公室 13:30-16:59 开放（偷钥匙仍限 14:00-14:59） |
+| `Scripts/Location/OfficeKickOut.cs` | 新增 | 办公室非午睡时段点任何东西都会被赶回入口 |
+| `Scripts/Player/PlayerInteractor.cs` | 修改 | 交互前先问 `OfficeKickOut` 是否要拦下 |
 | `Scripts/Location/BookDesk.cs` | 新增 | 看书推进 |
 | `Scripts/Location/KeyedDrawer.cs` | 新增 | 抽屉钥匙 |
 | `Scripts/Location/BombInteractable.cs` | 新增 | 炸药取样 / 湿炸药 |
@@ -1374,7 +1410,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | `Dialogue/Npc/yamada.dialogue` | 修改 | 正式剧本 |
 | `Dialogue/Npc/yamada_underground.dialogue` | 新增 | 17:00 对质 + 尾声 |
 | `Dialogue/Npc/shinji_lab.dialogue` | 新增 | 15:30 结果 |
-| `Dialogue/Objects/*.dialogue` | 新增 | 5 个物体剧本 |
+| `Dialogue/Objects/*.dialogue` | 新增 | 6 个物体剧本（含 `office_kick_out`） |
 | `Resources/Documents/*.tres` | 新增 | 8 篇文档 |
 | `Resources/Documents/DocumentLibrary.tres` | 修改 | 注册 8 篇；移除 club_notice |
 | `Scenes/Locations/Classroom.tscn` | 修改 | 实验室房间 / 门 / 座位 / 新井 / 教室门 |
@@ -1415,7 +1451,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | 一周目锁 | 门只在 `IsFirstLoop && chose_reading` 时挡；玩家在选看书前仍可离开，这是剧本「对话结束后才无法离开」的直译 |
 | 看书次数 | 13:00 + 4×60 = 17:00，第 5 次只 +30；不要写成 4 次到 17:30 |
 | 实验室时间 | `BombAnalysisReadyMinute` 是本轮分钟；`AdvanceTime` 夹到 270，晚交样本可能拿不到结果，这是时间压力的一部分 |
-| 办公室时间窗 | 办公室门只在 14:00-14:59 开放；否则玩家可以在办公室内从 13:30 等到 14:00，绕开时间压力。用门锁近似剧本的「交互后请出去」，本轮不做 kick-out |
+| 办公室时间窗 | 办公室门在 13:30-16:59（山田在办公室）开放，13:00-13:29 与 17:00 后锁着。剧本三周目路线 13:45 进办公室，门锁到 14:00 会让剧本路线走不通。偷钥匙的时间压力由 NPC 状态保证：只有 14:00-14:59 `sleeping` 分支发 `office_key`；其余时段由 `OfficeKickOut` 把交互者赶回入口，避免玩家在办公室里磨到 14:00 |
 | 实验室背景 | 暂无化学实验室背景，暂用 `next_classroom.png`；后续换图只改 `Bg.texture` |
 | 新井两个实例 | 教室 / 实验室是不同 `NpcId`；用 `PresentLoopFlag` 互斥，不要用 `CollisionShape2D.Disabled` |
 | NPC 显隐规则 | 现有规则「在场只看时间帧」扩展为「时间帧 + 可选标记」；同步 AGENTS.md，避免后续误改 |

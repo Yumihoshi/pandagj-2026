@@ -29,6 +29,12 @@ public partial class PlayerInteractor : Area2D
 		if (_player == null || _player.InputLocked) return;
 		if (_current == null || !@event.IsActionPressed("interact")) return;
 
+		if (OfficeKickOut.TryInterceptAny(GetTree(), _current))
+		{
+			GetViewport().SetInputAsHandled();
+			return;
+		}
+
 		_current.Interact();
 		GetViewport().SetInputAsHandled();
 	}

@@ -12,7 +12,6 @@ public partial class DialogueBalloon : CanvasLayer
 	/// <summary>为 true 时 _ExitTree 不释放玩家输入锁；由 PhoneScreen 在会话结束时统一释放。</summary>
 	public bool KeepPlayerInputLockedOnExit { get; set; }
 
-	[Export] public string NextAction = "ui_accept";
 	[Export] public string SkipAction = "ui_cancel";
 
 	private Control balloon;
@@ -35,6 +34,9 @@ public partial class DialogueBalloon : CanvasLayer
 
 	/// <summary>已收集文档的灰色。</summary>
 	private const string DocumentCollectedColor = "[color=#8a8a8a]";
+
+	/// <summary>没有任何按键绑定的占位动作：用来关掉响应菜单自带的空格/回车选择。</summary>
+	private static readonly StringName MouseOnlyAdvanceAction = "dialogue_mouse_only_advance";
 
 	private Label copyToast;
 	private Tween copyToastTween;
@@ -92,10 +94,13 @@ public partial class DialogueBalloon : CanvasLayer
 		balloon.Hide();
 		balloon.GuiInput += OnBalloonGuiInput;
 
-		if (string.IsNullOrEmpty(responsesMenu.NextAction))
+		// 响应菜单自带 ui_accept（空格/回车）键盘选择；对话只保留鼠标左键推进，
+		// 因此给它一个没有任何按键绑定的动作，IsActionPressed 恒为 false。
+		if (!InputMap.HasAction(MouseOnlyAdvanceAction))
 		{
-			responsesMenu.NextAction = NextAction;
+			InputMap.AddAction(MouseOnlyAdvanceAction);
 		}
+		responsesMenu.NextAction = MouseOnlyAdvanceAction;
 		responsesMenu.ResponseSelected += OnResponseSelected;
 
 		mutationCooldown.OneShot = true;
@@ -236,15 +241,6 @@ public partial class DialogueBalloon : CanvasLayer
 			// 位移超过阈值但没有选中（拖在对话框空白处）：什么都不做。
 			return;
 		}
-
-		if (!isWaitingForInput) return;
-		if (filteredResponses.Count > 0) return;
-
-		if (@event.IsActionPressed(NextAction) && GetViewport().GuiGetFocusOwner() == balloon)
-		{
-			GetViewport().SetInputAsHandled();
-			Next(dialogueLine.NextId);
-		}
 	}
 
 	private void OnDialogueMetaClicked(Variant meta)
@@ -384,7 +380,7 @@ public partial class DialogueBalloon : CanvasLayer
 		// 打字完成（或本句无文字）：本句正文可以拖拽选择。
 		dialogueLabel.SelectionEnabled = true;
 		// 引擎在 set_selection_enabled(true) 里会把 focus_mode 设成 ALL；
-		// 点击正文会抢走 Balloon 的键盘焦点，导致空格/回车推进失效。
+		// 正文不需要键盘焦点，改回 None，避免抢走 Balloon 的焦点。
 		dialogueLabel.FocusMode = Control.FocusModeEnum.None;
 
 		if (filtered.Count > 0)

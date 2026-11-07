@@ -280,8 +280,9 @@ Dialogue 为空     → PushError，返回
 
 | 字段 | 默认 | 说明 |
 |---|---|---|
-| `NextAction` | `ui_accept` | 推进正文/确认选项 |
 | `SkipAction` | `ui_cancel` | 跳过打字机；不关闭对话 |
+
+> 2026-11-07 起 `NextAction` 已移除：对话推进只保留鼠标左键（空格/回车既不推进正文也不确认选项），详见 `docs/superpowers/specs/2026-11-07-dialogue-mouse-only-advance-design.md`。
 
 `Start(Resource dialogueResource, string label, Array<Variant> extraGameStates)`：
 

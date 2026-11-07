@@ -6,6 +6,7 @@
 | 项目 | pandagj-2026（Godot 4.7.2 mono / C#） |
 | 模块 | 对话系统 · 对白正文的选择与剪贴板复制 |
 | 状态 | 已实现（2026-11-07）；C# 编译与无头启动验证通过，有窗口交互待手测确认 |
+| 后续变更 | 2026-11-07：键盘推进（空格/回车）被移除，对话推进只保留鼠标左键；详见 `docs/superpowers/specs/2026-11-07-dialogue-mouse-only-advance-design.md` |
 | 上游需求 | 用户当轮需求：对话系统允许拖拽选择说话文本，选中文本有底色，拖拽完成后自动复制 |
 | 依赖 | Dialogue Manager 4.2.0；`Scenes/Dialogue/DialogueBalloon.tscn`；`Scripts/Dialogue/DialogueBalloon.cs`；`DialogueLabel`（RichTextLabel） |
 
@@ -246,7 +247,7 @@ private async void ApplyDialogueLine()
     // 打字完成（或本句无文字）：本句正文可以拖拽选择
     dialogueLabel.SelectionEnabled = true;
     // 引擎在 set_selection_enabled(true) 里会把 focus_mode 设成 ALL；
-    // 点击正文会抢走 Balloon 的键盘焦点，导致空格/回车推进失效，所以改回 None。
+    // 正文不需要键盘焦点，改回 None，避免抢走 Balloon 的焦点。
     dialogueLabel.FocusMode = Control.FocusModeEnum.None;
 
     // …现有逻辑：选项菜单 / 自动推进 / isWaitingForInput…
@@ -256,7 +257,7 @@ private async void ApplyDialogueLine()
 要点：
 
 - `SelectionEnabled = false` 在引擎里会顺带 `deselect()`，**不需要额外的 `Deselect()` 调用**（Godot 源码 `set_selection_enabled` 内已处理）。
-- `SelectionEnabled = true` 在引擎里会把 `focus_mode` 改成 `FOCUS_ALL`；必须随即改回 `FOCUS_NONE`，否则点击正文后 `GuiGetFocusOwner()` 变成正文，`ui_accept` 推进失效。鼠标选区不依赖焦点，改回 `None` 不影响拖拽。
+- `SelectionEnabled = true` 在引擎里会把 `focus_mode` 改成 `FOCUS_ALL`；必须随即改回 `FOCUS_NONE`，否则点击正文后 `GuiGetFocusOwner()` 变成正文，Esc 跳过打字会失效（2026-11-07 起键盘推进已移除，正文不再抢焦点也不会影响推进）。鼠标选区不依赖焦点，改回 `None` 不影响拖拽。
 - 打字机进行中不打开选区：避免选中尚未显示的字，同时保留「点击 = 跳过打字」。
 - 有选项菜单时保持可选：玩家可以先复制台词再点选项。
 - 自动推进行（`[time]`）也保持可选；若玩家在自动推进倒计时里拖选，台词到点仍会翻页，这是已知行为，不额外处理。
@@ -322,15 +323,7 @@ private void OnBalloonGuiInput(InputEvent @event)
         // 位移 > 阈值但没有选中（拖在对话框空白处）：什么都不做
         return;
     }
-
-    if (!isWaitingForInput) return;
-    if (filteredResponses.Count > 0) return;
-
-    if (@event.IsActionPressed(NextAction) && GetViewport().GuiGetFocusOwner() == balloon)
-    {
-        GetViewport().SetInputAsHandled();
-        Next(dialogueLine.NextId);
-    }
+    // 2026-11-07 起：空格 / 回车不再推进，对话只保留鼠标左键
 }
 ```
 
@@ -520,7 +513,7 @@ DialogueManager 结束 / LoopReset / 选项全不可用
 | 复制后继续停留 | 高亮保留，直到下一次在正文上按下或新一句开始 |
 | 对话被循环重置关闭 | `QueueFree`，选区与提示一并销毁 |
 | 自动推进行等待期间拖选 | 可以选中，但到点仍会翻页（已知行为） |
-| 键盘空格 / 回车 | 仍推进；不改变选区 |
+| 键盘空格 / 回车 | 2026-11-07 起不再推进（推进只保留鼠标左键）；不改变选区 |
 | Esc | 仍跳过打字；不改变选区 |
 | 角色名区域 | 不可选择（`CharacterLabel` 未开启选区） |
 | 选项按钮文字 | 不可选择（`Button` 不参与） |
@@ -552,8 +545,8 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 - [ ] 拖动 3~5px 后松开 → 仍按单击推进
 - [ ] 复制后选区保持高亮；在正文上再次按下或进入新一句后清除
 - [ ] 对话结束 / 循环重置 → 无残留提示、无报错
-- [ ] 键盘空格 / 回车推进、Esc 跳过打字仍正常
-- [ ] 拖选复制后点击正文，再按空格 / 回车 → 仍能推进（焦点没有被正文抢走）
+- [ ] Esc 跳过打字仍正常（2026-11-07 起空格 / 回车不再推进，键盘推进已移除）
+- [ ] 拖选复制后点击正文 → 鼠标单击仍能推进（焦点没有被正文抢走）
 - [ ] 不同窗口尺寸下提示位置仍在对话框右上方
 
 > 剪贴板只能在有窗口的运行里手测，`--headless` 只能验证编译与脚本启动。
@@ -605,7 +598,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | 项 | 说明 |
 |---|---|
 | `DialogueLabel.mouse_filter` 必须保持 `PASS` | 若被改成 `STOP`，Label 会吃掉松开事件，Balloon 收不到，单击推进失效；若改成 `IGNORE`，原生选区也失效 |
-| 正文的 `focus_mode` | `SelectionEnabled = true` 会把 `RichTextLabel.focus_mode` 设成 `FOCUS_ALL`；每个新句启用选区后必须改回 `FOCUS_NONE`，否则点击正文会抢走 `Balloon` 的键盘焦点，空格/回车推进失效 |
+| 正文的 `focus_mode` | `SelectionEnabled = true` 会把 `RichTextLabel.focus_mode` 设成 `FOCUS_ALL`；每个新句启用选区后必须改回 `FOCUS_NONE`，否则点击正文会抢走 `Balloon` 的键盘焦点，Esc 跳过打字会失效（2026-11-07 起空格/回车推进已移除） |
 | `CenterContainer` 必须设为 `IGNORE` | 它是铺满全屏的 `Container`，默认 `PASS` 且绘制在对话框之上，会抢走 `DialogueLabel` 的按下事件，表现为「能推进、但拖不出选区」。子按钮仍先于父节点参与命中测试，不受影响 |
 | 选区依赖引擎版本 | `selection_enabled` / `get_selected_text` / `selection_color` 是 Godot 4.x `RichTextLabel` 的既有能力；本设计按项目当前的 4.7.2 验证 |
 | 双击 / 三击 | **不纳入支持**：第一次单击会推进对话，第二次按下已经落在新句上；原生双击选词在本作语境下不可用。拖拽是唯一选择方式 |

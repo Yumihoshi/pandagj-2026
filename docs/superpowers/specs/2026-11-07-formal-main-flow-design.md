@@ -204,7 +204,7 @@ graph TD
   Dialogue/Objects/equipment_water.dialogue
   Dialogue/Objects/underground_wait.dialogue
   Resources/Documents/{shinji_schedule,yuka_secret,equipment_room,yamada_tracks,
-                       laptop_password,chem_lab,bomb_weakness,yamada_notebook}.tres
+                       laptop_password,chem_lab,bomb_weakness,yamada_notebook,yamada_nap}.tres
   docs/superpowers/specs/2026-11-07-formal-main-flow-design.md（本文件）
 
 修改
@@ -671,7 +671,11 @@ public partial class OfficeKickOut : Node
 {
     private const int SleepFromMinute = 60;   // 14:00
     private const int SleepToMinute = 120;    // 15:00
+    private const int WokenAtMinute = 120;    // 15:00 睡醒后赶人台词换成 woken
     private const int LeavesAtMinute = 240;   // 17:00 山田去地下
+
+    private const string StartCue = "start";  // 13:30-13:59
+    private const string WokenCue = "woken";  // 15:00-16:59
 
     /// <summary>被赶出去时走的门，负责黑幕与 5 分钟路程。</summary>
     [Export] public RoomDoor ExitDoor { get; set; }
@@ -687,6 +691,7 @@ public partial class OfficeKickOut : Node
 - 挂在 `Room_Office` 下，`_EnterTree` 注册进 `office_kick_out` 分组；`PlayerInteractor` 在 `Interact()` 之前调 `OfficeKickOut.TryInterceptAny(...)`，返回 true 就不再执行目标对象。
 - 拦截条件**必须先判房间**：目标在 `Room_Office` 下、当前不在 60-119、当前 < 240；`RoomDoor` / `LocationExit` 不拦（自己走出去不算碰东西）。顺序错了会把地图出口、办公室门这些门外交互一起吞掉（曾导致「被赶出去后再也点不动任何东西」）。
 - 赶人流程：播 `Dialogue/Objects/office_kick_out.dialogue`（山田「晚点再来吧」+ 旁白），同时调 `DoorToLobby.Interact()` —— 复用门的 5 分钟与黑幕把玩家送回入口，对白在入口继续显示。
+- 赶人台词按时间选 cue：`ElapsedMinutes < 120`（13:30-13:59）用 `start`；`>= 120`（15:00-16:59）用 `woken`，山田会先打哈欠说自己刚睡醒，其中「直到15:00都在睡觉」是 `[url=doc:yamada_nap]` 黄色高亮，给出「老师在几点到几点睡觉」的重要的事。
 - 不保留「正在赶人」的布尔状态：对白打开时 `Player.InputLocked` 已经挡住重复交互，状态标记反而容易卡死。
 - 这样 13:30-13:59 / 15:00-16:59 玩家可以进门看一眼、走动，但**任何交互都会被赶出去**，无法靠待在里面磨到 14:00。
 
@@ -914,6 +919,7 @@ flowchart TD
 - 进门不消耗额外的门禁时间，只有 `RoomDoor.TravelMinutes = 5`；剧本三周目路线 13:45 进门、14:55 再进一次偷钥匙。
 - 偷钥匙只发生在 60-119（14:00-14:59）山田 `sleeping` 时；其余时段进办公室可以走动，但**碰任何东西**（抽屉 / 山田 / 其它交互物）都会被 `OfficeKickOut` 播 `office_kick_out.dialogue` 并赶回入口。
 - 15:00 后门继续开放（山田在里面办公），如果玩家在 14:59 已进入，不强制弹出，山田切到 `working` 后一交互就会被赶。
+- 15:00-16:59 被赶时走 `office_kick_out.dialogue` 的 `woken` cue：山田「（哈欠）——啊，是千原啊，我刚刚直到15:00都在睡觉……」，黄字「直到15:00都在睡觉」给出 `yamada_nap`（老师在 14:00-15:00 睡觉），这是下一轮 14:00 来偷钥匙的知识锁。
 - 密码与小优香的情报可能跨轮：先在一轮里看过笔记本（`saw_laptop`），下一轮问小优香 0721，再下一轮 14:00 开电脑；线索与文档跨轮保留，不要求一轮内完成。
 
 ---
@@ -975,6 +981,7 @@ flowchart TD
 | `Dialogue/Objects/underground_bomb.dialogue` | 地下炸药 | `sample`、`wet`、`already_wet`、`nothing` |
 | `Dialogue/Objects/equipment_water.dialogue` | 器材准备室水管 | `hint`、`fill`、`already` |
 | `Dialogue/Objects/underground_wait.dialogue` | 地下等待点 | `not_yet`、`waited`、`already` |
+| `Dialogue/Objects/office_kick_out.dialogue` | 办公室赶人 | `start`（13:30-13:59）、`woken`（15:00-16:59） |
 
 场景文本以附录 A 的飞书剧本为准；以上 cue 是实现结构，台词逐段搬运。
 
@@ -982,7 +989,7 @@ flowchart TD
 
 ## 7. 红字文档映射
 
-飞书 docx 中 `text-color="rgb(216,57,49)"` 的文本共 18 处；另有 2 处 `background-color="rgb(247,105,100)"` 背景高亮。属于「世界内重要信息」的映射如下；纯进度说明（「解锁…」「密码打不开」等）不单独做文档，只作为对应流程的说明。
+飞书 docx 中 `text-color="rgb(216,57,49)"` 的文本共 20 处；另有 2 处 `background-color="rgb(247,105,100)"` 背景高亮。属于「世界内重要信息」的映射如下；纯进度说明（「解锁…」「密码打不开」等）不单独做文档，只作为对应流程的说明。
 
 | 文档 id | 标题 | 出现的台词 | 高亮词（`[url=doc:<id>]`） | 正文要点 |
 |---|---|---|---|---|
@@ -994,6 +1001,7 @@ flowchart TD
 | `chem_lab` | 化学实验室 | 新井`ask_bomb` | 化学实验室 | 新井会去化学实验室解析炸药，需要两小时 |
 | `bomb_weakness` | 炸药的弱点 | 新井`shinji_lab` | 硝铵类炸药、大量的水 | 硝铵类炸药；用大量的水可以销毁 |
 | `yamada_notebook` | 山田老师的笔记本 | 密码面板解锁后自动获取 | 整篇文档 | 山田发现的真相、计划、17:30 引爆炸药、操场后井盖入口 |
+| `yamada_nap` | 山田老师的午睡 | 办公室 15:00-16:59 赶人`woken` | 直到15:00都在睡觉 | 老师刚睡到 15:00；14:00-15:00 在办公室折叠床上睡觉 |
 
 写法：
 
@@ -1077,6 +1085,15 @@ flowchart TD
 
 通往地下空间的入口在操场后面。那里有一个井盖。
 服务器就在下面。
+```
+
+**`yamada_nap` / 山田老师的午睡**
+
+```
+山田老师刚刚一直睡到 15:00。
+他下午一直在办公室处理文件，大概 14:00 就在折叠床上睡着了。
+
+也就是说，14:00 到 15:00 之间，山田老师都在办公室睡觉。
 ```
 
 ---
@@ -1344,6 +1361,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 - [ ] 山田老师 → 解锁行政楼 → 高亮「放学之后自己一个人来操场后面」→ `yamada_tracks`
 - [ ] 行政楼办公室门 13:00 / 17:00 锁着，提示「晚点再来」；13:30-16:59 可进；14:00-14:59 山田睡着才能偷钥匙
 - [ ] 非 14:00-14:59 在办公室里与抽屉 / 山田交互 → 播「晚点再来吧」+ 旁白，被送回行政楼入口（5 分钟）
+- [ ] 15:00-16:59 被赶时山田先说「（哈欠）……我刚刚直到15:00都在睡觉」，高亮「直到15:00都在睡觉」→ 手机出现 `yamada_nap`（14:00-15:00 睡觉）
 - [ ] 14:00 山田睡着，交互拿到 `office_key`；15:00 后交互被赶
 
 **三周目**
@@ -1366,7 +1384,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 - [ ] The End 后玩家不能移动
 - [ ] 未湿 → 被绑旁白 → 黑屏 → 循环重置
 - [ ] 17:30 未处理 → 爆炸重置
-- [ ] 手机文档列表按获取顺序显示 8 篇（已获取的）；重复点击高亮提示「已在手机里」
+- [ ] 手机文档列表按获取顺序显示 9 篇（已获取的）；重复点击高亮提示「已在手机里」
 
 ### 12.3 调试观察点
 
@@ -1411,8 +1429,8 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | `Dialogue/Npc/yamada_underground.dialogue` | 新增 | 17:00 对质 + 尾声 |
 | `Dialogue/Npc/shinji_lab.dialogue` | 新增 | 15:30 结果 |
 | `Dialogue/Objects/*.dialogue` | 新增 | 6 个物体剧本（含 `office_kick_out`） |
-| `Resources/Documents/*.tres` | 新增 | 8 篇文档 |
-| `Resources/Documents/DocumentLibrary.tres` | 修改 | 注册 8 篇；移除 club_notice |
+| `Resources/Documents/*.tres` | 新增 | 9 篇文档 |
+| `Resources/Documents/DocumentLibrary.tres` | 修改 | 注册 9 篇；移除 club_notice |
 | `Scenes/Locations/Classroom.tscn` | 修改 | 实验室房间 / 门 / 座位 / 新井 / 教室门 |
 | `Scenes/Locations/Administration.tscn` | 修改 | 抽屉 / 密码面板 |
 | `Scenes/Locations/Playground.tscn` | 修改 | 炸药 / 水管 / 等待点 / 地下门 / 山田剧本 |
@@ -1436,7 +1454,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 7. `GameScene` / `GameScene.tscn`：结局信号、终末提示；编译。
 8. 场景改造：Classroom / Administration / Playground；每个场景单独跑无头验证。
 9. 剧本导入：yuka / shinji / shinji_lab / yamada / yamada_underground / 5 个物体剧本；POT 登记。
-10. 文档：8 篇 `.tres` + `DocumentLibrary.tres`；移除 `club_notice` 注册。
+10. 文档：9 篇 `.tres` + `DocumentLibrary.tres`；移除 `club_notice` 注册。
 11. `--import` + `--build-solutions` + `--quit-after 120`；修编译/启动错误。
 12. 按 §12.2 手动走四周目；重点验证一周目锁、看书 5 次、实验室两小时、密码、湿炸药、真结局/失败。
 13. 同步 `AGENTS.md`；更新本规格状态；**不执行 git commit**。

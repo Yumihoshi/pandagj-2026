@@ -36,7 +36,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Dialogue/day1.dialogue`：开场 / 循环开始剧本，三个 cue —— `~ start`（一周目在座位上迷迷糊糊醒来、点名要去找小优香）、`~ phone_vibrate`（二周目起循环开始的「手机在震动。」）与 `~ talk_first`（门禁提示）。**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
 - `Dialogue/Npc/student.dialogue`：旧「同学」demo 剧本，当前未挂到任何 NPC；`yuka.dialogue` / `yamada.dialogue` / `shinji.dialogue` 是三个 NPC 的正式剧本；`shinji_lab.dialogue` / `yamada_underground.dialogue` 是新 NPC 剧本；`Dialogue/Objects/` 是物体剧本。
 - `Scenes/Phone/PhoneScreen.tscn`：手机（`CanvasLayer.layer=45`）：左上角「手机」按钮、遮罩、重要的事列表 / 阅读 / 记事本面板。
-- `Resources/Documents/`：`DocumentLibrary.tres` 注册表与 8 篇正式条目（`shinji_schedule` / `yuka_secret` / `equipment_room` / `yamada_tracks` / `laptop_password` / `chem_lab` / `bomb_weakness` / `yamada_notebook`）；`club_notice.tres` 保留但不注册。
+- `Resources/Documents/`：`DocumentLibrary.tres` 注册表与 9 篇正式条目（`shinji_schedule` / `yuka_secret` / `equipment_room` / `yamada_tracks` / `laptop_password` / `chem_lab` / `bomb_weakness` / `yamada_notebook` / `yamada_nap`）；`club_notice.tres` 保留但不注册。
 - `Dialogue/phone.dialogue`：手机主菜单剧本（重要的事 / 记事本 / 关闭）。
 - `ArtRes/`：临时美术素材 —— `Backgrounds/`（9 张 1920x600 场景背景）、`Characters/`（4 张 240x300 透明立绘）、`CREDITS.md`（来源与许可）；`Source/` 保留原图与裁切源。
 - `Audio/Sfx/`：Kenney UI Audio 音效，按 `Click`(5) / `Rollover`(6) / `Switch`(38) / `Mouse`(2) 分组，保留 `License.txt`；`Audio/Bgm/` 目前为空。
@@ -106,9 +106,9 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 三周目：抽屉 + 密码面板 0721 → `yamada_notebook`（电脑日志）→ 手机里点黄色文字「我发现了操场后面那个井盖下的秘密空间」→ `underground_access` → 地下取样 → 新井分析两小时 → `bomb_weakness`。
 - 四周目：器材准备室接水 → 地下湿炸药 → 等待点到 17:00 → 真结局；未湿则 `FailLoop`。
 - 本轮标记：`chose_reading` / `chose_going_out` / `yuka_briefed` / `shinji_analyzing` / `bomb_sample_taken` / `bomb_wet` / `water_taken` / `office_key_taken`；每轮清空。
-- 办公室（行政楼）：门在 13:30-16:59 开放（`OfficeDoor`）；不在 14:00-14:59 时，玩家在办公室里与门 / 出口以外的任何东西交互，都会由 `OfficeKickOut` 播 `Dialogue/Objects/office_kick_out.dialogue` 并赶回入口（走 `DoorToLobby`，5 分钟）。偷 `office_key` 仍只限 14:00-14:59 山田午睡时。
+- 办公室（行政楼）：门在 13:30-16:59 开放（`OfficeDoor`）；不在 14:00-14:59 时，玩家在办公室里与门 / 出口以外的任何东西交互，都会由 `OfficeKickOut` 播 `Dialogue/Objects/office_kick_out.dialogue` 并赶回入口（走 `DoorToLobby`，5 分钟）。赶人台词按时间选 cue：13:30-13:59 用 `start`，15:00-16:59 用 `woken`（山田打哈欠说「我刚刚直到15:00都在睡觉」，黄字给出 `yamada_nap`「山田老师的午睡」= 老师 14:00-15:00 在办公室睡觉）。偷 `office_key` 仍只限 14:00-14:59 山田午睡时。
 - 跨轮线索：`yuka_likes_yamada` / `saw_laptop` / `laptop_password` / `chem_lab_unlocked` / `bomb_weakness` / `underground_access`。
-- 8 篇重要的事的高亮语法与位置见 `docs/superpowers/specs/2026-11-07-formal-main-flow-design.md` §7。
+- 9 篇重要的事的高亮语法与位置见 `docs/superpowers/specs/2026-11-07-formal-main-flow-design.md` §7。
 
 ## 音频
 

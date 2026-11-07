@@ -3,3 +3,9 @@
 （山田老师把鸣子请出了办公室。）
 do guard.LeaveOffice()
 => END
+
+~ woken
+山田: （哈欠）——啊，是千原啊，我刚刚[url=doc:yamada_nap][color=#ffd866]直到15:00都在睡觉[/color][/url]，真是没睡好，有什么事吗，老师这会在处理很重要的文件哦，晚点再来吧
+（山田老师把鸣子请出了办公室。）
+do guard.LeaveOffice()
+=> END

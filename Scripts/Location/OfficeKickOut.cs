@@ -16,6 +16,15 @@ public partial class OfficeKickOut : Node
 	/// <summary>山田离开办公室去地下的分钟（17:00），此后没人赶人。</summary>
 	private const int LeavesAtMinute = 240;
 
+	/// <summary>山田睡醒继续办公的分钟（15:00），此后赶人时他会提到自己刚睡醒。</summary>
+	private const int WokenAtMinute = 120;
+
+	/// <summary>山田还没午睡（13:30-13:59）被赶出去时的对白 cue。</summary>
+	private const string StartCue = "start";
+
+	/// <summary>山田睡醒后（15:00-16:59）被赶出去时的对白 cue。</summary>
+	private const string WokenCue = "woken";
+
 	/// <summary>被赶出去时走的门，负责黑幕与 5 分钟路程。</summary>
 	[Export] public RoomDoor ExitDoor { get; set; }
 
@@ -90,13 +99,20 @@ public partial class OfficeKickOut : Node
 			GD.PushError($"OfficeKickOut {Name}: 缺少 ExitDoor 或 KickDialogue");
 			return;
 		}
+		if (GameState.Instance == null)
+		{
+			GD.PushError($"OfficeKickOut {Name}: GameState 未就绪");
+			return;
+		}
+
+		string cue = GameState.Instance.ElapsedMinutes >= WokenAtMinute ? WokenCue : StartCue;
 
 		var states = new Godot.Collections.Array<Variant>
 		{
 			new Godot.Collections.Dictionary { { "guard", this } }
 		};
 
-		if (DialogueManager.ShowDialogueBalloon(KickDialogue, "start", states) == null)
+		if (DialogueManager.ShowDialogueBalloon(KickDialogue, cue, states) == null)
 		{
 			GD.PushError($"OfficeKickOut {Name}: ShowDialogueBalloon 返回空");
 		}

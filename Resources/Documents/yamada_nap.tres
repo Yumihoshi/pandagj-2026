@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DocumentData" format=3]
+
+[ext_resource type="Script" uid="uid://ciqtvja815o4p" path="res://Scripts/Documents/DocumentData.cs" id="1_doc"]
+
+[resource]
+script = ExtResource("1_doc")
+Id = "yamada_nap"
+Title = "山田老师的午睡"
+Body = "山田老师刚刚一直睡到 15:00。\n他下午一直在办公室处理文件，大概 14:00 就在折叠床上睡着了。\n\n也就是说，14:00 到 15:00 之间，山田老师都在办公室睡觉。"

@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://buvi5cxeca7g5"
+path="res://.godot/imported/yuka.dialogue-e702e45ade8077d290f5ebdb706bcb7f.tres"
+
+[deps]
+
+source_file="res://Dialogue/Npc/yuka.dialogue"
+dest_files=["res://.godot/imported/yuka.dialogue-e702e45ade8077d290f5ebdb706bcb7f.tres"]
+
+[params]
+
+defaults=true

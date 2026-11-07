@@ -37,7 +37,7 @@
 | Q11 | 新开 exe = 新游戏：`LoopCount = 1`，`UnlockedLocations` / `Clues` / `Inventory` 全部从初始状态开始；玩家自己的知识不受影响 |
 | Q12 | 时间系统不实现通用延迟任务调度器；新井三小时分析由内容层用 `GetElapsedMinutes()` + 自己的时间戳字段实现 |
 | Q13 | 17:00 老师下地下、地下被抓失败属于内容层；核心时钟只提供时间与信号 |
-| Q14 | 时间 UI / HUD / 手机时钟不在本次范围；`GetClockText()` 先用于调试与未来 UI |
+| Q14 | 时间 UI 的右上角 HUD 时钟已实现（`UILayer/TimePanel/TimeLabel` + `Scripts/UI/TimeLabel.cs`）；手机时钟仍不在本次范围 |
 | Q15 | 现有 `TimeStep` / `TimeAdvanced` 全部移除，改为 `ElapsedMinutes` / `TimeChanged(int)`；旧 NPC 规格中 `FromStep` 的条款由本规格取代 |
 | Q16 | 负数时间 `PushError`；0 是合法的无操作；跨过 17:30 只触发一次终末 |
 | Q17 | 地下空间入口、化学实验室、保健室不在本次接入；等剧本补入口与耗时后再加转移配置 |
@@ -62,7 +62,7 @@
 
 ### 1.2 本规格不覆盖
 
-- 时间 UI / HUD / 手机时钟的显示
+- 手机时钟的显示；右上角 HUD 时钟已在 `GameScene` 实现
 - 通用延迟任务调度器；新井三小时分析的具体实现
 - 炸药爆炸的 VFX / 音效；只做 0.6 秒占位与黑幕
 - 17:00 地下失败的具体剧情与表现
@@ -438,6 +438,7 @@ private async Task TransitionToRoomAsync(RoomDoor door)
 | 行政楼 ↔ 办公室 | `RoomDoor.TravelMinutes` | 5 | 剧本「进/出办公室 5」 |
 | 操场 → 操场后 | `RoomDoor.TravelMinutes` | 10 | 剧本「去操场后 10」 |
 | 操场后 → 器材准备室 | `RoomDoor.TravelMinutes` | 5（初值） | 剧本没写；可在场景里改 |
+| 操场后 ↔ 地下空间 | `RoomDoor.TravelMinutes` | 5（初值） | 剧本没写；先用默认 |
 | 其他地图旅行 | `MapLocationButton.TravelMinutes` | 30（默认） | 剧本统一按 30 |
 | 其他房间门 | `RoomDoor.TravelMinutes` | 5（默认） | 未配置时的默认 |
 | 从地点退回地图 | `LocationExit` | 0 | 不扣时；地图旅行由目标按钮扣 |
@@ -446,7 +447,7 @@ private async Task TransitionToRoomAsync(RoomDoor door)
 
 - 地图旅行按目的地扣时，不按出发地；如果以后需要按起点/终点不同，再加新字段，不在本规格。
 - 房间门耗时按**单次**计；往返各走一扇门，各扣一次。
-- 地下空间入口不在本表：剧本没有给出耗时，本次不接入；等剧本补数后加一扇 `RoomDoor` 并填 `TravelMinutes`。
+- 地下空间入口已接：从操场后的门进入，耗时暂按默认 5；剧本补数后改 `RoomDoor.TravelMinutes`。
 - 化学实验室、保健室不在本次场景流程内；本次不接入，等剧本补数后再加。
 
 ### 5.3 继承 / 重置清单
@@ -773,6 +774,7 @@ GameScene.OnLoopEndReached()
 - [x] 新开 exe：`LoopCount == 1`、`IsFirstLoop()` 为 true；第一次重置后 `LoopCount == 2`、`IsFirstLoop()` 为 false；二周目没有周目级路线限制
 - [x] `--headless --build-solutions --quit` 无编译错误
 - [x] `--headless --path . --quit-after 120` 无运行时报错
+- [x] 右上角 `UILayer/TimePanel/TimeLabel` 启动显示 `13:00`，`AdvanceTime` 后同步，`ResetLoop` 后回到 `13:00`
 
 > 2026-11-07 验收：用户在运行中的游戏里手测启动状态、锁门 / 开门扣时、地图旅行、NPC 换帧、17:30 转移中止与重置；负数 / 0、AdvanceTime(270) 直调、新开 exe 等项由代码审查确认，未单独手测。
 
@@ -800,6 +802,8 @@ GameScene.OnLoopEndReached()
 | `Scenes/Locations/Classroom.tscn` | 修改 | demo 帧 `FromMinute 0/30/60/120/240`；房门按需填分钟 |
 | `Scenes/Map/MapScreen.tscn` | 修改 | 按钮可显式填 `TravelMinutes`（不填走默认 30） |
 | `project.godot` | 修改 | 删除旧的输入动作；只保留 `move_left` / `move_right` / `interact` |
+| `Scenes/Root/GameScene.tscn` | 修改 | 新增右上角 `UILayer/TimePanel/TimeLabel` |
+| `Scripts/UI/TimeLabel.cs` | 新增 | 订阅 `TimeChanged`，用 `GetClockText()` 刷新时钟 |
 | `AGENTS.md` | 文档同步 | 实现后把 `TimeStep` / `FromStep` 的描述改成分钟时钟 |
 
 不改：
@@ -825,7 +829,7 @@ GameScene.OnLoopEndReached()
 | 新开 exe | 没有存档；`LoopCount`、解锁、线索、背包全部从初始状态开始。玩家自己的知识不受影响 |
 | 三周目 14:50 | 以括号耗时为数据源；14:50 是内容标注误差。数据驱动，改配置即可 |
 | 地下空间 / 化学实验室 / 保健室 | 本次不接入；等剧本补入口与耗时后加门/场景；不要临时用默认 5 分钟静默补上 |
-| 时间 UI | 本次不做；用 `GetClockText()` 和 `[Time]` 日志验收；未来接 HUD/手机时钟时只读 `GetElapsedMinutes()` |
+| 时间 UI | 右上角 HUD 时钟由 `UILayer/TimePanel/TimeLabel` 读取 `GetClockText()`，订阅 `TimeChanged` 刷新；手机时钟仍未做 |
 | 爆炸表现 | 本次只有 0.6 秒停顿 + 黑幕；VFX / 音效后续接在 `OnLoopEndReached` 里，不改时间系统 |
 | 过渡期间键盘交互 | `ScreenFade` 淡入时只挡鼠标；F 键在 0.25 秒过渡内仍可能触发一次门。本次沿用现有过渡守卫，不新增全局输入锁 |
 | 一周目书桌 | 书桌交互本身不在本次实现；只保证 `AdvanceTime` 可被任意交互调用。一周目没有书桌时，时间不会自己走到 17:30，这是内容接入前的已知空档 |

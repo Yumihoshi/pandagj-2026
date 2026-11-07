@@ -111,6 +111,19 @@ public partial class GameState : Node
 		return Clues.Contains(clueId);
 	}
 
+	/// <summary>把一条线索记进手机；跨循环保留，重复添加无副作用。</summary>
+	public void AddClue(string clueId)
+	{
+		if (string.IsNullOrEmpty(clueId))
+		{
+			GD.PushError("GameState.AddClue: 线索 id 为空");
+			return;
+		}
+		if (!Clues.Add(clueId)) return;
+
+		GD.Print($"[Clue] 获得线索 {clueId}");
+	}
+
 	/// <summary>本轮某个 NPC 的状态覆盖；没有时返回空字符串。</summary>
 	public string GetNpcLoopState(string npcId)
 	{

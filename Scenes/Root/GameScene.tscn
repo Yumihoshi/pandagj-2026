@@ -5,6 +5,23 @@
 [ext_resource type="Resource" uid="uid://dm375lq5bf84h" path="res://Resources/MapConfig.tres" id="3_config"]
 [ext_resource type="PackedScene" uid="uid://47uoowgt8ywv" path="res://Scenes/Locations/Classroom.tscn" id="4_start"]
 [ext_resource type="PackedScene" uid="uid://uk6kxcc2r3rl" path="res://Scenes/Dialogue/DialogueBalloon.tscn" id="5_balloon"]
+[ext_resource type="Script" path="res://Scripts/UI/TimeLabel.cs" id="6_time"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_time"]
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+bg_color = Color(0.0470588, 0.0470588, 0.0705882, 0.62)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.16)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="GameScene" type="Node2D" unique_id=1828415781 node_paths=PackedStringArray("MapScreen", "LocationHost")]
 script = ExtResource("1_game")
@@ -20,3 +37,26 @@ DialogueBalloonScene = ExtResource("5_balloon")
 layer = 10
 
 [node name="MapScreen" parent="UILayer" unique_id=1539145619 instance=ExtResource("2_map")]
+
+[node name="TimePanel" type="PanelContainer" parent="UILayer"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -176.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = 84.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_time")
+
+[node name="TimeLabel" type="Label" parent="UILayer/TimePanel"]
+layout_mode = 2
+mouse_filter = 2
+text = "13:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 28
+script = ExtResource("6_time")

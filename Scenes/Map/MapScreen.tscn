@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dw7jdfrxvptsa" path="res://Scripts/Map/MapLocationButton.cs" id="2_button"]
 [ext_resource type="PackedScene" uid="uid://47uoowgt8ywv" path="res://Scenes/Locations/Classroom.tscn" id="3_classroom"]
 [ext_resource type="PackedScene" path="res://Scenes/Locations/Playground.tscn" id="4_playground"]
+[ext_resource type="PackedScene" path="res://Scenes/Locations/Administration.tscn" id="5_administration"]
 
 [node name="MapScreen" type="Control" unique_id=1234144408 node_paths=PackedStringArray("Buttons")]
 layout_mode = 3
@@ -13,7 +14,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_screen")
-Buttons = [NodePath("LocationButtons/BtnClassroom"), NodePath("LocationButtons/BtnPlayground")]
+Buttons = [NodePath("LocationButtons/BtnClassroom"), NodePath("LocationButtons/BtnAdministration"), NodePath("LocationButtons/BtnPlayground")]
 
 [node name="Background" type="ColorRect" parent="." unique_id=956434100]
 layout_mode = 1
@@ -51,6 +52,18 @@ text = "教室"
 script = ExtResource("2_button")
 LocationId = "classroom"
 LocationScene = ExtResource("3_classroom")
+
+[node name="BtnAdministration" type="Button" parent="LocationButtons" unique_id=234040861]
+layout_mode = 0
+offset_left = 320.0
+offset_top = 440.0
+offset_right = 520.0
+offset_bottom = 520.0
+text = "行政楼"
+script = ExtResource("2_button")
+LocationId = "administration"
+LocationScene = ExtResource("5_administration")
+TravelMinutes = 25
 
 [node name="BtnPlayground" type="Button" parent="LocationButtons" unique_id=950715715]
 layout_mode = 0

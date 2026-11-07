@@ -1,0 +1,19 @@
+~ start
+if npc.IsInState("sleeping")
+	山田老师: （趴在折叠床上睡着了。）
+	- 算了 [#repeatable] => END
+elif npc.IsInState("preparing")
+	山田老师: ……你不该来这里的。
+	- 算了 [#repeatable] => END
+elif npc.IsInState("writing")
+	山田老师: （山田老师正在本子上写着什么。）
+	- 关于新井次郎 [ID:ask_shinji_at_desk] => ask_shinji
+	- 算了 [#repeatable] => END
+else
+	山田老师: 有什么事吗？
+	- 关于新井次郎 [ID:ask_shinji] => ask_shinji
+	- 算了 [#repeatable] => END
+
+~ ask_shinji
+山田老师: 新井吗？他整个下午都在隔壁教室自习。
+=> END

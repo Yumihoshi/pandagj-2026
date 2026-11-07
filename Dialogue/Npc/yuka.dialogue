@@ -1,0 +1,27 @@
+~ start
+if npc.IsInState("running")
+	小优香: 今天的天气真适合跑步呢！鸣子找我有什么事吗？
+	- 关于田径部 [ID:ask_track] => ask_track
+	- 关于山田老师 [ID:ask_yamada] [if GameState.HasClue("yuka_likes_yamada") /] => ask_yamada
+	- 算了 [#repeatable] => END
+else
+	小优香: 啊，鸣子你醒啦
+	- 小优香接下来在哪 [ID:ask_where] => ask_where
+	- 算了 [#repeatable] => END
+
+~ ask_where
+小优香: 那我一会去田径部啦，17:30 一起回家哦
+do GameState.UnlockLocation("playground")
+小优香: （田径部……应该就是操场那边吧）
+=> END
+
+~ ask_track
+小优香: 对了，去操场后的准备室坐一会吧，这是钥匙
+do GameState.AddItem("equipment_key")
+=> END
+
+~ ask_yamada
+小优香: 山田老师……我最近总看到他放学后一个人去操场后面
+do GameState.UnlockLocation("administration")
+小优香: （先去行政楼的办公室看看吧）
+=> END

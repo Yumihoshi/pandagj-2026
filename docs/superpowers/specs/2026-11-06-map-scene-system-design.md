@@ -95,10 +95,11 @@ graph TD
         MapScreen --> BtnBox["LocationButtons (Control)"]
         BtnBox --> BtnA["MapLocationButton<br/>教室"]
         BtnBox --> BtnB["MapLocationButton<br/>操场"]
+        BtnBox --> BtnC["MapLocationButton<br/>行政楼"]
     end
 
     subgraph 自动加载["autoload"]
-        GameState["GameState (Node)<br/>解锁集合 / 时间步 / 循环重置"]
+        GameState["GameState (Node)<br/>解锁集合 / 分钟 / 循环重置"]
         ScreenFade["ScreenFade (CanvasLayer, layer=100)<br/>黑幕淡入淡出"]
     end
 
@@ -127,6 +128,7 @@ res://Scenes/Root/GameScene.tscn        (Node2D, GameScene.cs)
         ├── Background                  (TextureRect)
         └── LocationButtons             (Control)
             ├── BtnClassroom            (MapLocationButton)
+            ├── BtnAdministration       (MapLocationButton)
             └── BtnPlayground           (MapLocationButton)
 
 res://Scenes/Locations/Classroom.tscn   (Node2D, LocationRoot.cs)

@@ -21,16 +21,16 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 当前结构
 
-- `Scenes/Root/GameScene.tscn`：主场景（`run/main_scene` 已指向它），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset` 与 `LoopEndReached`（17:30 终末）。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`。
-- `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D` + `InteractionRange`（`PlayerInteractor`）；贴图暂用 `icon.svg`。
-- `Scenes/Map/MapScreen.tscn`：地图 UI 面板（占位色块 + 地点按钮 `BtnClassroom` / `BtnPlayground`）。
-- `Scenes/Locations/`：`Classroom.tscn`（两房间：教室 / 器材室；教室里有 demo NPC「同学」）、`Playground.tscn`（demo 占位地点）。
+- `Scenes/Root/GameScene.tscn`：主场景（`run/main_scene` 已指向它），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset` 与 `LoopEndReached`（17:30 终末）。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`、`UILayer/TimePanel`（右上角游戏时钟）。
+- `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D` + `InteractionRange`（`PlayerInteractor`）；贴图暂用 `ArtRes/Characters/muriko.png`，`AnimatedSprite2D` scale 0.28。
+- `Scenes/Map/MapScreen.tscn`：地图 UI 面板（占位色块 + 地点按钮 `BtnClassroom` / `BtnAdministration` / `BtnPlayground`，竖排在 x=320，y=260/440/620）。
+- `Scenes/Locations/`：`Classroom.tscn`（地点「教室」：教室 / 走廊 / 隔壁班，NPC 小优香 / 山田老师 / 新井次郎）、`Playground.tscn`（地点「操场」：操场 / 操场后 / 器材准备室 / 地下空间，NPC 小优香 / 山田老师）、`Administration.tscn`（地点「行政楼」：入口 / 办公室，NPC 山田老师）。化学实验室、保健室尚未建场景。
 - `Scenes/Dialogue/DialogueBalloon.tscn`：NPC 对话 balloon（从 `ExampleBalloon` 复制改造，`layer = 50`；名字 / 正文 / 选项 / 进度点）。
 - `Resources/MapConfig.tres`：初始解锁地点 `["classroom"]`。
-- `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Npc/`（`Npc`、`NpcStateFrame`）、`Dialogue/`（`DialogueBalloon`）、`Audio/`（`AudioManager`）、`Demo/`（`PickupItem`、`ReadDocument`）。
+- `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Npc/`（`Npc`、`NpcStateFrame`）、`Dialogue/`（`DialogueBalloon`）、`Audio/`（`AudioManager`）、`UI/`（`TimeLabel`）、`Demo/`（`PickupItem`、`ReadDocument`，当前未挂场景）。
 - `Dialogue/day1.dialogue`：占位剧本，**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
-- `Dialogue/Npc/student.dialogue`：教室 NPC「同学」的 demo 剧本。
-- `ArtRes/`：美术素材（当前为空）。
+- `Dialogue/Npc/student.dialogue`：旧「同学」demo 剧本，当前未挂到任何 NPC；`yuka.dialogue` / `yamada.dialogue` / `shinji.dialogue` 是当前三个 NPC 的占位剧本。
+- `ArtRes/`：临时美术素材 —— `Backgrounds/`（9 张 1920x600 场景背景）、`Characters/`（4 张 240x300 透明立绘）、`CREDITS.md`（来源与许可）；`Source/` 保留原图与裁切源。
 - `Audio/Sfx/`：Kenney UI Audio 音效，按 `Click`(5) / `Rollover`(6) / `Switch`(38) / `Mouse`(2) 分组，保留 `License.txt`；`Audio/Bgm/` 目前为空。
 - `default_bus_layout.tres`：音频总线 `SFX` / `BGM`（`send = Master`），播放器按总线独立控音量。
 - `addons/dialogue_manager/`：Dialogue Manager 4.2.0；`export_presets.cfg` 已有 Windows Desktop 预设（`export_path` 为空）。
@@ -41,15 +41,16 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 剧本写在 `Dialogue/*.dialogue`，不要把对白硬编码进 C#；对话 UI 用 `Scenes/Dialogue/DialogueBalloon.tscn`（从 `ExampleBalloon` 复制改造），不要直接改 addon 目录。
 - C# API 在 `DialogueManagerRuntime` 命名空间：快速验证用 `DialogueManager.ShowExampleDialogueBalloon(resource)`；正式对话用 `DialogueManager.ShowDialogueBalloon(resource)`（默认 balloon 由 `GameScene` 注册）或 `ShowDialogueBalloonScene`。
 - 默认 balloon 注册：`GameScene._Ready` 调 `DialogueManager.SetDefaultBalloon(DialogueBalloonScene)` 之后，必须再 `ProjectSettings.SetSetting("dialogue_manager/runtime/balloon_path", DialogueBalloonScene.ResourcePath)`；addon 的 `set_default_balloon` 写的是 `runtime/balloon_path`，读的是 `dialogue_manager/runtime/balloon_path`，只调它会静默回退到 `ExampleBalloon`。
-- `.dialogue` 语法：标签写 `[#repeatable]` / `[#show_if=true]` / `[#hide_if=true]`（裸 `#tag` 不解析）；`~ cue` 下的台词/`do`/`=> END` 顶格，只有 `if/else` 分支缩进；选项正文不要加方括号，一次性选项必须写 `[ID:]`。
-- `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue` 与 `res://Dialogue/Npc/student.dialogue`；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
+- `.dialogue` 语法：标签写 `[#repeatable]` / `[#show_if=true]` / `[#hide_if=true]`（裸 `#tag` 不解析）；响应条件写 `[if 表达式 /]`（末尾斜杠）；`~ cue` 下的台词/`do`/`=> END` 顶格，只有 `if/elif/else` 分支缩进；同一文件里 `[ID:]` 必须唯一；选项正文不要加方括号，一次性选项必须写 `[ID:]`。
+- `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue`、`res://Dialogue/Npc/student.dialogue` 与 `yuka` / `yamada` / `shinji` 三个 NPC 剧本；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
 
 ## 时间系统
 
 - `GameState.ElapsedMinutes`：循环内分钟，0 = 13:00，270 = 17:30；`AdvanceTime(int minutes)` 返回 `true` 表示本次推进触发或已处于终末，**调用方必须随即中止后续动作**（不装载场景 / 不切房间）。
-- 默认扣时点：地图旅行（`MapLocationButton.TravelMinutes`，默认 30）与房间切换（`RoomDoor.TravelMinutes`，默认 5；正式门按剧本填 15/20/5/10）。从地点退回地图不扣时；对话 / 调查 / 拾取不扣时。
+- 默认扣时点：地图旅行（`MapLocationButton.TravelMinutes`，默认 30）与房间切换（`RoomDoor.TravelMinutes`，默认 5）。当前值：地图→教室 30、地图→操场 35、地图→行政楼 25；教室↔走廊 15、走廊↔隔壁班 20、操场↔操场后 10、操场后↔器材准备室 5、操场后↔地下空间 5（剧本未给，初值）、行政楼入口↔办公室 5。从地点退回地图不扣时；对话 / 调查 / 拾取不扣时。
 - `TimeChanged(int elapsedMinutes)` 驱动 NPC 换帧；`NpcStateFrame.FromMinute` 是循环内分钟（0 = 13:00，45 = 13:45）。
 - 17:30 发 `LoopEndReached`；`GameScene` 等 0.6 秒后调 `ResetLoop()`。`ResetLoop()` 把时间归零、`LoopCount++`、清背包与本轮 NPC 状态 / 已选选项；`UnlockedLocations` / `Clues` 保留。
+- 右上角 `UILayer/TimePanel/TimeLabel`（`Scripts/UI/TimeLabel.cs`）显示 `GameState.GetClockText()`，订阅 `TimeChanged` 刷新；`ResetLoop()` 也会发 `TimeChanged(0)`，所以重置后自动回到 13:00。
 - `LoopCount` 只在当前进程内有效，只用于一周目固定锁；二 / 三 / 四周目是预期打法，不是系统强制的状态机，不按周目数限制地点 / 道具 / 对话 / 路线。
 - 工程只保留 `move_left` / `move_right` / `interact` 三个输入；循环重置只由 17:30 终末触发。
 - 17:30 终末后到重载完成之间，当前地点 ProcessMode 置 Disabled，冻结移动与交互；从地图触发终末时没有地点可冻结，地图按钮由 _loopEnding 挡住。
@@ -60,9 +61,10 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 有效状态：优先取 `GameState.GetNpcLoopState(NpcId)`（本轮覆盖，`SetLoopState` 写入），没有覆盖时取当前时间帧的 `StateId`；**在场只看当前时间帧的 `Visible`，覆盖不改在场**。
 - 在场用 `Area2D.Monitorable` 切换，不要用 `CollisionShape2D.Disabled`（`Room.SetActive` 会覆盖它）。
 - `Npc` 给 `.dialogue` 暴露 `IsPresent()` / `IsInState("...")` / `SetLoopState("...")`；状态动作必须在帧表里有对应状态。
-- `GameState` 新增本轮 `NpcLoopStates` / `NpcUsedChoices`；`ResetLoop()` 清空它们，`UnlockedLocations` / `Clues` 保留。
+- `GameState` 新增本轮 `NpcLoopStates` / `NpcUsedChoices`；`ResetLoop()` 清空它们，`UnlockedLocations` / `Clues` 保留；`AddClue(string)` 写入跨循环线索，`HasClue` 读取。
 - `DialogueBalloon`：`Start` 置 `Player.InputLocked=true`，`_ExitTree` 复位；选项过滤顺序是 `hide_if` → 已选灰显 → `IsAllowed` / `show_if`；一次性选项必须写 `[ID:]`，`[#repeatable]` 不记录；过滤后没有任何可选选项时报错并关闭。
 - `LocationRoot` 在 `_Ready` 里检查同地点 `NpcId` 重复；`NpcId` 跨地点唯一靠 `地点.名字` 命名约定。
+- 当前占位 NPC：`classroom.yuka`（教室 13:00-13:44）、`classroom.yamada`（教室讲台 13:00-13:29）、`classroom.shinji`（隔壁班 整个下午）、`playground.yuka`（操场 13:45 起）、`playground.yamada`（地下空间 17:00 起）、`administration.yamada`（办公室 13:30-16:59，14:00-14:59 睡觉）。
 
 ## 音频
 

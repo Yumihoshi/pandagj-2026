@@ -1,0 +1,10 @@
+~ start
+新井: 诶……千、千原同学？你怎么来了
+- 关于小优香 [ID:ask_yuka] => ask_yuka
+- 算了 [#repeatable] => END
+
+~ ask_yuka
+新井: 小……小优香啊，她从前两个月起好像就跟山田老师关系非常好呢
+do GameState.AddClue("yuka_likes_yamada")
+新井: 还跟我说她喜欢山田老师什么的……
+=> END

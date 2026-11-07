@@ -17,6 +17,15 @@ public partial class DialogueBalloon : CanvasLayer
 	private DialogueResponsesMenu responsesMenu;
 	private Polygon2D progress;
 
+	/// <summary>区分「拖拽选择」与「单击推进」的位移阈值（像素）。</summary>
+	[Export] public float ClickDragThreshold = 6.0f;
+
+	private Label copyToast;
+	private Tween copyToastTween;
+	private bool pointerPressed;
+	private bool pressStartedInLabel;
+	private Vector2 pressPosition;
+
 	private Resource dialogueResource;
 	private string startFromLabel = "";
 	private Array<Variant> temporaryGameStates = new();
@@ -53,6 +62,13 @@ public partial class DialogueBalloon : CanvasLayer
 		dialogueLabel = GetNode<DialogueLabel>("%DialogueLabel");
 		responsesMenu = GetNode<DialogueResponsesMenu>("%ResponsesMenu");
 		progress = GetNode<Polygon2D>("%Progress");
+
+		copyToast = GetNodeOrNull<Label>("%CopyToast");
+		if (copyToast == null)
+		{
+			GD.PushError("DialogueBalloon: 找不到 %CopyToast，复制提示不可用");
+		}
+		dialogueLabel.SelectionEnabled = false;
 
 		balloon.Hide();
 		balloon.GuiInput += OnBalloonGuiInput;
@@ -138,6 +154,7 @@ public partial class DialogueBalloon : CanvasLayer
 
 	private void OnBalloonGuiInput(InputEvent @event)
 	{
+		// 打字中：点击或 Esc 都是跳过打字（现有行为）。
 		if (dialogueLabel.IsTyping)
 		{
 			bool mouseWasClicked = @event is InputEventMouseButton mb
@@ -152,17 +169,51 @@ public partial class DialogueBalloon : CanvasLayer
 			}
 		}
 
+		if (@event is InputEventMouseButton mouseButton && mouseButton.ButtonIndex == MouseButton.Left)
+		{
+			if (mouseButton.Pressed)
+			{
+				// 只要不是打字中，按下就记录位置；复制与推进都留到松开时判定。
+				// 选项菜单 / 自动推进等待期间也记录，否则那两种状态下无法拖拽复制。
+				pointerPressed = true;
+				pressPosition = mouseButton.Position;
+				pressStartedInLabel = dialogueLabel.GetGlobalRect()
+					.HasPoint(mouseButton.GlobalPosition);
+				return;
+			}
+
+			if (!pointerPressed) return;
+			pointerPressed = false;
+
+			float dragDistance = mouseButton.Position.DistanceTo(pressPosition);
+			string selected = dialogueLabel.GetSelectedText();
+
+			if (pressStartedInLabel
+				&& dragDistance > ClickDragThreshold
+				&& !string.IsNullOrWhiteSpace(selected))
+			{
+				GetViewport().SetInputAsHandled();
+				CopySelectedText(selected);
+				return;
+			}
+
+			if (dragDistance <= ClickDragThreshold
+				&& isWaitingForInput
+				&& filteredResponses.Count == 0)
+			{
+				GetViewport().SetInputAsHandled();
+				Next(dialogueLine.NextId);
+				return;
+			}
+
+			// 位移超过阈值但没有选中（拖在对话框空白处）：什么都不做。
+			return;
+		}
+
 		if (!isWaitingForInput) return;
 		if (filteredResponses.Count > 0) return;
 
-		if (@event is InputEventMouseButton mouseButton
-			&& mouseButton.IsPressed()
-			&& mouseButton.ButtonIndex == MouseButton.Left)
-		{
-			GetViewport().SetInputAsHandled();
-			Next(dialogueLine.NextId);
-		}
-		else if (@event.IsActionPressed(NextAction) && GetViewport().GuiGetFocusOwner() == balloon)
+		if (@event.IsActionPressed(NextAction) && GetViewport().GuiGetFocusOwner() == balloon)
 		{
 			GetViewport().SetInputAsHandled();
 			Next(dialogueLine.NextId);
@@ -171,6 +222,11 @@ public partial class DialogueBalloon : CanvasLayer
 
 	private async void ApplyDialogueLine()
 	{
+		// 新的一句：关掉上一句的选区，并清掉上一句的复制提示。
+		dialogueLabel.SelectionEnabled = false;
+		copyToastTween?.Kill();
+		if (copyToast != null) copyToast.Visible = false;
+
 		mutationCooldown.Stop();
 		isWaitingForInput = false;
 		balloon.FocusMode = Control.FocusModeEnum.All;
@@ -205,6 +261,12 @@ public partial class DialogueBalloon : CanvasLayer
 			await ToSignal(dialogueLabel, DialogueLabel.SignalName.FinishedTyping);
 			if (!GodotObject.IsInstanceValid(this)) return;
 		}
+
+		// 打字完成（或本句无文字）：本句正文可以拖拽选择。
+		dialogueLabel.SelectionEnabled = true;
+		// 引擎在 set_selection_enabled(true) 里会把 focus_mode 设成 ALL；
+		// 点击正文会抢走 Balloon 的键盘焦点，导致空格/回车推进失效。
+		dialogueLabel.FocusMode = Control.FocusModeEnum.None;
 
 		if (filtered.Count > 0)
 		{
@@ -303,6 +365,34 @@ public partial class DialogueBalloon : CanvasLayer
 
 		CurrentLine = next;
 		isAdvancing = false;
+	}
+
+	private void CopySelectedText(string text)
+	{
+		if (!DisplayServer.HasFeature(DisplayServer.Feature.Clipboard))
+		{
+			GD.PushError("DialogueBalloon: 当前平台没有剪贴板，无法复制对话");
+			return;
+		}
+
+		DisplayServer.ClipboardSet(text);
+		ShowCopyToast();
+		GD.Print($"[Dialogue] 已复制 {text.Length} 字");
+	}
+
+	private void ShowCopyToast()
+	{
+		if (copyToast == null) return;   // 缺失已在 _Ready 报错
+
+		copyToastTween?.Kill();
+		copyToast.Visible = true;
+		copyToast.Modulate = new Color(1, 1, 1, 0);
+
+		copyToastTween = CreateTween();
+		copyToastTween.TweenProperty(copyToast, "modulate:a", 1.0f, 0.1f);
+		copyToastTween.TweenInterval(0.35f);
+		copyToastTween.TweenProperty(copyToast, "modulate:a", 0.0f, 0.25f);
+		copyToastTween.TweenCallback(Callable.From(() => copyToast.Visible = false));
 	}
 
 	private void OnMutated(Dictionary mutation)

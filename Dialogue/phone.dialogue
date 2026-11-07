@@ -2,6 +2,7 @@
 手机: 要看什么？
 - 重要的事 [ID:open_documents] [#repeatable] => documents
 - 记事本 [ID:open_notes] [#repeatable] => notes
+- 玩手机消磨时间 [ID:waste_time] [#repeatable] => waste_time
 - 关闭 [#repeatable] => END
 
 ~ documents
@@ -10,4 +11,8 @@ do phone.OpenDocuments()
 
 ~ notes
 do phone.OpenNotebook()
+=> END
+
+~ waste_time
+do phone.OpenTimeSkip()
 => END

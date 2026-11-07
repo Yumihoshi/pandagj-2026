@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://brnnps4bw4j1r" path="res://Scripts/Phone/PhoneScreen.cs" id="1_phone"]
 [ext_resource type="PackedScene" uid="uid://uk6kxcc2r3rl" path="res://Scenes/Dialogue/DialogueBalloon.tscn" id="2_balloon"]
 [ext_resource type="Resource" uid="uid://dhofpyrqo3u64" path="res://Dialogue/phone.dialogue" id="3_dialogue"]
+[ext_resource type="Script" uid="uid://t8qrk8mh15o1" path="res://Scripts/Phone/TimeSkipPanel.cs" id="4_timeskip"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
 content_margin_left = 18.0
@@ -286,3 +287,164 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 text = "返回"
+
+[node name="TimeSkipPanel" type="PanelContainer" parent="Overlay/Center"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(760, 520)
+layout_mode = 2
+script = ExtResource("4_timeskip")
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/Center/TimeSkipPanel"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Overlay/Center/TimeSkipPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Header" type="Label" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "玩手机消磨时间"
+horizontal_alignment = 1
+
+[node name="TimeRow" type="HBoxContainer" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="HourTens" type="VBoxContainer" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="HourTensUp" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/HourTens"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 48)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 28
+text = "▲"
+
+[node name="HourTensValue" type="Label" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/HourTens"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 90)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HourTensDown" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/HourTens"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 48)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 28
+text = "▼"
+
+[node name="HourOnes" type="VBoxContainer" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="HourOnesUp" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/HourOnes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 48)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 28
+text = "▲"
+
+[node name="HourOnesValue" type="Label" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/HourOnes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 90)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "3"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HourOnesDown" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/HourOnes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 48)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 28
+text = "▼"
+
+[node name="Colon" type="Label" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow"]
+custom_minimum_size = Vector2(30, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = ":"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MinuteTens" type="VBoxContainer" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="MinuteTensUp" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/MinuteTens"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 48)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 28
+text = "▲"
+
+[node name="MinuteTensValue" type="Label" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/MinuteTens"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 90)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MinuteTensDown" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/MinuteTens"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 48)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 28
+text = "▼"
+
+[node name="MinuteOnes" type="VBoxContainer" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="MinuteOnesUp" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/MinuteOnes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 48)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 28
+text = "▲"
+
+[node name="MinuteOnesValue" type="Label" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/MinuteOnes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 90)
+layout_mode = 2
+theme_override_font_sizes/font_size = 64
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MinuteOnesDown" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/TimeRow/MinuteOnes"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 48)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 28
+text = "▼"
+
+[node name="TimeSkipConfirm" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "确定"

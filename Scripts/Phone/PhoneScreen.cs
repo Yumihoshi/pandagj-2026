@@ -23,7 +23,8 @@ public partial class PhoneScreen : CanvasLayer
 	private enum PhonePage
 	{
 		Documents,
-		Notebook
+		Notebook,
+		TimeSkip
 	}
 
 	private Button PhoneButton;
@@ -42,6 +43,7 @@ public partial class PhoneScreen : CanvasLayer
 	private Control NotebookPanel;
 	private TextEdit NotebookEdit;
 	private Button NotebookBack;
+	private TimeSkipPanel TimeSkipPanel;
 
 	private bool _open;
 	private bool _loopEnded;
@@ -72,6 +74,7 @@ public partial class PhoneScreen : CanvasLayer
 		NotebookPanel = GetNode<Control>("%NotebookPanel");
 		NotebookEdit = GetNode<TextEdit>("%NotebookEdit");
 		NotebookBack = GetNode<Button>("%NotebookBack");
+		TimeSkipPanel = GetNode<TimeSkipPanel>("%TimeSkipPanel");
 
 		if (DialogueBalloonScene == null)
 		{
@@ -96,6 +99,7 @@ public partial class PhoneScreen : CanvasLayer
 		DocReadBack.Pressed += ShowDocumentList;
 		NotebookBack.Pressed += BackToMainMenu;
 		NotebookEdit.TextChanged += OnNotebookTextChanged;
+		TimeSkipPanel.Confirmed += OnTimeSkipConfirmed;
 		DocReadBody.GuiInput += OnDocReadGuiInput;
 		DocReadBody.MetaClicked += OnDocMetaClicked;
 
@@ -103,6 +107,7 @@ public partial class PhoneScreen : CanvasLayer
 		DocListPanel.Hide();
 		DocReadPanel.Hide();
 		NotebookPanel.Hide();
+		TimeSkipPanel.Hide();
 		DocReadBody.SelectionEnabled = false;
 		DocCopyToast.Visible = false;
 	}
@@ -137,7 +142,7 @@ public partial class PhoneScreen : CanvasLayer
 			ShowDocumentList();
 			return;
 		}
-		if (DocListPanel.Visible || NotebookPanel.Visible)
+		if (DocListPanel.Visible || NotebookPanel.Visible || TimeSkipPanel.Visible)
 		{
 			GetViewport().SetInputAsHandled();
 			BackToMainMenu();
@@ -166,6 +171,18 @@ public partial class PhoneScreen : CanvasLayer
 		}
 		if (_closing) return;
 		_pendingPage = PhonePage.Notebook;
+	}
+
+	/// <summary>由 phone.dialogue 的 do 调用：关闭主菜单后打开等待时间选择器。</summary>
+	public void OpenTimeSkip()
+	{
+		if (!_open)
+		{
+			GD.PushError("PhoneScreen.OpenTimeSkip: 手机未打开");
+			return;
+		}
+		if (_closing) return;
+		_pendingPage = PhonePage.TimeSkip;
 	}
 
 	/// <summary>循环开始提示：自动打开手机，把提示追加到记事本并直接显示记事本面板。</summary>
@@ -300,6 +317,9 @@ public partial class PhoneScreen : CanvasLayer
 			case PhonePage.Notebook:
 				ShowNotebook();
 				break;
+			case PhonePage.TimeSkip:
+				ShowTimeSkip();
+				break;
 			default:
 				CloseSession();
 				break;
@@ -344,6 +364,7 @@ public partial class PhoneScreen : CanvasLayer
 		DocListPanel.Hide();
 		DocReadPanel.Hide();
 		NotebookPanel.Hide();
+		TimeSkipPanel.Hide();
 		DocReadBody.SelectionEnabled = false;
 	}
 
@@ -453,6 +474,43 @@ public partial class PhoneScreen : CanvasLayer
 	{
 		if (GameState.Instance == null) return;
 		GameState.Instance.NotebookText = NotebookEdit.Text;
+	}
+
+	private void ShowTimeSkip()
+	{
+		if (GameState.Instance == null)
+		{
+			GD.PushError("PhoneScreen.ShowTimeSkip: GameState 未就绪");
+			CloseSession();
+			return;
+		}
+
+		HideAllPages();
+		Overlay.Show();
+		TimeSkipPanel.Show();
+		GD.Print("[Phone] 玩手机消磨时间");
+		TimeSkipPanel.Open(GameState.Instance.ElapsedMinutes, GameState.LoopDurationMinutes);
+	}
+
+	/// <summary>时间选择器确认：先关掉手机释放输入锁，再把时钟推进到选定的时刻。</summary>
+	private void OnTimeSkipConfirmed(int targetElapsedMinutes)
+	{
+		if (GameState.Instance == null)
+		{
+			GD.PushError("PhoneScreen.OnTimeSkipConfirmed: GameState 未就绪");
+			return;
+		}
+
+		int now = GameState.Instance.ElapsedMinutes;
+		int delta = targetElapsedMinutes - now;
+		if (delta <= 0)
+		{
+			GD.PushError($"PhoneScreen.OnTimeSkipConfirmed: 目标时刻 {targetElapsedMinutes} 不晚于当前时刻 {now}");
+			return;
+		}
+
+		CloseSession();
+		GameState.Instance.AdvanceTime(delta);
 	}
 
 	private void OnDocMetaClicked(Variant meta)

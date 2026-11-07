@@ -65,6 +65,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Player.InputLocked` 从 `true` 变回 `false` 时会 `Input.ActionRelease("move_left"/"move_right")`：在记事本这类 `TextEdit` 里打字时字母键同样写进动作状态，输入法会吞掉 key-up，不清掉的话解锁后玩家会自己一直往一个方向走。
 - `PhoneScreen` 的面板容器 `Center` 必须 `mouse_filter = IGNORE`，否则全屏容器会抢走面板鼠标事件。
 - 术语：玩家可见文案统一写「重要的事」，不写「文档」；代码侧类名 / 节点名 / 资源 id（`DocumentData`、`DocumentLibrary`、`AcquireDocument`、`DocListPanel` 等）保持不变，避免破坏 `.tres` 的 uid 与场景唯一名引用。
+- 玩手机消磨时间：主菜单 `[ID:waste_time]` → `phone.OpenTimeSkip()` → `PhoneScreen` 打开 `TimeSkipPanel`（四位数显 HH:MM，每格 ▲▼ 按本位权值 600 / 60 / 10 / 1 分钟调整；可选范围 13:00–17:30，时十位恒为 1 所以它的箭头常禁用）。目标 ≤ 当前时刻时「确定」置灰；确认后先 `CloseSession()` 释放输入锁，再 `AdvanceTime(目标 - 当前)`，目标 17:30 照常触发终末重置。设计见 `docs/superpowers/specs/2026-11-07-phone-time-skip-design.md`。
 
 ## 时间系统
 
@@ -122,7 +123,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 引擎：`D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-stable_mono_win64.exe`（项目 features=4.7；C# 目标框架 net8.0，本机 .NET SDK 10 + 运行时 8 构建正常）。同目录 `_console.exe` 便于在终端看输出。
 - 校验命令（仓库根目录执行）：
   - 导入资源：`& $godot --headless --path . --import`
-  - 编译 C#：`& $godot --headless --path . --build-solutions --quit`（或 `dotnet build`）
+  - 编译 C#：优先 `dotnet build --nologo -v q`（快、不启动编辑器）；`--build-solutions` 会拉起 headless 编辑器，经常卡住，不要用。
   - 无头跑主场景并立刻退出：`& $godot --headless --path . --quit-after 120`（需先在项目设置指定主场景）
 - `*.csproj` / `*.sln` 已存在且可编译；它们由 Godot 首次创建 C# 脚本时生成。
 - `.vscode/settings.json`：已把 `.godot/`、`*.import`、`*.uid`、`*.translation`、`bin/`、`obj/`、`mono_crash.*.json` 从资源管理器与搜索中排除，并跳过 `.godot`/`bin`/`obj` 的文件监听；仅隐藏，不影响 git 与 Godot。

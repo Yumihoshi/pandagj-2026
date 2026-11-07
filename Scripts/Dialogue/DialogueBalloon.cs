@@ -33,10 +33,10 @@ public partial class DialogueBalloon : CanvasLayer
 	private const string DocumentLinkEnd = "[/url]";
 
 	/// <summary>未收集文档的高亮色。</summary>
-	private const string DocumentHighlightColor = "[color=#ffd866]";
+	private static readonly string DocumentHighlightColor = $"[color=#{LinkTextColors.HighlightHtml}]";
 
 	/// <summary>已收集文档的灰色。</summary>
-	private const string DocumentCollectedColor = "[color=#8a8a8a]";
+	private static readonly string DocumentCollectedColor = $"[color=#{LinkTextColors.CollectedHtml}]";
 
 	/// <summary>没有任何按键绑定的占位动作：用来关掉响应菜单自带的空格/回车选择。</summary>
 	private static readonly StringName MouseOnlyAdvanceAction = "dialogue_mouse_only_advance";
@@ -48,6 +48,9 @@ public partial class DialogueBalloon : CanvasLayer
 	private Vector2 pressPosition;
 	private Vector2 pressGlobalPosition;
 	private ulong lastMetaClickFrame = ulong.MaxValue;
+
+	/// <summary>正文里当前处于鼠标悬浮状态的链接 meta；空串表示没有。</summary>
+	private string hoveredLinkMeta = "";
 
 	private Resource dialogueResource;
 	private string startFromLabel = "";
@@ -93,6 +96,9 @@ public partial class DialogueBalloon : CanvasLayer
 		}
 		dialogueLabel.SelectionEnabled = false;
 		dialogueLabel.MetaClicked += OnDialogueMetaClicked;
+		LinkTextColors.ApplyUnderline(dialogueLabel);
+		dialogueLabel.MetaHoverStarted += OnDialogueMetaHoverStarted;
+		dialogueLabel.MetaHoverEnded += OnDialogueMetaHoverEnded;
 
 		balloon.Hide();
 		balloon.GuiInput += OnBalloonGuiInput;
@@ -128,6 +134,8 @@ public partial class DialogueBalloon : CanvasLayer
 		if (GodotObject.IsInstanceValid(dialogueLabel))
 		{
 			dialogueLabel.MetaClicked -= OnDialogueMetaClicked;
+			dialogueLabel.MetaHoverStarted -= OnDialogueMetaHoverStarted;
+			dialogueLabel.MetaHoverEnded -= OnDialogueMetaHoverEnded;
 		}
 		if (GodotObject.IsInstanceValid(gameState))
 		{
@@ -228,6 +236,7 @@ public partial class DialogueBalloon : CanvasLayer
 			{
 				GetViewport().SetInputAsHandled();
 				CopySelectedText(selected);
+				RestoreLinkHoverIfIdle();
 				return;
 			}
 
@@ -242,6 +251,7 @@ public partial class DialogueBalloon : CanvasLayer
 			}
 
 			// 位移超过阈值但没有选中（拖在对话框空白处）：什么都不做。
+			RestoreLinkHoverIfIdle();
 			return;
 		}
 	}
@@ -290,6 +300,54 @@ public partial class DialogueBalloon : CanvasLayer
 		}
 	}
 
+	/// <summary>鼠标移进链接：把这条链接换成悬浮色；同一链接重复触发时不再重写正文。</summary>
+	private void OnDialogueMetaHoverStarted(Variant meta)
+	{
+		if (meta.VariantType != Variant.Type.String) return;
+		string url = meta.AsString();
+		if (!url.StartsWith("doc:", StringComparison.Ordinal)) return;
+		if (hoveredLinkMeta == url) return;
+		// 打字中重写正文会打乱打字进度；拖拽选择 / 已有选区时重写会清掉选区。
+		if (dialogueLabel.IsTyping || pointerPressed) return;
+		if (!string.IsNullOrEmpty(dialogueLabel.GetSelectedText())) return;
+
+		hoveredLinkMeta = url;
+		ApplyLinkHover();
+	}
+
+	/// <summary>鼠标移出链接：还原这条链接的高亮色。</summary>
+	private void OnDialogueMetaHoverEnded(Variant meta)
+	{
+		if (meta.VariantType != Variant.Type.String) return;
+		if (hoveredLinkMeta != meta.AsString()) return;
+
+		hoveredLinkMeta = "";
+		// 拖拽选择中不重写正文，等松开或下一次悬浮时自然还原。
+		if (pointerPressed) return;
+		ApplyLinkHover();
+	}
+
+	/// <summary>按 hoveredLinkMeta 重写正文颜色：有悬浮的链接时该链接换成悬浮色，否则回到剧本原色。</summary>
+	private void ApplyLinkHover()
+	{
+		if (dialogueLine == null || dialogueLabel.IsTyping) return;
+
+		string text = hoveredLinkMeta == ""
+			? dialogueLine.Text
+			: LinkTextColors.RecolorLinkForHover(dialogueLine.Text, hoveredLinkMeta);
+
+		if (dialogueLabel.Text == text) return;
+		dialogueLabel.Text = text;
+		dialogueLabel.VisibleCharacters = -1;
+	}
+
+	/// <summary>拖拽 / 点击结束后还原悬浮色；正文有选区时不重写，避免把选区清掉。</summary>
+	private void RestoreLinkHoverIfIdle()
+	{
+		if (!string.IsNullOrEmpty(dialogueLabel.GetSelectedText())) return;
+		ApplyLinkHover();
+	}
+
 	/// <summary>把当前句里已收集文档的高亮改成灰色；只换颜色不动结构，正文长度不变。</summary>
 	private void ApplyCollectedDocumentStyle()
 	{
@@ -327,6 +385,8 @@ public partial class DialogueBalloon : CanvasLayer
 		ApplyCollectedDocumentStyle();
 		dialogueLabel.Text = dialogueLine.Text;
 		dialogueLabel.VisibleCharacters = -1;
+		// 鼠标可能还停在刚变灰的链接上：按灰字的悬浮色重绘。
+		ApplyLinkHover();
 	}
 
 	private void AdvanceAfterMetaClick(string nextId)
@@ -339,8 +399,9 @@ public partial class DialogueBalloon : CanvasLayer
 
 	private async void ApplyDialogueLine()
 	{
-		// 新的一句：关掉上一句的选区，并清掉上一句的复制提示。
+		// 新的一句：关掉上一句的选区，并清掉上一句的复制提示与悬浮状态。
 		dialogueLabel.SelectionEnabled = false;
+		hoveredLinkMeta = "";
 		copyToastTween?.Kill();
 		if (copyToast != null) copyToast.Visible = false;
 

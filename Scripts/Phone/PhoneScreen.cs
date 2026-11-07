@@ -56,6 +56,9 @@ public partial class PhoneScreen : CanvasLayer
 	private Tween _docCopyTween;
 	private DocumentData _currentDoc;
 
+	/// <summary>正文里当前处于鼠标悬浮状态的链接 meta；空串表示没有。</summary>
+	private string _hoveredLinkMeta = "";
+
 	public override void _Ready()
 	{
 		PhoneButton = GetNode<Button>("%PhoneButton");
@@ -102,6 +105,9 @@ public partial class PhoneScreen : CanvasLayer
 		TimeSkipPanel.Confirmed += OnTimeSkipConfirmed;
 		DocReadBody.GuiInput += OnDocReadGuiInput;
 		DocReadBody.MetaClicked += OnDocMetaClicked;
+		LinkTextColors.ApplyUnderline(DocReadBody);
+		DocReadBody.MetaHoverStarted += OnDocMetaHoverStarted;
+		DocReadBody.MetaHoverEnded += OnDocMetaHoverEnded;
 
 		Overlay.Hide();
 		DocListPanel.Hide();
@@ -366,6 +372,7 @@ public partial class PhoneScreen : CanvasLayer
 		NotebookPanel.Hide();
 		TimeSkipPanel.Hide();
 		DocReadBody.SelectionEnabled = false;
+		_hoveredLinkMeta = "";
 	}
 
 	private void ShowDocumentList()
@@ -445,6 +452,7 @@ public partial class PhoneScreen : CanvasLayer
 		GD.Print($"[Phone] 阅读文档 {document.Id}");
 		DocReadTitle.Text = document.Title;
 		_currentDoc = document;
+		_hoveredLinkMeta = "";
 		DocReadBody.Text = ApplyClueStyle(document.Body);
 		DocReadBody.SelectionEnabled = true;
 		DocReadBody.GrabFocus();
@@ -522,10 +530,58 @@ public partial class PhoneScreen : CanvasLayer
 		if (string.IsNullOrEmpty(clueId) || GameState.Instance == null) return;
 
 		GameState.Instance.AddClue(clueId);
-		if (_currentDoc != null)
+		// 解锁后链接立刻变灰；鼠标还停在上面时就显示灰字的悬浮色。
+		ApplyDocHover();
+	}
+
+	/// <summary>鼠标移进线索链接：把这条链接换成悬浮色；同一链接重复触发时不重写正文。</summary>
+	private void OnDocMetaHoverStarted(Variant meta)
+	{
+		if (meta.VariantType != Variant.Type.String) return;
+		string value = meta.AsString();
+		if (!value.StartsWith("clue:")) return;
+		if (_hoveredLinkMeta == value) return;
+		// 拖拽选择 / 已有选区时重写正文会清掉选区。
+		if (_docPointerPressed) return;
+		if (!string.IsNullOrEmpty(DocReadBody.GetSelectedText())) return;
+
+		_hoveredLinkMeta = value;
+		ApplyDocHover();
+	}
+
+	/// <summary>鼠标移出线索链接：还原这条链接的高亮色。</summary>
+	private void OnDocMetaHoverEnded(Variant meta)
+	{
+		if (meta.VariantType != Variant.Type.String) return;
+		if (_hoveredLinkMeta != meta.AsString()) return;
+
+		_hoveredLinkMeta = "";
+		if (_docPointerPressed) return;
+		ApplyDocHover();
+	}
+
+	/// <summary>按 _hoveredLinkMeta 重绘正文：有悬浮的链接时该链接换成悬浮色，否则回到已解锁 / 未解锁的原色。</summary>
+	private void ApplyDocHover()
+	{
+		if (_currentDoc == null) return;
+
+		string text = ApplyClueStyle(_currentDoc.Body);
+		if (_hoveredLinkMeta != "")
 		{
-			DocReadBody.Text = ApplyClueStyle(_currentDoc.Body);
+			text = LinkTextColors.RecolorLinkForHover(text, _hoveredLinkMeta);
 		}
+
+		if (DocReadBody.Text != text)
+		{
+			DocReadBody.Text = text;
+		}
+	}
+
+	/// <summary>拖拽 / 点击结束后还原悬浮色；正文有选区时不重写，避免把选区清掉。</summary>
+	private void RestoreLinkHoverIfIdle()
+	{
+		if (!string.IsNullOrEmpty(DocReadBody.GetSelectedText())) return;
+		ApplyDocHover();
 	}
 
 	/// <summary>已解锁的线索链接在正文里变灰。</summary>
@@ -557,10 +613,18 @@ public partial class PhoneScreen : CanvasLayer
 		if (!_docPointerPressed) return;
 		_docPointerPressed = false;
 
-		if (mouse.Position.DistanceTo(_docPressPosition) <= DocDragThreshold) return;
+		if (mouse.Position.DistanceTo(_docPressPosition) <= DocDragThreshold)
+		{
+			RestoreLinkHoverIfIdle();
+			return;
+		}
 
 		string selected = DocReadBody.GetSelectedText();
-		if (string.IsNullOrWhiteSpace(selected)) return;
+		if (string.IsNullOrWhiteSpace(selected))
+		{
+			RestoreLinkHoverIfIdle();
+			return;
+		}
 
 		if (!DisplayServer.HasFeature(DisplayServer.Feature.Clipboard))
 		{
@@ -571,6 +635,7 @@ public partial class PhoneScreen : CanvasLayer
 		DisplayServer.ClipboardSet(selected);
 		ShowDocCopyToast();
 		GD.Print($"[Phone] 已复制文档 {selected.Length} 字");
+		RestoreLinkHoverIfIdle();
 	}
 
 	private void ShowDocCopyToast()

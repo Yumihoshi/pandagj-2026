@@ -9,8 +9,19 @@ public partial class Player : CharacterBody2D
 	/// <summary>跟随玩家的相机，由地点场景设置限位。</summary>
 	[Export] public Camera2D Camera { get; set; }
 
+	private bool _inputLocked;
+
 	/// <summary>对话等 UI 打开时锁住移动与交互；由持有 UI 的一方负责复位。</summary>
-	public bool InputLocked { get; set; }
+	public bool InputLocked
+	{
+		get => _inputLocked;
+		set
+		{
+			if (_inputLocked == value) return;
+			_inputLocked = value;
+			if (!_inputLocked) ReleaseMovementInput();
+		}
+	}
 
 	public override void _EnterTree()
 	{
@@ -28,5 +39,16 @@ public partial class Player : CharacterBody2D
 		float direction = Input.GetAxis("move_left", "move_right");
 		Velocity = new Vector2(direction * MoveSpeed, 0f);
 		MoveAndSlide();
+	}
+
+	/// <summary>
+	/// 清掉移动键的按压状态。UI 里用键盘输入文字时字母键同样会写进动作状态，
+	/// key-up 一旦丢失（例如输入法吞掉抬起事件）动作就会一直算作按住，
+	/// 解锁后玩家会自己朝一个方向走；因此解锁时把锁期间积压的移动输入丢掉。
+	/// </summary>
+	private static void ReleaseMovementInput()
+	{
+		Input.ActionRelease("move_left");
+		Input.ActionRelease("move_right");
 	}
 }

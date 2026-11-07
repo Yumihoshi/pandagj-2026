@@ -8,6 +8,12 @@ public partial class LocationRoot : Node2D
 	/// <summary>从地图进入时激活的房间。</summary>
 	[Export] public Room StartingRoom { get; set; }
 
+	/// <summary>循环重置时激活的房间（如教室座位所在的教室）；留空时用 StartingRoom。</summary>
+	[Export] public Room LoopStartRoom { get; set; }
+
+	/// <summary>本次载入是否来自循环开始，由 GameScene 在挂入场景树前设置。</summary>
+	public bool IsLoopStart { get; set; }
+
 	/// <summary>本地点唯一的玩家实例。</summary>
 	[Export] public Player PlayerNode { get; set; }
 
@@ -64,15 +70,22 @@ public partial class LocationRoot : Node2D
 
 		exits[0].Interacted += () => EmitSignal(SignalName.ExitRequested);
 
-		Marker2D spawn = ResolveStartSpawn(StartingRoom);
-		ActivateRoom(StartingRoom, spawn);
-		GD.Print($"[Map] 地点 {Name} 就绪，当前房间 {StartingRoom.Name}，落点 {spawn?.GlobalPosition}");
+		Room startRoom = ResolveStartRoom();
+		Marker2D spawn = ResolveStartSpawn(startRoom);
+		ActivateRoom(startRoom, spawn);
+		GD.Print($"[Map] 地点 {Name} 就绪，当前房间 {startRoom.Name}，落点 {spawn?.GlobalPosition}");
 	}
 
-	/// <summary>初始落点：优先用房间配的 FirstLoopSpawn（如教室座位），留空时用 DefaultSpawn。</summary>
-	private static Marker2D ResolveStartSpawn(Room room)
+	/// <summary>循环开始时用 LoopStartRoom（没配则用 StartingRoom），从地图进入时用 StartingRoom。</summary>
+	private Room ResolveStartRoom()
 	{
-		return room.FirstLoopSpawn != null ? room.FirstLoopSpawn : room.DefaultSpawn;
+		return IsLoopStart && LoopStartRoom != null ? LoopStartRoom : StartingRoom;
+	}
+
+	/// <summary>循环开始用房间配的 FirstLoopSpawn（如教室座位）且留空时用 DefaultSpawn；从地图进入一律用 DefaultSpawn。</summary>
+	private Marker2D ResolveStartSpawn(Room room)
+	{
+		return IsLoopStart && room.FirstLoopSpawn != null ? room.FirstLoopSpawn : room.DefaultSpawn;
 	}
 
 	private async Task TransitionToRoomAsync(RoomDoor door)

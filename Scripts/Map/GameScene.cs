@@ -84,7 +84,7 @@ public partial class GameScene : Node2D
 		MapScreen.HideMap();
 
 		Fade.SetOpaque();
-		await LoadLocationAsync(StartLocation);
+		await LoadLocationAsync(StartLocation, loopStart: true);
 		await Fade.FadeInAsync();
 
 		ShowLoopStartIntro();
@@ -226,7 +226,7 @@ public partial class GameScene : Node2D
 		LoopEndNotice.HideAll();
 		await Fade.FadeOutAsync();
 		UnloadLocation();
-		await LoadLocationAsync(StartLocation);
+		await LoadLocationAsync(StartLocation, loopStart: true);
 		await Fade.FadeInAsync();
 		_transitioning = false;
 		GD.Print("[Loop] 已回到起点地点");
@@ -251,7 +251,7 @@ public partial class GameScene : Node2D
 		GD.Print($"[Map] 进入地点 {locationId}");
 	}
 
-	private async Task LoadLocationAsync(PackedScene scene)
+	private async Task LoadLocationAsync(PackedScene scene, bool loopStart = false)
 	{
 		Node instance = scene.Instantiate();
 		if (instance is not LocationRoot location)
@@ -261,6 +261,7 @@ public partial class GameScene : Node2D
 			return;
 		}
 
+		location.IsLoopStart = loopStart;
 		LocationHost.AddChild(location);
 		_currentLocation = location;
 		location.ExitRequested += OnExitRequested;

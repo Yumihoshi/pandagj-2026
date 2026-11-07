@@ -7,7 +7,7 @@ public partial class Room : Node2D
 	/// <summary>玩家进入本房间时的默认落点。</summary>
 	[Export] public Marker2D DefaultSpawn { get; set; }
 
-	/// <summary>地点载入时的起始落点（如教室座位）；留空则沿用默认落点。</summary>
+	/// <summary>循环开始时的落点（如教室座位）；留空则沿用默认落点。</summary>
 	[Export] public Marker2D FirstLoopSpawn { get; set; }
 
 	/// <summary>相机限位，本房间局部坐标。</summary>

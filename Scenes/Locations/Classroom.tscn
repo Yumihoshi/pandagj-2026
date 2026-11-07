@@ -60,9 +60,10 @@ script = ExtResource("9_frame")
 StateId = "working"
 Texture = ExtResource("char_shinji")
 
-[node name="Classroom" type="Node2D" unique_id=143605120 node_paths=PackedStringArray("StartingRoom", "PlayerNode")]
+[node name="Classroom" type="Node2D" unique_id=143605120 node_paths=PackedStringArray("StartingRoom", "LoopStartRoom", "PlayerNode")]
 script = ExtResource("1_root")
-StartingRoom = NodePath("Room_Classroom")
+StartingRoom = NodePath("Room_Hallway")
+LoopStartRoom = NodePath("Room_Classroom")
 PlayerNode = NodePath("Player")
 
 [node name="Room_Classroom" type="Node2D" parent="." unique_id=1383618968 node_paths=PackedStringArray("DefaultSpawn", "FirstLoopSpawn")]

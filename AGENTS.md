@@ -94,7 +94,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 一周目开场（出生在座位 + 先找小优香）
 
-- 出生点：`Room.FirstLoopSpawn`（可选 `Marker2D`）；`LocationRoot._Ready` 的 `ResolveStartSpawn` 始终优先用它，留空时用 `DefaultSpawn`。教室 `Room_Classroom/FirstLoopSpawn` = `(700, 520)`（座位上，紧挨 `BookDesk`），所以每周目循环重置后都在座位上醒来。
+- 出生点：`LocationRoot` 的两个导出房间决定落点 —— `StartingRoom`（从地图进入时激活，教室为 `Room_Hallway` 走廊，落 `DefaultSpawn` = `(350, 520)`）与 `LoopStartRoom`（循环重置时激活，教室为 `Room_Classroom`，落 `FirstLoopSpawn` = `(700, 520)` 座位、留空回落 `DefaultSpawn`）；`LoopStartRoom` 留空时循环开始也用 `StartingRoom`。两者由 `GameScene.LoadLocationAsync(scene, loopStart)` 通过 `LocationRoot.IsLoopStart` 在挂入场景树前指定：`_Ready` 与 `OnLoopReset` 传 `true`，地图进入不传。所以从大地图回教室落在走廊，每周目循环重置后在座位上醒来。
 - 开场剧情：`GameScene.OpeningNarration`（`Dialogue/day1.dialogue`）在淡入后按周目播放：一周目播 `start` cue；二周目起播 `phone_vibrate` cue（「手机在震动。」），对话结束后 `PhoneScreen.OpenNotebookWithNote` 自动打开手机记事本并把「下午出去转转吧」追加到 `GameState.NotebookText`（已有这句则不重复，否则换行追加）。`GameScene._Ready` 与 `OnLoopReset` 末尾都调 `ShowLoopStartIntro`；对话与手机界面期间 `Player.InputLocked` 锁住移动与交互。
 - 门禁：`TalkToYukaFirst`（`Scripts/Location/TalkToYukaFirst.cs`）挂在 `Room_Classroom` 下，加入组 `talk_to_yuka_first`；`PlayerInteractor` 在 `_current.Interact()` 之前调 `TryInterceptAny`（排在 `OfficeKickOut` 之后）。判定顺序：本房间（`_room.IsAncestorOf`）→ 目标不是 `RequiredNpcId` 本人 → `IsArmed()`（一周目且无 `yuka_briefed`）；命中就播 `day1.dialogue` 的 `talk_first` 并中止本体逻辑。
 - `yuka_briefed` 由 `yuka.dialogue` 的 `choose_read` / `choose_out` 写入，所以「谈过话」= 走完开场对话并做出选择；`ResetLoop` 后 `LoopCount` 变 2，门禁自动失效、开场旁白不再播。

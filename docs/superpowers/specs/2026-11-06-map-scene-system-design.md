@@ -107,8 +107,12 @@ graph TD
     Location --> RoomA["Room (Node2D) + Room.cs"]
     Location --> RoomB["Room (Node2D) + Room.cs"]
     Location --> PlayerNode["Player + Camera2D"]
+    PlayerNode --> Interactor["PlayerInteractor<br/>门禁拦截 → Interact()"]
+    RoomB --> Spawn["DefaultSpawn / FirstLoopSpawn (Marker2D)"]
+    RoomB --> Gate["TalkToYukaFirst (Node)<br/>一周目开场门禁<br/>组 talk_to_yuka_first"]
     RoomB --> Door["RoomDoor (Area2D)"]
     RoomB --> Exit["LocationExit (Area2D)"]
+    GameScene --> Narration["OpeningNarration<br/>Dialogue/day1.dialogue"]
 
     GameScene --> GameState
     GameScene --> ScreenFade
@@ -200,10 +204,11 @@ Scripts/
 | `StartLocation` | `PackedScene` | 起点地点（教室） |
 | `MapScreen` | `MapScreen` | 地图面板 |
 | `LocationHost` | `Node2D` | 地点挂载点 |
+| `OpeningNarration` | `Resource` | 一周目开场剧情（`Dialogue/day1.dialogue`） |
 
 行为：
 
-- `_Ready()`：校验导出引用 → `GameState.SeedInitialUnlocks(MapConfig)` → 订阅 `GameState.LoopReset` 与 `MapScreen.LocationSelected` → 实例化起点地点 → 淡入。
+- `_Ready()`：校验导出引用 → `GameState.SeedInitialUnlocks(MapConfig)` → 订阅 `GameState.LoopReset` 与 `MapScreen.LocationSelected` → 实例化起点地点 → 淡入 → 一周目时播 `OpeningNarration` 的 `start` cue。
 - `EnterLocation(PackedScene, string locationId)`：守卫 → 淡出 → 卸载旧地点 → 实例化并挂到 `LocationHost` → 连接 `ExitRequested` → 隐藏地图 → 淡入。
 - `ReturnToMap()`：守卫 → 淡出 → 卸载地点 → 显示地图 → 淡入。
 - `OnLoopReset()`：守卫 → 淡出 → 卸载地点 → 清空每轮状态由 `GameState` 负责 → 实例化起点地点 → 淡入。
@@ -226,7 +231,7 @@ Scripts/
 2. 递归查找本场景内所有 `Room`，全部 `SetActive(false)`。
 3. 递归查找所有 `RoomDoor` / `LocationExit`，连接它们的 `Interacted` 信号（不依赖父子层级查找）。
 4. 校验 `LocationExit` **恰好一个**，0 个或多个都报错。
-5. `StartingRoom.SetActive(true)`，玩家放到该房间的 `DefaultSpawn`，套用相机限位。
+5. `StartingRoom.SetActive(true)`，玩家放到该房间的落点（一周目优先 `FirstLoopSpawn`，否则 `DefaultSpawn`，见 `ResolveStartSpawn`），套用相机限位。
 
 `TransitionToRoomAsync(RoomDoor door)`：**`GameState.AdvanceTime()`** → 淡出 → 当前房间 `SetActive(false)` → `door.TargetRoom.SetActive(true)` → 玩家放到 `door.TargetSpawn` → 套用 `TargetRoom.CameraBounds` → 淡入。全程走 `_transitioning` 守卫。
 
@@ -239,7 +244,10 @@ Scripts/
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `DefaultSpawn` | `Marker2D` | 玩家进入本房间的默认落点 |
+| `FirstLoopSpawn` | `Marker2D` | 一周目进入本房间的落点（如教室座位）；留空则沿用默认落点 |
 | `CameraBounds` | `Rect2I` | 相机限位，房间局部坐标 |
+
+> `LocationRoot` 只在**初始激活**时按周目选落点；`RoomDoor` 切换仍用门上的 `TargetSpawn`。
 
 `SetActive(bool active)`：
 
@@ -323,32 +331,20 @@ public partial class Interactable : Area2D
 挂在 `player.tscn` 下，持有一个居中的 `Area2D`（`InteractionRange`）收集重叠的 `interactable`。
 
 - 每帧在重叠集合里取「离玩家最近的一个」记为 `_current`。
-- `_UnhandledInput` 里按下 `interact`（F）且 `_current != null` → 调 `_current.Interact()`。
-- 场景切换、对话进行中禁用等情况**不做**——那是玩家系统的正式版。
+- `_UnhandledInput` 里按下 `interact`（F）且 `_current != null` → 依次尝试前置拦截，全部放行才调 `_current.Interact()`。
+- 前置拦截器：`OfficeKickOut.TryInterceptAny`（办公室赶人）、`TalkToYukaFirst.TryInterceptAny`（一周目开场门禁，见 §7.8）。拦截器自己播对白并返回 `true`，调用方随即 `SetInputAsHandled()` 并中止。
 
 ```csharp
-using Godot;
-using System.Linq;
-
-public partial class PlayerInteractor : Area2D
+public override void _UnhandledInput(InputEvent @event)
 {
-    private Interactable _current;
+    if (_player == null || _player.InputLocked) return;
+    if (_current == null || !@event.IsActionPressed("interact")) return;
 
-    public override void _PhysicsProcess(double delta)
-    {
-        _current = GetOverlappingAreas()
-            .OfType<Interactable>()
-            .OrderBy(a => a.GlobalPosition.DistanceSquaredTo(GlobalPosition))
-            .FirstOrDefault();
-    }
+    if (OfficeKickOut.TryInterceptAny(GetTree(), _current)) { GetViewport().SetInputAsHandled(); return; }
+    if (TalkToYukaFirst.TryInterceptAny(GetTree(), _current)) { GetViewport().SetInputAsHandled(); return; }
 
-    public override void _UnhandledInput(InputEvent @event)
-    {
-        if (_current == null) return;
-        if (!@event.IsActionPressed("interact")) return;
-        _current.Interact();
-        GetViewport().SetInputAsHandled();
-    }
+    _current.Interact();
+    GetViewport().SetInputAsHandled();
 }
 ```
 
@@ -425,7 +421,9 @@ public partial class MapConfig : Resource
 ```mermaid
 flowchart LR
     Input["玩家输入<br/>鼠标点击 / F 键"] --> Map["MapLocationButton.Pressed"]
-    Input --> Inter["Interactable.Interact()"]
+    Input --> Gate["TalkToYukaFirst / OfficeKickOut<br/>前置拦截"]
+    Gate -->|放行| Inter["Interactable.Interact()"]
+    Gate -->|拦下| Prompt["播提示对白 → 中止，不执行本体"]
 
     Map --> Sel["MapScreen.LocationSelected(id, scene)"]
     Sel --> Adv["GameState.AdvanceTime()"]
@@ -463,7 +461,7 @@ flowchart LR
 
 ```
 GameScene._Ready()
-├── 校验 MapConfig / StartLocation / MapScreen / LocationHost
+├── 校验 MapConfig / StartLocation / MapScreen / LocationHost / OpeningNarration
 ├── GameState.SeedInitialUnlocks(MapConfig)
 ├── GameState.LoopReset += OnLoopReset
 ├── MapScreen.LocationSelected += OnLocationSelected
@@ -472,8 +470,11 @@ GameScene._Ready()
 ├── 实例化 StartLocation → LocationHost
 ├── 连接 location.ExitRequested → ReturnToMap
 ├── MapScreen.Refresh()            // 先算好可见性，避免第一次开图闪一下
-└── ScreenFade.FadeInAsync()
+├── ScreenFade.FadeInAsync()
+└── IsFirstLoop() ? 播 OpeningNarration 的 start cue : （无）
 ```
+
+落点由 `LocationRoot._Ready` 决定：一周目（`LoopCount == 1`）用 `Room.FirstLoopSpawn`（教室座位），否则用 `DefaultSpawn`。
 
 ### 7.2 地图 → 地点
 
@@ -581,6 +582,42 @@ sequenceDiagram
         ├── 实例化 StartLocation
         └── ScreenFade.FadeInAsync()
 ```
+
+> 重载后 `LoopCount` 已 +1，因此落点回到 `DefaultSpawn`、开场旁白不再播、门禁自动失效。
+
+### 7.8 一周目开场（出生在座位 + 先找小优香）
+
+```mermaid
+sequenceDiagram
+    participant U as 玩家
+    participant G as GameScene
+    participant L as LocationRoot
+    participant S as GameState
+    participant D as DialogueBalloon
+    participant P as PlayerInteractor
+    participant T as TalkToYukaFirst
+    U->>G: 启动游戏
+    G->>L: 实例化 Classroom
+    L->>S: IsFirstLoop()？（LoopCount == 1）
+    L->>L: 取 Room_Classroom.FirstLoopSpawn（座位 700,520）
+    G->>D: ShowDialogueBalloon(day1.dialogue, "start")
+    D-->>U: 迷迷糊糊醒来的旁白（点名去找小优香）
+
+    U->>P: F 与物体交互（座位 / 门 / 山田）
+    P->>T: TryInterceptAny(tree, target)
+    T->>S: HasLoopFlag("yuka_briefed")？
+    alt 一周目且还没谈过
+        T->>D: ShowDialogueBalloon(day1.dialogue, "talk_first")
+        T-->>P: true（不执行目标本体）
+    else 已谈过 / 非一周目 / 目标就是小优香本人
+        T-->>P: false
+        P->>P: target.Interact()
+    end
+```
+
+- 门禁判定顺序：`_room.IsAncestorOf(target)`（只拦本房间）→ 目标是 `RequiredNpcId` 本人则放行 → `IsArmed()`（一周目且无 `yuka_briefed`）。
+- `yuka_briefed` 由 `yuka.dialogue` 的 `choose_read` / `choose_out` 分支写入，所以「谈过话」= 走完开场对话并做出选择。
+- 对话期间 `Player.InputLocked` 已挡重复触发，门禁不额外加布尔状态。
 
 ---
 

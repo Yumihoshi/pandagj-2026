@@ -1,5 +1,6 @@
 using Godot;
 using System.Collections.Generic;
+using DialogueManagerRuntime;
 
 /// <summary>手机：左上角入口、主菜单 balloon、文档列表 / 阅读 / 记事本面板。</summary>
 public partial class PhoneScreen : CanvasLayer
@@ -12,6 +13,12 @@ public partial class PhoneScreen : CanvasLayer
 
 	/// <summary>区分拖拽选择与单击的位移阈值（像素）。</summary>
 	private const float DocDragThreshold = 6.0f;
+
+	/// <summary>未读的重要的事的高亮色，与对话里的文档高亮同色。</summary>
+	private static readonly Color UnreadHighlightColor = Color.FromHtml("ffd866");
+
+	/// <summary>手机主菜单里「重要的事」选项的选项 id，对应 Dialogue/phone.dialogue 的 [ID:]。</summary>
+	private const string DocumentsOptionId = "open_documents";
 
 	private enum PhonePage
 	{
@@ -213,6 +220,7 @@ public partial class PhoneScreen : CanvasLayer
 		}
 
 		balloon.KeepPlayerInputLockedOnExit = true;
+		balloon.ResponseColorResolver = ResolveMenuResponseColor;
 		balloon.TreeExited += OnMenuBalloonExited;
 		AddChild(balloon);
 		_menuBalloon = balloon;
@@ -222,6 +230,20 @@ public partial class PhoneScreen : CanvasLayer
 			new Godot.Collections.Dictionary { { "phone", this } }
 		};
 		balloon.Start(PhoneDialogue, "start", states);
+	}
+
+	/// <summary>手机主菜单的选项配色：有还没读过的重要的事时，把「重要的事」选项标黄。</summary>
+	private Color? ResolveMenuResponseColor(DialogueResponse response)
+	{
+		if (response == null) return null;
+		if (response.StaticId != DocumentsOptionId) return null;
+		if (GameState.Instance == null)
+		{
+			GD.PushError("PhoneScreen.ResolveMenuResponseColor: GameState 未就绪");
+			return null;
+		}
+
+		return GameState.Instance.HasUnreadDocuments ? UnreadHighlightColor : null;
 	}
 
 	private void OnMenuBalloonExited()
@@ -331,6 +353,10 @@ public partial class PhoneScreen : CanvasLayer
 				Text = document.Title,
 				CustomMinimumSize = new Vector2(0f, 48f)
 			};
+			if (GameState.Instance != null && !GameState.Instance.IsDocumentRead(document.Id))
+			{
+				button.AddThemeColorOverride("font_color", UnreadHighlightColor);
+			}
 			button.Pressed += () => ShowDocumentRead(document);
 			DocList.AddChild(button);
 		}
@@ -345,6 +371,14 @@ public partial class PhoneScreen : CanvasLayer
 			GD.PushError("PhoneScreen.ShowDocumentRead: 文档为空");
 			return;
 		}
+		if (GameState.Instance == null)
+		{
+			GD.PushError("PhoneScreen.ShowDocumentRead: GameState 未就绪");
+			return;
+		}
+
+		// 打开正文即视为已读：菜单里的「重要的事」与列表标题的黄色高亮随之消失。
+		GameState.Instance.MarkDocumentRead(document.Id);
 
 		HideAllPages();
 		Overlay.Show();

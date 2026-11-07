@@ -12,6 +12,9 @@ public partial class DialogueBalloon : CanvasLayer
 	/// <summary>为 true 时 _ExitTree 不释放玩家输入锁；由 PhoneScreen 在会话结束时统一释放。</summary>
 	public bool KeepPlayerInputLockedOnExit { get; set; }
 
+	/// <summary>响应按钮的文字配色回调；返回 null 表示保持默认颜色。</summary>
+	public Func<DialogueResponse, Color?> ResponseColorResolver { get; set; }
+
 	[Export] public string SkipAction = "ui_cancel";
 
 	private Control balloon;
@@ -365,6 +368,7 @@ public partial class DialogueBalloon : CanvasLayer
 
 		responsesMenu.Hide();
 		responsesMenu.Responses = filtered;
+		ApplyResponseColors();
 
 		balloon.Show();
 		willHideBalloon = false;
@@ -448,6 +452,25 @@ public partial class DialogueBalloon : CanvasLayer
 			if (response.IsAllowed) return true;
 		}
 		return false;
+	}
+
+	/// <summary>把 ResponseColorResolver 给出的颜色应用到响应按钮上；没有回调时不改动。</summary>
+	private void ApplyResponseColors()
+	{
+		if (ResponseColorResolver == null) return;
+
+		foreach (Node child in responsesMenu.GetChildren())
+		{
+			if (child is not Button button) continue;
+			if (!button.HasMeta("response")) continue;
+
+			var response = (DialogueResponse)button.GetMeta("response");
+			Color? color = ResponseColorResolver(response);
+			if (color.HasValue)
+			{
+				button.AddThemeColorOverride("font_color", color.Value);
+			}
+		}
 	}
 
 	private void OnResponseSelected(DialogueResponse response)

@@ -58,6 +58,9 @@ public partial class GameState : Node
 	/// <summary>已获取文档 id，用于 O(1) 判重；跨循环保留。</summary>
 	private readonly HashSet<string> _acquiredDocumentIds = new();
 
+	/// <summary>已读过的文档 id；跨循环保留。</summary>
+	private readonly HashSet<string> _readDocumentIds = new();
+
 	/// <summary>已获取的文档，按获取顺序。</summary>
 	public IReadOnlyList<DocumentData> AcquiredDocuments => _acquiredDocuments;
 
@@ -224,6 +227,48 @@ public partial class GameState : Node
 			return false;
 		}
 		return _acquiredDocumentIds.Contains(documentId);
+	}
+
+	/// <summary>把一篇已获取的文档标记为已读；跨循环保留，重复标记无副作用。</summary>
+	public void MarkDocumentRead(string documentId)
+	{
+		if (string.IsNullOrEmpty(documentId))
+		{
+			GD.PushError("GameState.MarkDocumentRead: 文档 id 为空");
+			return;
+		}
+		if (!_acquiredDocumentIds.Contains(documentId))
+		{
+			GD.PushError($"GameState.MarkDocumentRead: 文档 {documentId} 还没有获取");
+			return;
+		}
+		if (!_readDocumentIds.Add(documentId)) return;
+
+		GD.Print($"[Doc] 已读 {documentId}");
+	}
+
+	/// <summary>某篇文档是否已经读过。</summary>
+	public bool IsDocumentRead(string documentId)
+	{
+		if (string.IsNullOrEmpty(documentId))
+		{
+			GD.PushError("GameState.IsDocumentRead: 文档 id 为空");
+			return false;
+		}
+		return _readDocumentIds.Contains(documentId);
+	}
+
+	/// <summary>手机里是否有已获取但还没读过的文档。</summary>
+	public bool HasUnreadDocuments
+	{
+		get
+		{
+			foreach (DocumentData document in _acquiredDocuments)
+			{
+				if (!_readDocumentIds.Contains(document.Id)) return true;
+			}
+			return false;
+		}
 	}
 
 	/// <summary>本轮某个 NPC 的状态覆盖；没有时返回空字符串。</summary>

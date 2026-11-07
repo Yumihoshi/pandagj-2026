@@ -70,6 +70,7 @@
 | **菜单 balloon** | `PhoneScreen` 在运行时实例化的 `DialogueBalloon`，只用于主菜单 |
 | **文档链接 / 高亮文本** | 对话正文里带 `[url=doc:<id>]` 与特殊颜色的子串 |
 | **已获取文档** | 玩家点击过文档链接、写入 `GameState` 的 `DocumentData` |
+| **已读文档** | 玩家在手机里打开过正文的文档；与已获取文档一样跨循环保留（见 `2026-11-07-phone-unread-highlight-design.md`） |
 | **文档列表** | 手机里列出所有已获取文档标题的面板 |
 | **文档阅读面板** | 显示单篇文档标题与正文的面板 |
 | **记事本** | 手机里的单个多行 `TextEdit` |
@@ -92,14 +93,14 @@ graph TD
     end
 
     subgraph PhoneRuntime["手机会话期间"]
-        MenuBalloon["DialogueBalloon（layer = 50）<br/>phone.dialogue 主菜单"]
+        MenuBalloon["DialogueBalloon（layer = 50）<br/>phone.dialogue 主菜单<br/>响应配色回调"]
         DocList["DocListPanel<br/>文档列表"]
         DocRead["DocReadPanel<br/>文档阅读"]
         Notebook["NotebookPanel<br/>记事本 TextEdit"]
     end
 
     subgraph Autoload["autoload"]
-        GameState["GameState<br/>文档注册 / 已获取列表 / 记事本文本"]
+        GameState["GameState<br/>文档注册 / 已获取列表 / 已读集合 / 记事本文本"]
         DM["DialogueManager"]
     end
 

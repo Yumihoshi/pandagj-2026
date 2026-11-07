@@ -5,6 +5,7 @@
 [ext_resource type="Resource" uid="uid://dm375lq5bf84h" path="res://Resources/MapConfig.tres" id="3_config"]
 [ext_resource type="PackedScene" uid="uid://47uoowgt8ywv" path="res://Scenes/Locations/Classroom.tscn" id="4_start"]
 [ext_resource type="PackedScene" uid="uid://uk6kxcc2r3rl" path="res://Scenes/Dialogue/DialogueBalloon.tscn" id="5_balloon"]
+[ext_resource type="Resource" uid="uid://cghj3c7q72yb2" path="res://Dialogue/day1.dialogue" id="11_day1"]
 [ext_resource type="Script" path="res://Scripts/UI/TimeLabel.cs" id="6_time"]
 [ext_resource type="Resource" path="res://Resources/Documents/DocumentLibrary.tres" id="7_docs"]
 [ext_resource type="PackedScene" path="res://Scenes/Phone/PhoneScreen.tscn" id="8_phone"]
@@ -35,6 +36,7 @@ MapScreen = NodePath("UILayer/MapScreen")
 LocationHost = NodePath("LocationHost")
 DialogueBalloonScene = ExtResource("5_balloon")
 DocumentLibrary = ExtResource("7_docs")
+OpeningNarration = ExtResource("11_day1")
 EndingOverlay = NodePath("EndingOverlay")
 LoopEndNotice = NodePath("LoopEndNotice")
 

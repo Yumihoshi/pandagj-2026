@@ -7,34 +7,26 @@
 [ext_resource type="PackedScene" uid="uid://cijlhrgfnh804" path="res://Scenes/player.tscn" id="7_player"]
 [ext_resource type="Script" uid="uid://c3su5mw6h1kl4" path="res://Scripts/Npc/Npc.cs" id="8_npc"]
 [ext_resource type="Script" uid="uid://bprjrbj35gc5c" path="res://Scripts/Npc/NpcStateFrame.cs" id="9_frame"]
-[ext_resource type="Resource" path="res://Dialogue/Npc/yuka.dialogue" id="10_yuka"]
-[ext_resource type="Resource" path="res://Dialogue/Npc/yamada.dialogue" id="11_yamada"]
-[ext_resource type="Resource" path="res://Dialogue/Npc/shinji.dialogue" id="12_shinji"]
-[ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/classroom.png" id="bg_classroom"]
-[ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/hallway.png" id="bg_hallway"]
-[ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/next_classroom.png" id="bg_next_classroom"]
-[ext_resource type="Texture2D" path="res://ArtRes/Characters/yuka.png" id="char_yuka"]
-[ext_resource type="Texture2D" path="res://ArtRes/Characters/yamada.png" id="char_yamada"]
-[ext_resource type="Texture2D" path="res://ArtRes/Characters/shinji.png" id="char_shinji"]
-[ext_resource type="Script" path="res://Scripts/Location/ClassroomDoor.cs" id="13_classroom_door"]
-[ext_resource type="Script" path="res://Scripts/Location/LabDoor.cs" id="14_lab_door"]
-[ext_resource type="Script" path="res://Scripts/Location/BookDesk.cs" id="15_desk"]
-[ext_resource type="Resource" path="res://Dialogue/Objects/classroom_desk.dialogue" id="16_desk_dialogue"]
-[ext_resource type="Resource" path="res://Dialogue/Objects/classroom_block.dialogue" id="17_block_dialogue"]
-[ext_resource type="Resource" path="res://Dialogue/Npc/shinji_lab.dialogue" id="18_shinji_lab"]
+[ext_resource type="Resource" uid="uid://buvi5cxeca7g5" path="res://Dialogue/Npc/yuka.dialogue" id="10_yuka"]
+[ext_resource type="Resource" uid="uid://duufovmswv1tm" path="res://Dialogue/Npc/yamada.dialogue" id="11_yamada"]
+[ext_resource type="Resource" uid="uid://cjpwxyxstbiev" path="res://Dialogue/Npc/shinji.dialogue" id="12_shinji"]
+[ext_resource type="Script" uid="uid://4uf0ehh31t3v" path="res://Scripts/Location/ClassroomDoor.cs" id="13_classroom_door"]
+[ext_resource type="Script" uid="uid://cirkmtd8d2gey" path="res://Scripts/Location/LabDoor.cs" id="14_lab_door"]
+[ext_resource type="Script" uid="uid://dadopw0n7x2mq" path="res://Scripts/Location/BookDesk.cs" id="15_desk"]
+[ext_resource type="Resource" uid="uid://ddvk8itddig33" path="res://Dialogue/Objects/classroom_desk.dialogue" id="16_desk_dialogue"]
+[ext_resource type="Resource" uid="uid://j8fxlyvgpgi6" path="res://Dialogue/Objects/classroom_block.dialogue" id="17_block_dialogue"]
+[ext_resource type="Resource" uid="uid://cwdq4hub4qur7" path="res://Dialogue/Npc/shinji_lab.dialogue" id="18_shinji_lab"]
+[ext_resource type="Script" uid="uid://buaoah2grvxuv" path="res://Scripts/Location/TalkToYukaFirst.cs" id="19_gate"]
+[ext_resource type="Resource" uid="uid://cghj3c7q72yb2" path="res://Dialogue/day1.dialogue" id="20_day1"]
+[ext_resource type="Texture2D" uid="uid://bxryq0uffuepx" path="res://ArtRes/Backgrounds/classroom.png" id="bg_classroom"]
+[ext_resource type="Texture2D" uid="uid://c7gb0dpx7dobd" path="res://ArtRes/Backgrounds/hallway.png" id="bg_hallway"]
+[ext_resource type="Texture2D" uid="uid://b4tx8uv1evqv3" path="res://ArtRes/Backgrounds/next_classroom.png" id="bg_next_classroom"]
+[ext_resource type="Texture2D" uid="uid://bg8raiix1hesn" path="res://ArtRes/Characters/shinji.png" id="char_shinji"]
+[ext_resource type="Texture2D" uid="uid://csxxahio6eje1" path="res://ArtRes/Characters/yamada.png" id="char_yamada"]
+[ext_resource type="Texture2D" uid="uid://dh00r67jb2iya" path="res://ArtRes/Characters/yuka.png" id="char_yuka"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
 size = Vector2(120, 200)
-
-[sub_resource type="Gradient" id="Gradient_yuka"]
-colors = PackedColorArray(0.95, 0.82, 0.72, 1, 0.72, 0.5, 0.4, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_yuka"]
-gradient = SubResource("Gradient_yuka")
-width = 120
-height = 200
-fill_from = Vector2(0.5, 0)
-fill_to = Vector2(0.5, 1)
 
 [sub_resource type="Resource" id="NpcStateFrame_yuka_0"]
 script = ExtResource("9_frame")
@@ -47,16 +39,6 @@ FromMinute = 45
 StateId = "absent"
 Visible = false
 
-[sub_resource type="Gradient" id="Gradient_yamada"]
-colors = PackedColorArray(0.92, 0.95, 1, 1, 0.35, 0.45, 0.72, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_yamada"]
-gradient = SubResource("Gradient_yamada")
-width = 120
-height = 200
-fill_from = Vector2(0.5, 0)
-fill_to = Vector2(0.5, 1)
-
 [sub_resource type="Resource" id="NpcStateFrame_yamada_0"]
 script = ExtResource("9_frame")
 StateId = "writing"
@@ -68,16 +50,6 @@ FromMinute = 30
 StateId = "absent"
 Visible = false
 
-[sub_resource type="Gradient" id="Gradient_shinji"]
-colors = PackedColorArray(0.38, 0.4, 0.44, 1, 0.12, 0.13, 0.16, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_shinji"]
-gradient = SubResource("Gradient_shinji")
-width = 120
-height = 200
-fill_from = Vector2(0.5, 0)
-fill_to = Vector2(0.5, 1)
-
 [sub_resource type="Resource" id="NpcStateFrame_shinji_0"]
 script = ExtResource("9_frame")
 StateId = "studying"
@@ -88,17 +60,18 @@ script = ExtResource("9_frame")
 StateId = "working"
 Texture = ExtResource("char_shinji")
 
-[node name="Classroom" type="Node2D" node_paths=PackedStringArray("StartingRoom", "PlayerNode")]
+[node name="Classroom" type="Node2D" unique_id=143605120 node_paths=PackedStringArray("StartingRoom", "PlayerNode")]
 script = ExtResource("1_root")
 StartingRoom = NodePath("Room_Classroom")
 PlayerNode = NodePath("Player")
 
-[node name="Room_Classroom" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+[node name="Room_Classroom" type="Node2D" parent="." unique_id=1383618968 node_paths=PackedStringArray("DefaultSpawn", "FirstLoopSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
+FirstLoopSpawn = NodePath("FirstLoopSpawn")
 CameraBounds = Rect2i(0, 0, 1920, 600)
 
-[node name="Bg" type="TextureRect" parent="Room_Classroom"]
+[node name="Bg" type="TextureRect" parent="Room_Classroom" unique_id=1023548115]
 offset_right = 1920.0
 offset_bottom = 600.0
 mouse_filter = 2
@@ -106,35 +79,43 @@ texture = ExtResource("bg_classroom")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DefaultSpawn" type="Marker2D" parent="Room_Classroom"]
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Classroom" unique_id=867716794]
 position = Vector2(350, 520)
 
-[node name="DoorToHallway" type="Area2D" parent="Room_Classroom" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="FirstLoopSpawn" type="Marker2D" parent="Room_Classroom" unique_id=1900000011]
+position = Vector2(700, 520)
+
+[node name="TalkToYukaFirst" type="Node" parent="Room_Classroom" unique_id=1900000012]
+script = ExtResource("19_gate")
+RequiredNpcId = "classroom.yuka"
+PromptDialogue = ExtResource("20_day1")
+
+[node name="DoorToHallway" type="Area2D" parent="Room_Classroom" unique_id=838777572 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(1800, 500)
 script = ExtResource("13_classroom_door")
+BlockingDialogue = ExtResource("17_block_dialogue")
 TargetRoom = NodePath("../../Room_Hallway")
 TargetSpawn = NodePath("../../Room_Hallway/DefaultSpawn")
 TravelMinutes = 15
-BlockingDialogue = ExtResource("17_block_dialogue")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/DoorToHallway"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/DoorToHallway" unique_id=2131311619]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Classroom/DoorToHallway"]
+[node name="Placeholder" type="ColorRect" parent="Room_Classroom/DoorToHallway" unique_id=1912226257]
 offset_left = -40.0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = 100.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Classroom/DoorToHallway"]
+[node name="Caption" type="Label" parent="Room_Classroom/DoorToHallway" unique_id=1014184792]
 offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "门（走廊）"
 
-[node name="Npc_Yuka" type="Area2D" parent="Room_Classroom" node_paths=PackedStringArray("Sprite")]
+[node name="Npc_Yuka" type="Area2D" parent="Room_Classroom" unique_id=524856633 node_paths=PackedStringArray("Sprite")]
 position = Vector2(500, 520)
 script = ExtResource("8_npc")
 NpcId = "classroom.yuka"
@@ -142,23 +123,23 @@ Dialogue = ExtResource("10_yuka")
 Frames = [SubResource("NpcStateFrame_yuka_0"), SubResource("NpcStateFrame_yuka_1")]
 Sprite = NodePath("Sprite")
 
-[node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Yuka"]
+[node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Yuka" unique_id=1643002108]
 position = Vector2(0, -100)
 scale = Vector2(0.65, 0.65)
 texture = ExtResource("char_yuka")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Yuka"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Yuka" unique_id=858694304]
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_Classroom/Npc_Yuka"]
+[node name="DebugLabel" type="Label" parent="Room_Classroom/Npc_Yuka" unique_id=2070325950]
 offset_left = -80.0
 offset_top = 10.0
 offset_right = 80.0
 offset_bottom = 50.0
 text = "classroom.yuka:talking"
 
-[node name="Npc_Yamada" type="Area2D" parent="Room_Classroom" node_paths=PackedStringArray("Sprite")]
+[node name="Npc_Yamada" type="Area2D" parent="Room_Classroom" unique_id=2034364836 node_paths=PackedStringArray("Sprite")]
 position = Vector2(1600, 520)
 script = ExtResource("8_npc")
 NpcId = "classroom.yamada"
@@ -166,50 +147,50 @@ Dialogue = ExtResource("11_yamada")
 Frames = [SubResource("NpcStateFrame_yamada_0"), SubResource("NpcStateFrame_yamada_1")]
 Sprite = NodePath("Sprite")
 
-[node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Yamada"]
+[node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Yamada" unique_id=1516865725]
 position = Vector2(0, -100)
 scale = Vector2(0.65, 0.65)
 texture = ExtResource("char_yamada")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Yamada"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Yamada" unique_id=1930865771]
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_Classroom/Npc_Yamada"]
+[node name="DebugLabel" type="Label" parent="Room_Classroom/Npc_Yamada" unique_id=748636972]
 offset_left = -80.0
 offset_top = 10.0
 offset_right = 80.0
 offset_bottom = 50.0
 text = "classroom.yamada:writing"
 
-[node name="BookDesk" type="Area2D" parent="Room_Classroom"]
+[node name="BookDesk" type="Area2D" parent="Room_Classroom" unique_id=1602488800]
 position = Vector2(760, 520)
 script = ExtResource("15_desk")
 Dialogue = ExtResource("16_desk_dialogue")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/BookDesk"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/BookDesk" unique_id=150705150]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Classroom/BookDesk"]
+[node name="Placeholder" type="ColorRect" parent="Room_Classroom/BookDesk" unique_id=1680321374]
 offset_left = -40.0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = 100.0
 color = Color(0.55, 0.45, 0.62, 1)
 
-[node name="Caption" type="Label" parent="Room_Classroom/BookDesk"]
+[node name="Caption" type="Label" parent="Room_Classroom/BookDesk" unique_id=763323604]
 offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "座位"
 
-[node name="Room_Hallway" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+[node name="Room_Hallway" type="Node2D" parent="." unique_id=200861915 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 CameraBounds = Rect2i(0, 0, 1920, 600)
 
-[node name="Bg" type="TextureRect" parent="Room_Hallway"]
+[node name="Bg" type="TextureRect" parent="Room_Hallway" unique_id=1916759305]
 offset_right = 1920.0
 offset_bottom = 600.0
 mouse_filter = 2
@@ -217,79 +198,79 @@ texture = ExtResource("bg_hallway")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DefaultSpawn" type="Marker2D" parent="Room_Hallway"]
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Hallway" unique_id=974879950]
 position = Vector2(350, 520)
 
-[node name="ExitToMap" type="Area2D" parent="Room_Hallway"]
+[node name="ExitToMap" type="Area2D" parent="Room_Hallway" unique_id=1947565227]
 position = Vector2(80, 500)
 script = ExtResource("4_exit")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Hallway/ExitToMap"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Hallway/ExitToMap" unique_id=319266404]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Hallway/ExitToMap"]
+[node name="Placeholder" type="ColorRect" parent="Room_Hallway/ExitToMap" unique_id=1819771153]
 offset_left = -40.0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = 100.0
 color = Color(0.2, 0.5, 0.8, 1)
 
-[node name="Caption" type="Label" parent="Room_Hallway/ExitToMap"]
+[node name="Caption" type="Label" parent="Room_Hallway/ExitToMap" unique_id=1726028903]
 offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "出口"
 
-[node name="DoorToClassroom" type="Area2D" parent="Room_Hallway" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToClassroom" type="Area2D" parent="Room_Hallway" unique_id=1765778004 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(500, 500)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Classroom")
 TargetSpawn = NodePath("../../Room_Classroom/DefaultSpawn")
 TravelMinutes = 15
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToClassroom"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToClassroom" unique_id=663163850]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToClassroom"]
+[node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToClassroom" unique_id=283509472]
 offset_left = -40.0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = 100.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Hallway/DoorToClassroom"]
+[node name="Caption" type="Label" parent="Room_Hallway/DoorToClassroom" unique_id=1996532491]
 offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "门（教室）"
 
-[node name="DoorToNextClassroom" type="Area2D" parent="Room_Hallway" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToNextClassroom" type="Area2D" parent="Room_Hallway" unique_id=631183918 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(1500, 500)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_NextClassroom")
 TargetSpawn = NodePath("../../Room_NextClassroom/DefaultSpawn")
 TravelMinutes = 20
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToNextClassroom"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToNextClassroom" unique_id=1711712136]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToNextClassroom"]
+[node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToNextClassroom" unique_id=184472800]
 offset_left = -40.0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = 100.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Hallway/DoorToNextClassroom"]
+[node name="Caption" type="Label" parent="Room_Hallway/DoorToNextClassroom" unique_id=1353465013]
 offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "门（隔壁班）"
 
-[node name="DoorToLab" type="Area2D" parent="Room_Hallway" node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
+[node name="DoorToLab" type="Area2D" parent="Room_Hallway" unique_id=947754456 node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
 position = Vector2(1200, 500)
 script = ExtResource("14_lab_door")
 TargetRoom = NodePath("../../Room_ChemLab")
@@ -298,36 +279,36 @@ RequiredClueId = "chem_lab_unlocked"
 TravelMinutes = 0
 LockedHint = NodePath("LockedHint")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToLab"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToLab" unique_id=1599966807]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToLab"]
+[node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToLab" unique_id=601999748]
 offset_left = -40.0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = 100.0
 color = Color(0.35, 0.5, 0.45, 1)
 
-[node name="Caption" type="Label" parent="Room_Hallway/DoorToLab"]
+[node name="Caption" type="Label" parent="Room_Hallway/DoorToLab" unique_id=1141619842]
 offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "门（化学实验室）"
 
-[node name="LockedHint" type="Label" parent="Room_Hallway/DoorToLab"]
+[node name="LockedHint" type="Label" parent="Room_Hallway/DoorToLab" unique_id=1023667460]
 offset_left = -90.0
 offset_top = -150.0
 offset_right = 90.0
 offset_bottom = -110.0
 text = "（化学实验室还进不去）"
 
-[node name="Room_NextClassroom" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+[node name="Room_NextClassroom" type="Node2D" parent="." unique_id=873235996 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 CameraBounds = Rect2i(0, 0, 1920, 600)
 
-[node name="Bg" type="TextureRect" parent="Room_NextClassroom"]
+[node name="Bg" type="TextureRect" parent="Room_NextClassroom" unique_id=26889650]
 offset_right = 1920.0
 offset_bottom = 600.0
 mouse_filter = 2
@@ -335,65 +316,65 @@ texture = ExtResource("bg_next_classroom")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DefaultSpawn" type="Marker2D" parent="Room_NextClassroom"]
+[node name="DefaultSpawn" type="Marker2D" parent="Room_NextClassroom" unique_id=2004668448]
 position = Vector2(350, 520)
 
-[node name="DoorToHallway" type="Area2D" parent="Room_NextClassroom" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToHallway" type="Area2D" parent="Room_NextClassroom" unique_id=1311367547 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(80, 500)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Hallway")
 TargetSpawn = NodePath("../../Room_Hallway/DefaultSpawn")
 TravelMinutes = 20
 
-[node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/DoorToHallway"]
+[node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/DoorToHallway" unique_id=738305875]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_NextClassroom/DoorToHallway"]
+[node name="Placeholder" type="ColorRect" parent="Room_NextClassroom/DoorToHallway" unique_id=1349440404]
 offset_left = -40.0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = 100.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_NextClassroom/DoorToHallway"]
+[node name="Caption" type="Label" parent="Room_NextClassroom/DoorToHallway" unique_id=616660094]
 offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "门（走廊）"
 
-[node name="Npc_Shinji" type="Area2D" parent="Room_NextClassroom" node_paths=PackedStringArray("Sprite")]
+[node name="Npc_Shinji" type="Area2D" parent="Room_NextClassroom" unique_id=1874883470 node_paths=PackedStringArray("Sprite")]
 position = Vector2(1200, 520)
 script = ExtResource("8_npc")
 NpcId = "classroom.shinji"
 Dialogue = ExtResource("12_shinji")
-PresentLoopFlag = "shinji_analyzing"
-VisibleWhenFlagSet = false
 Frames = [SubResource("NpcStateFrame_shinji_0")]
 Sprite = NodePath("Sprite")
+PresentLoopFlag = "shinji_analyzing"
+VisibleWhenFlagSet = false
 
-[node name="Sprite" type="Sprite2D" parent="Room_NextClassroom/Npc_Shinji"]
+[node name="Sprite" type="Sprite2D" parent="Room_NextClassroom/Npc_Shinji" unique_id=1022534276]
 position = Vector2(0, -100)
 scale = Vector2(0.65, 0.65)
 texture = ExtResource("char_shinji")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/Npc_Shinji"]
+[node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/Npc_Shinji" unique_id=1177071336]
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_NextClassroom/Npc_Shinji"]
+[node name="DebugLabel" type="Label" parent="Room_NextClassroom/Npc_Shinji" unique_id=1814813677]
 offset_left = -80.0
 offset_top = 10.0
 offset_right = 80.0
 offset_bottom = 50.0
 text = "classroom.shinji:studying"
 
-[node name="Room_ChemLab" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+[node name="Room_ChemLab" type="Node2D" parent="." unique_id=216933270 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 CameraBounds = Rect2i(0, 0, 1920, 600)
 
-[node name="Bg" type="TextureRect" parent="Room_ChemLab"]
+[node name="Bg" type="TextureRect" parent="Room_ChemLab" unique_id=1962173172]
 offset_right = 1920.0
 offset_bottom = 600.0
 mouse_filter = 2
@@ -401,58 +382,57 @@ texture = ExtResource("bg_next_classroom")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DefaultSpawn" type="Marker2D" parent="Room_ChemLab"]
+[node name="DefaultSpawn" type="Marker2D" parent="Room_ChemLab" unique_id=214575002]
 position = Vector2(350, 520)
 
-[node name="DoorToHallway" type="Area2D" parent="Room_ChemLab" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToHallway" type="Area2D" parent="Room_ChemLab" unique_id=515881135 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(80, 500)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Hallway")
 TargetSpawn = NodePath("../../Room_Hallway/DefaultSpawn")
 TravelMinutes = 0
 
-[node name="Shape" type="CollisionShape2D" parent="Room_ChemLab/DoorToHallway"]
+[node name="Shape" type="CollisionShape2D" parent="Room_ChemLab/DoorToHallway" unique_id=175668393]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_ChemLab/DoorToHallway"]
+[node name="Placeholder" type="ColorRect" parent="Room_ChemLab/DoorToHallway" unique_id=1565959013]
 offset_left = -40.0
 offset_top = -100.0
 offset_right = 40.0
 offset_bottom = 100.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_ChemLab/DoorToHallway"]
+[node name="Caption" type="Label" parent="Room_ChemLab/DoorToHallway" unique_id=1066929131]
 offset_left = -40.0
 offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "门（走廊）"
 
-[node name="Npc_ShinjiLab" type="Area2D" parent="Room_ChemLab" node_paths=PackedStringArray("Sprite")]
+[node name="Npc_ShinjiLab" type="Area2D" parent="Room_ChemLab" unique_id=1492828083 node_paths=PackedStringArray("Sprite")]
 position = Vector2(1200, 520)
 script = ExtResource("8_npc")
 NpcId = "classroom.shinji_lab"
 Dialogue = ExtResource("18_shinji_lab")
-PresentLoopFlag = "shinji_analyzing"
-VisibleWhenFlagSet = true
 Frames = [SubResource("NpcStateFrame_shinji_lab_0")]
 Sprite = NodePath("Sprite")
+PresentLoopFlag = "shinji_analyzing"
 
-[node name="Sprite" type="Sprite2D" parent="Room_ChemLab/Npc_ShinjiLab"]
+[node name="Sprite" type="Sprite2D" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=437091534]
 position = Vector2(0, -100)
 scale = Vector2(0.65, 0.65)
 texture = ExtResource("char_shinji")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_ChemLab/Npc_ShinjiLab"]
+[node name="Shape" type="CollisionShape2D" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=251163847]
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_ChemLab/Npc_ShinjiLab"]
+[node name="DebugLabel" type="Label" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=1814933870]
 offset_left = -80.0
 offset_top = 10.0
 offset_right = 80.0
 offset_bottom = 50.0
 text = "classroom.shinji_lab:working"
 
-[node name="Player" parent="." instance=ExtResource("7_player")]
+[node name="Player" parent="." unique_id=763594586 instance=ExtResource("7_player")]
 position = Vector2(350, 520)

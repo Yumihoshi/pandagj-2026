@@ -64,8 +64,19 @@ public partial class LocationRoot : Node2D
 
 		exits[0].Interacted += () => EmitSignal(SignalName.ExitRequested);
 
-		ActivateRoom(StartingRoom, StartingRoom.DefaultSpawn);
-		GD.Print($"[Map] 地点 {Name} 就绪，当前房间 {StartingRoom.Name}");
+		Marker2D spawn = ResolveStartSpawn(StartingRoom);
+		ActivateRoom(StartingRoom, spawn);
+		GD.Print($"[Map] 地点 {Name} 就绪，当前房间 {StartingRoom.Name}，落点 {spawn?.GlobalPosition}");
+	}
+
+	/// <summary>初始落点：一周目用房间配的 FirstLoopSpawn（如座位），其它周目用 DefaultSpawn。</summary>
+	private static Marker2D ResolveStartSpawn(Room room)
+	{
+		if (GameState.Instance != null && GameState.Instance.IsFirstLoop() && room.FirstLoopSpawn != null)
+		{
+			return room.FirstLoopSpawn;
+		}
+		return room.DefaultSpawn;
 	}
 
 	private async Task TransitionToRoomAsync(RoomDoor door)

@@ -29,11 +29,11 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Resources/MapConfig.tres`：初始解锁地点 `["classroom"]`。
 - `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Npc/`（`Npc`、`NpcStateFrame`）、`Dialogue/`（`DialogueBalloon`）、`Documents/`（`DocumentData`、`DocumentLibrary`）、`Phone/`（`PhoneScreen`）、`Audio/`（`AudioManager`）、`UI/`（`TimeLabel`）、`Demo/`（`PickupItem`、`ReadDocument`，当前未挂场景）。
 - `Scenes/UI/`：`PasswordPanel.tscn`（办公桌密码面板，`CanvasLayer.layer=60`）、`EndingOverlay.tscn`（真结局黑屏 / The End，layer 46）、`LoopEndNotice.tscn`（17:30 闪白，layer 90）。
-- `Scripts/Location/` 新增 `ClassroomDoor`（一周目教室门阻挡）、`LabDoor`（实验室两小时等待）、`OfficeDoor`（办公室 13:30-16:59 开放，14:00-14:59 山田午睡）、`BookDesk`（看书）、`KeyedDrawer`（抽屉钥匙）、`BombInteractable`（炸药）、`WaterPipe`（接水）、`WaitSpot`（等到 17:00）。
+- `Scripts/Location/` 新增 `ClassroomDoor`（一周目教室门阻挡）、`LabDoor`（实验室两小时等待）、`OfficeDoor`（办公室 13:30-16:59 开放，14:00-14:59 山田午睡）、`BookDesk`（看书）、`KeyedDrawer`（抽屉钥匙）、`BombInteractable`（炸药）、`WaterPipe`（接水）、`WaitSpot`（等到 17:00）、`TalkToYukaFirst`（一周目开场门禁）。
 - `Scripts/UI/` 新增 `PasswordPanel`、`EndingOverlay`、`LoopEndNotice`。
 - `Dialogue/Objects/`：座位 / 教室门阻挡 / 炸药 / 水管 / 等待点 / 办公室赶人 / 井盖 7 个物体剧本；`Dialogue/Npc/shinji_lab.dialogue` 与 `yamada_underground.dialogue` 是两个新 NPC 剧本。
 - `Scenes/Locations/Classroom.tscn` 新增化学实验室房间 `Room_ChemLab`（背景暂用 `next_classroom.png`）。
-- `Dialogue/day1.dialogue`：占位剧本，**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
+- `Dialogue/day1.dialogue`：一周目开场剧本，两个 cue —— `~ start`（在座位上迷迷糊糊醒来、点名要去找小优香）与 `~ talk_first`（门禁提示）。**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
 - `Dialogue/Npc/student.dialogue`：旧「同学」demo 剧本，当前未挂到任何 NPC；`yuka.dialogue` / `yamada.dialogue` / `shinji.dialogue` 是三个 NPC 的正式剧本；`shinji_lab.dialogue` / `yamada_underground.dialogue` 是新 NPC 剧本；`Dialogue/Objects/` 是物体剧本。
 - `Scenes/Phone/PhoneScreen.tscn`：手机（`CanvasLayer.layer=45`）：左上角「手机」按钮、遮罩、重要的事列表 / 阅读 / 记事本面板。
 - `Resources/Documents/`：`DocumentLibrary.tres` 注册表与 8 篇正式条目（`shinji_schedule` / `yuka_secret` / `equipment_room` / `yamada_tracks` / `laptop_password` / `chem_lab` / `bomb_weakness` / `yamada_notebook`）；`club_notice.tres` 保留但不注册。
@@ -60,6 +60,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 重要的事（玩家面向术语，原「文档」）：`DocumentData`（Id/Title/Body）+ `DocumentLibrary` 注册表放在 `Resources/Documents/`，启动时 `GameScene` 调 `GameState.SeedDocuments` 灌入；对话正文用 `[url=doc:<id>][color=#ffd866]文字[/color][/url]` 标可获取的重要的事，点击只获取、不推进对话；已获取的跨循环保留。已获取的链接由 `DialogueBalloon` 自动换成灰色 `#8a8a8a`（同句收集后立即重绘），再点只提示「已在手机里」；带高亮的选项一律加 `[#repeatable]`，漏点后可再进同一分支补收。
 - 文档正文里的线索链接：`DocumentData.Body` 里 `[url=clue:<id>][color=#ffd866]文字[/color][/url]` 是可点击解锁线索的链接，`PhoneScreen.DocReadBody` 的 `MetaClicked` 处理 `clue:` 前缀 → `GameState.AddClue`，点击后由 `ApplyClueStyle` 把内层颜色换灰 `#8a8a8a`（与对话里 `[url=doc:]` 的收集是两个独立机制）。
 - 记事本：`GameState.NotebookText` 单个字符串，每次 `TextEdit.TextChanged` 直接写入；跨循环保留但不落盘。
+- 未读高亮：手机主菜单的「重要的事」选项文字（`phone.dialogue` 的 `[ID:open_documents]`）与「重要的事」列表里未读的文档标题，在有未读文档时标黄 `#ffd866`；在手机里点进正文即视为已读（`GameState.MarkDocumentRead`），已读集合 `_readDocumentIds` 跨循环保留。通用 balloon 只提供 `DialogueBalloon.ResponseColorResolver`（`Func<DialogueResponse, Color?>`）回调，颜色规则写在 `PhoneScreen`，不改 addon 目录。
 - `DialogueBalloon.KeepPlayerInputLockedOnExit`：手机会话期间保持玩家输入锁，由 `PhoneScreen` 在关闭 / 循环重置时统一释放。
 - `Player.InputLocked` 从 `true` 变回 `false` 时会 `Input.ActionRelease("move_left"/"move_right")`：在记事本这类 `TextEdit` 里打字时字母键同样写进动作状态，输入法会吞掉 key-up，不清掉的话解锁后玩家会自己一直往一个方向走。
 - `PhoneScreen` 的面板容器 `Center` 必须 `mouse_filter = IGNORE`，否则全屏容器会抢走面板鼠标事件。
@@ -88,6 +89,14 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `DialogueBalloon`：`Start` 置 `Player.InputLocked=true`，`_ExitTree` 复位；选项过滤顺序是 `hide_if` → 已选灰显 → `IsAllowed` / `show_if`；一次性选项必须写 `[ID:]`，`[#repeatable]` 不记录；过滤后没有任何可选选项时报错并关闭。
 - `LocationRoot` 在 `_Ready` 里检查同地点 `NpcId` 重复；`NpcId` 跨地点唯一靠 `地点.名字` 命名约定。
 - 当前 NPC：`classroom.yuka`（教室 13:00-13:44）、`classroom.yamada`（教室讲台 13:00-13:29）、`classroom.shinji`（隔壁班 整个下午；`shinji_analyzing` 时离场）、`classroom.shinji_lab`（化学实验室；`shinji_analyzing` 时在场）、`playground.yuka`（操场 13:45 起）、`playground.yamada`（地下空间 17:00 起）、`administration.yamada`（办公室 13:30-16:59，14:00-14:59 睡觉）。
+
+## 一周目开场（出生在座位 + 先找小优香）
+
+- 出生点：`Room.FirstLoopSpawn`（可选 `Marker2D`）；`LocationRoot._Ready` 的 `ResolveStartSpawn` 在 `GameState.IsFirstLoop()`（`LoopCount == 1`）时优先用它，否则用 `DefaultSpawn`。教室 `Room_Classroom/FirstLoopSpawn` = `(700, 520)`（座位上，紧挨 `BookDesk`）。
+- 开场剧情：`GameScene.OpeningNarration`（`Dialogue/day1.dialogue`）在淡入后仅一周目播 `start` cue；对话期间 `Player.InputLocked` 锁住移动与交互。
+- 门禁：`TalkToYukaFirst`（`Scripts/Location/TalkToYukaFirst.cs`）挂在 `Room_Classroom` 下，加入组 `talk_to_yuka_first`；`PlayerInteractor` 在 `_current.Interact()` 之前调 `TryInterceptAny`（排在 `OfficeKickOut` 之后）。判定顺序：本房间（`_room.IsAncestorOf`）→ 目标不是 `RequiredNpcId` 本人 → `IsArmed()`（一周目且无 `yuka_briefed`）；命中就播 `day1.dialogue` 的 `talk_first` 并中止本体逻辑。
+- `yuka_briefed` 由 `yuka.dialogue` 的 `choose_read` / `choose_out` 写入，所以「谈过话」= 走完开场对话并做出选择；`ResetLoop` 后 `LoopCount` 变 2，门禁自动失效、落点回到 `DefaultSpawn`、开场旁白不再播。
+- 设计说明见 `docs/superpowers/specs/2026-11-06-map-scene-system-design.md` §7.8。
 
 ## 正式主流程
 

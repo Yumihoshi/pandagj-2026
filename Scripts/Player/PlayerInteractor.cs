@@ -35,6 +35,12 @@ public partial class PlayerInteractor : Area2D
 			return;
 		}
 
+		if (TalkToYukaFirst.TryInterceptAny(GetTree(), _current))
+		{
+			GetViewport().SetInputAsHandled();
+			return;
+		}
+
 		_current.Interact();
 		GetViewport().SetInputAsHandled();
 	}

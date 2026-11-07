@@ -23,6 +23,9 @@ public partial class GameScene : Node2D
 	/// <summary>全部可收集文档的注册表。</summary>
 	[Export] public DocumentLibrary DocumentLibrary { get; set; }
 
+	/// <summary>一周目开场的剧情文本：玩家在起点地点醒来时播放。</summary>
+	[Export] public Resource OpeningNarration { get; set; }
+
 	/// <summary>结局黑屏。</summary>
 	[Export] public EndingOverlay EndingOverlay { get; set; }
 
@@ -76,6 +79,24 @@ public partial class GameScene : Node2D
 		Fade.SetOpaque();
 		await LoadLocationAsync(StartLocation);
 		await Fade.FadeInAsync();
+
+		ShowOpeningNarration();
+	}
+
+	/// <summary>一周目开场：播放「刚醒来」的剧情文本。</summary>
+	private void ShowOpeningNarration()
+	{
+		if (OpeningNarration == null)
+		{
+			GD.PushError("GameScene: OpeningNarration 为空");
+			return;
+		}
+		if (!GameState.Instance.IsFirstLoop()) return;
+
+		if (DialogueManager.ShowDialogueBalloon(OpeningNarration, "start") == null)
+		{
+			GD.PushError("GameScene: 开场剧情 ShowDialogueBalloon 返回空");
+		}
 	}
 
 	/// <summary>MapConfig 里写的地点 id 必须在地图按钮中存在，否则是配置写错。</summary>

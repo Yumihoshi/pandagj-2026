@@ -12,6 +12,9 @@ public partial class RoomDoor : Interactable
 	/// <summary>开门所需道具 id；留空表示不锁。</summary>
 	[Export] public string RequiredKeyId { get; set; } = string.Empty;
 
+	/// <summary>穿过这扇门消耗的分钟数；0 表示免费。</summary>
+	[Export] public int TravelMinutes { get; set; } = 5;
+
 	/// <summary>锁着时闪一下的占位提示。</summary>
 	[Export] public Label LockedHint { get; set; }
 
@@ -30,6 +33,10 @@ public partial class RoomDoor : Interactable
 		if (!string.IsNullOrEmpty(RequiredKeyId) && LockedHint == null)
 		{
 			GD.PushError($"RoomDoor {Name}: 已上锁但 LockedHint 为空");
+		}
+		if (TravelMinutes < 0)
+		{
+			GD.PushError($"RoomDoor {Name}: TravelMinutes 不能为负");
 		}
 
 		if (LockedHint == null) return;

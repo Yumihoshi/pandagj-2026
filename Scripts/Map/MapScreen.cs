@@ -7,15 +7,23 @@ public partial class MapScreen : Control
 	/// <summary>地图上全部地点按钮，显式配置避免按名字查找。</summary>
 	[Export] public MapLocationButton[] Buttons { get; set; } = System.Array.Empty<MapLocationButton>();
 
-	[Signal] public delegate void LocationSelectedEventHandler(string locationId, PackedScene locationScene);
+	[Signal] public delegate void LocationSelectedEventHandler(
+		string locationId,
+		PackedScene locationScene,
+		int travelMinutes);
 
 	public override void _Ready()
 	{
 		Validate();
 		foreach (MapLocationButton button in Buttons)
 		{
+			if (button == null) continue;
 			MapLocationButton captured = button;
-			captured.Pressed += () => EmitSignal(SignalName.LocationSelected, captured.LocationId, captured.LocationScene);
+			captured.Pressed += () => EmitSignal(
+				SignalName.LocationSelected,
+				captured.LocationId,
+				captured.LocationScene,
+				captured.TravelMinutes);
 		}
 		Visible = false;
 	}
@@ -26,6 +34,7 @@ public partial class MapScreen : Control
 		int visibleCount = 0;
 		foreach (MapLocationButton button in Buttons)
 		{
+			if (button == null) continue;
 			button.Visible = GameState.Instance.IsLocationUnlocked(button.LocationId);
 			if (button.Visible) visibleCount++;
 		}
@@ -70,6 +79,10 @@ public partial class MapScreen : Control
 			if (button.LocationScene == null)
 			{
 				GD.PushError($"MapScreen: 按钮 {button.Name} 的 LocationScene 为空");
+			}
+			if (button.TravelMinutes < 0)
+			{
+				GD.PushError($"MapScreen: 按钮 {button.Name} 的 TravelMinutes 不能为负");
 			}
 			if (!string.IsNullOrEmpty(button.LocationId) && !seen.Add(button.LocationId))
 			{

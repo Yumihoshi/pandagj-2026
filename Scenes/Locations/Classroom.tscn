@@ -31,7 +31,7 @@ Texture = SubResource("GradientTexture2D_stand")
 
 [sub_resource type="Resource" id="NpcStateFrame_1"]
 script = ExtResource("9_frame")
-FromStep = 1
+FromMinute = 30
 StateId = "standing"
 Texture = SubResource("GradientTexture2D_stand")
 
@@ -47,19 +47,19 @@ fill_to = Vector2(0.5, 1)
 
 [sub_resource type="Resource" id="NpcStateFrame_2"]
 script = ExtResource("9_frame")
-FromStep = 2
+FromMinute = 60
 StateId = "sleeping"
 Texture = SubResource("GradientTexture2D_sleep")
 
 [sub_resource type="Resource" id="NpcStateFrame_3"]
 script = ExtResource("9_frame")
-FromStep = 3
+FromMinute = 120
 StateId = "sleeping"
 Texture = SubResource("GradientTexture2D_sleep")
 
 [sub_resource type="Resource" id="NpcStateFrame_4"]
 script = ExtResource("9_frame")
-FromStep = 4
+FromMinute = 240
 StateId = "absent"
 Visible = false
 

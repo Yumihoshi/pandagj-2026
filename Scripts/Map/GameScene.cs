@@ -2,7 +2,7 @@ using Godot;
 using System.Threading.Tasks;
 using DialogueManagerRuntime;
 
-/// <summary>常驻根场景：装载/卸载地点、显隐地图、衔接过渡、响应循环重置。</summary>
+/// <summary>常驻根场景：装载/卸载地点、显隐地图、衔接过渡、响应循环重置与终末。</summary>
 public partial class GameScene : Node2D
 {
 	/// <summary>初始解锁配置。</summary>
@@ -22,6 +22,7 @@ public partial class GameScene : Node2D
 
 	private LocationRoot _currentLocation;
 	private bool _transitioning;
+	private bool _loopEnding;
 
 	private ScreenFade Fade => GetNode<ScreenFade>("/root/ScreenFade");
 
@@ -31,6 +32,11 @@ public partial class GameScene : Node2D
 			|| LocationHost == null || DialogueBalloonScene == null)
 		{
 			GD.PushError("GameScene: 有导出引用为空，停止启动");
+			return;
+		}
+		if (GameState.Instance == null)
+		{
+			GD.PushError("GameScene: GameState 未就绪，停止启动");
 			return;
 		}
 		if (!ValidateConfigIds()) return;
@@ -49,21 +55,13 @@ public partial class GameScene : Node2D
 
 		GameState.Instance.SeedInitialUnlocks(MapConfig);
 		GameState.Instance.LoopReset += OnLoopReset;
+		GameState.Instance.LoopEndReached += OnLoopEndReached;
 		MapScreen.LocationSelected += OnLocationSelected;
 		MapScreen.HideMap();
 
 		Fade.SetOpaque();
 		await LoadLocationAsync(StartLocation);
 		await Fade.FadeInAsync();
-	}
-
-	// 临时调试入口：时间系统接入后删掉，循环重置改由时间系统触发。
-	public override void _UnhandledInput(InputEvent @event)
-	{
-		if (!@event.IsActionPressed("debug_reset_loop")) return;
-
-		GameState.Instance.ResetLoop();
-		GetViewport().SetInputAsHandled();
 	}
 
 	/// <summary>MapConfig 里写的地点 id 必须在地图按钮中存在，否则是配置写错。</summary>
@@ -90,19 +88,41 @@ public partial class GameScene : Node2D
 		return true;
 	}
 
-	private void OnLocationSelected(string locationId, PackedScene scene)
+	private void OnLocationSelected(string locationId, PackedScene scene, int travelMinutes)
 	{
-		if (_transitioning) return;
+		if (_transitioning || _loopEnding) return;
+		if (GameState.Instance.AdvanceTime(travelMinutes)) return;
 
-		GameState.Instance.AdvanceTime();
 		_ = EnterLocationAsync(locationId, scene);
+	}
+
+	private async void OnLoopEndReached()
+	{
+		if (_loopEnding) return;
+		_loopEnding = true;
+
+		if (_currentLocation != null)
+		{
+			_currentLocation.ProcessMode = ProcessModeEnum.Disabled;
+		}
+
+		GD.Print("[Loop] 17:30 爆炸");
+		await ToSignal(GetTree().CreateTimer(0.6), Timer.SignalName.Timeout);
+
+		GameState.Instance.ResetLoop();
+		_loopEnding = false;
 	}
 
 	private async void OnLoopReset()
 	{
-		if (_transitioning) return;
+		if (_transitioning)
+		{
+			GD.PushError("GameScene: LoopReset 在过渡中到达，重置未重载场景");
+			return;
+		}
 
 		_transitioning = true;
+		MapScreen.HideMap();
 		await Fade.FadeOutAsync();
 		UnloadLocation();
 		await LoadLocationAsync(StartLocation);
@@ -157,7 +177,7 @@ public partial class GameScene : Node2D
 
 	private async void OnExitRequested()
 	{
-		if (_transitioning) return;
+		if (_transitioning || _loopEnding) return;
 
 		_transitioning = true;
 		await Fade.FadeOutAsync();

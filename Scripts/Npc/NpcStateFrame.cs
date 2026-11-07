@@ -1,11 +1,11 @@
 using Godot;
 
-/// <summary>NPC 在某一步之后的状态：立绘、是否在场。</summary>
+/// <summary>NPC 在循环内某分钟之后的状态：立绘、是否在场。</summary>
 [GlobalClass]
 public partial class NpcStateFrame : Resource
 {
-	/// <summary>从第几步开始生效。</summary>
-	[Export] public int FromStep { get; set; }
+	/// <summary>从循环内第几分钟开始生效；0 = 13:00，45 = 13:45。</summary>
+	[Export] public int FromMinute { get; set; }
 
 	/// <summary>状态 id，例如 "standing" / "sleeping" / "absent"。</summary>
 	[Export] public string StateId { get; set; } = "";

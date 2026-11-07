@@ -21,7 +21,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 当前结构
 
-- `Scenes/Root/GameScene.tscn`：主场景（`run/main_scene` 已指向它），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset`。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`。
+- `Scenes/Root/GameScene.tscn`：主场景（`run/main_scene` 已指向它），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset` 与 `LoopEndReached`（17:30 终末）。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`。
 - `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D` + `InteractionRange`（`PlayerInteractor`）；贴图暂用 `icon.svg`。
 - `Scenes/Map/MapScreen.tscn`：地图 UI 面板（占位色块 + 地点按钮 `BtnClassroom` / `BtnPlayground`）。
 - `Scenes/Locations/`：`Classroom.tscn`（两房间：教室 / 器材室；教室里有 demo NPC「同学」）、`Playground.tscn`（demo 占位地点）。
@@ -44,9 +44,19 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `.dialogue` 语法：标签写 `[#repeatable]` / `[#show_if=true]` / `[#hide_if=true]`（裸 `#tag` 不解析）；`~ cue` 下的台词/`do`/`=> END` 顶格，只有 `if/else` 分支缩进；选项正文不要加方括号，一次性选项必须写 `[ID:]`。
 - `project.godot` 的 POT 生成已登记 `res://Dialogue/day1.dialogue` 与 `res://Dialogue/Npc/student.dialogue`；新增/改名剧本时同步 `[internationalization] locale/translations_pot_files`。
 
+## 时间系统
+
+- `GameState.ElapsedMinutes`：循环内分钟，0 = 13:00，270 = 17:30；`AdvanceTime(int minutes)` 返回 `true` 表示本次推进触发或已处于终末，**调用方必须随即中止后续动作**（不装载场景 / 不切房间）。
+- 默认扣时点：地图旅行（`MapLocationButton.TravelMinutes`，默认 30）与房间切换（`RoomDoor.TravelMinutes`，默认 5；正式门按剧本填 15/20/5/10）。从地点退回地图不扣时；对话 / 调查 / 拾取不扣时。
+- `TimeChanged(int elapsedMinutes)` 驱动 NPC 换帧；`NpcStateFrame.FromMinute` 是循环内分钟（0 = 13:00，45 = 13:45）。
+- 17:30 发 `LoopEndReached`；`GameScene` 等 0.6 秒后调 `ResetLoop()`。`ResetLoop()` 把时间归零、`LoopCount++`、清背包与本轮 NPC 状态 / 已选选项；`UnlockedLocations` / `Clues` 保留。
+- `LoopCount` 只在当前进程内有效，只用于一周目固定锁；二 / 三 / 四周目是预期打法，不是系统强制的状态机，不按周目数限制地点 / 道具 / 对话 / 路线。
+- 工程只保留 `move_left` / `move_right` / `interact` 三个输入；循环重置只由 17:30 终末触发。
+- 17:30 终末后到重载完成之间，当前地点 ProcessMode 置 Disabled，冻结移动与交互；从地图触发终末时没有地点可冻结，地图按钮由 _loopEnding 挡住。
+
 ## NPC 系统
 
-- `Npc`（`Area2D`，继承 `Interactable`）：导出 `NpcId`（建议 `地点.名字`）、`Dialogue`、`NpcStateFrame[] Frames`、`Sprite`。`Frames` 首帧 `FromStep=0`、严格递增；`Visible=true` 的帧必须有 `Texture`；同一 `StateId` 跨帧贴图必须一致。
+- `Npc`（`Area2D`，继承 `Interactable`）：导出 `NpcId`（建议 `地点.名字`）、`Dialogue`、`NpcStateFrame[] Frames`、`Sprite`。`Frames` 首帧 `FromMinute=0`（0=13:00）、严格递增；`Visible=true` 的帧必须有 `Texture`；同一 `StateId` 跨帧贴图必须一致。
 - 有效状态：优先取 `GameState.GetNpcLoopState(NpcId)`（本轮覆盖，`SetLoopState` 写入），没有覆盖时取当前时间帧的 `StateId`；**在场只看当前时间帧的 `Visible`，覆盖不改在场**。
 - 在场用 `Area2D.Monitorable` 切换，不要用 `CollisionShape2D.Disabled`（`Room.SetActive` 会覆盖它）。
 - `Npc` 给 `.dialogue` 暴露 `IsPresent()` / `IsInState("...")` / `SetLoopState("...")`；状态动作必须在帧表里有对应状态。
@@ -71,7 +81,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
   - 无头跑主场景并立刻退出：`& $godot --headless --path . --quit-after 120`（需先在项目设置指定主场景）
 - `*.csproj` / `*.sln` 已存在且可编译；它们由 Godot 首次创建 C# 脚本时生成。
 - `.vscode/settings.json`：已把 `.godot/`、`*.import`、`*.uid`、`*.translation`、`bin/`、`obj/`、`mono_crash.*.json` 从资源管理器与搜索中排除，并跳过 `.godot`/`bin`/`obj` 的文件监听；仅隐藏，不影响 git 与 Godot。
-- godot MCP 已配在 `opencode.json`（`mcp.servers.godot`，源码构建于 `%USERPROFILE%\.local\share\godot-mcp`，`GODOT_PATH` 指向上面的 exe）。优先用它做反馈闭环：`launch_editor`、`run_project` + `get_debug_output`、`stop_project`；项目相关工具要传绝对 `projectPath`。场景用 `create_scene` / `add_node` / `save_scene` 生成，手写 `.tscn` 容易破坏资源引用。
+- godot MCP 已配在 `opencode.json`（`mcp.servers.godot`，源码构建于 `%USERPROFILE%\.local\share\godot-mcp`）；`GODOT_PATH` 当前指向 `F:\SteamLibrary\steamapps\common\Godot Engine\godot.windows.opt.tools.64.exe`（同为 4.7.2 mono），命令行验证用上面的 D: 副本。优先用它做反馈闭环：`launch_editor`、`run_project` + `get_debug_output`、`stop_project`；项目相关工具要传绝对 `projectPath`。场景用 `create_scene` / `add_node` / `save_scene` 生成，手写 `.tscn` 容易破坏资源引用。
 
 ## 开发约定（48h jam）
 
@@ -81,4 +91,5 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 对白/分支走 Dialogue Manager 的 `.dialogue`，C# 只负责状态、场景与交互；不要把对白硬编码进脚本。
 - 空引用、资源缺失要显式报错，禁止用默认值或空实现静默兜底。
 - git 只读：禁止 commit / branch / checkout / push（用户明确要求）。
+- 外部修改 `project.godot`（输入映射 / autoload / POT / 渲染设置等）前，先确认没有 Godot 编辑器进程打开本项目；编辑器保存时会把内存中的 `ProjectSettings` 整文件写回，覆盖外部改动。
 - 这是 2D 项目，但 `project.godot` 仍是 Forward Plus + d3d12、拉伸 `canvas_items/expand`；没有明确需要不要改渲染设置。

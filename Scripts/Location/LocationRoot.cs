@@ -71,9 +71,14 @@ public partial class LocationRoot : Node2D
 	private async Task TransitionToRoomAsync(RoomDoor door)
 	{
 		if (_transitioning) return;
-		_transitioning = true;
+		if (GameState.Instance == null)
+		{
+			GD.PushError($"LocationRoot {Name}: GameState 未就绪");
+			return;
+		}
+		if (GameState.Instance.AdvanceTime(door.TravelMinutes)) return;
 
-		GameState.Instance.AdvanceTime();
+		_transitioning = true;
 
 		ScreenFade fade = GetNode<ScreenFade>("/root/ScreenFade");
 		await fade.FadeOutAsync();

@@ -11,7 +11,7 @@ public partial class Npc : Interactable
 	/// <summary>这个 NPC 的对话资源。</summary>
 	[Export] public Resource Dialogue { get; set; }
 
-	/// <summary>按 FromStep 升序的状态帧；首帧必须是 0。</summary>
+	/// <summary>按 FromMinute 升序的状态帧；首帧必须是 0（13:00）。</summary>
 	[Export] public NpcStateFrame[] Frames { get; set; } = System.Array.Empty<NpcStateFrame>();
 
 	/// <summary>立绘槽。</summary>
@@ -34,14 +34,14 @@ public partial class Npc : Interactable
 		if (!_valid) return;
 
 		RefreshVisual();
-		GameState.Instance.TimeAdvanced += OnTimeAdvanced;
+		GameState.Instance.TimeChanged += OnTimeChanged;
 	}
 
 	public override void _ExitTree()
 	{
 		if (GodotObject.IsInstanceValid(GameState.Instance))
 		{
-			GameState.Instance.TimeAdvanced -= OnTimeAdvanced;
+			GameState.Instance.TimeChanged -= OnTimeChanged;
 		}
 	}
 
@@ -107,7 +107,7 @@ public partial class Npc : Interactable
 		}
 	}
 
-	private void OnTimeAdvanced(int timeStep)
+	private void OnTimeChanged(int elapsedMinutes)
 	{
 		RefreshVisual();
 	}
@@ -116,10 +116,10 @@ public partial class Npc : Interactable
 	{
 		if (!_valid) return;
 
-		NpcStateFrame frame = ResolveFrame(GameState.Instance.TimeStep);
+		NpcStateFrame frame = ResolveFrame(GameState.Instance.ElapsedMinutes);
 		if (frame == null)
 		{
-			GD.PushError($"Npc {NpcId}: TimeStep {GameState.Instance.TimeStep} 没有可用帧");
+			GD.PushError($"Npc {NpcId}: {GameState.Instance.GetClockText()} 没有可用帧");
 			return;
 		}
 
@@ -141,18 +141,18 @@ public partial class Npc : Interactable
 		Label debugLabel = GetNodeOrNull<Label>("DebugLabel");
 		if (debugLabel != null)
 		{
-			debugLabel.Text = $"{NpcId}:{_effectiveStateId}";
+			debugLabel.Text = $"{NpcId}:{_effectiveStateId} @{GameState.Instance.GetClockText()}";
 		}
 
-		GD.Print($"[Npc] {NpcId} TimeStep={GameState.Instance.TimeStep} state={_effectiveStateId} present={_present}");
+		GD.Print($"[Npc] {NpcId} {GameState.Instance.GetClockText()} state={_effectiveStateId} present={_present}");
 	}
 
-	private NpcStateFrame ResolveFrame(int timeStep)
+	private NpcStateFrame ResolveFrame(int elapsedMinutes)
 	{
 		NpcStateFrame result = null;
 		foreach (NpcStateFrame frame in Frames)
 		{
-			if (frame.FromStep <= timeStep) result = frame;
+			if (frame.FromMinute <= elapsedMinutes) result = frame;
 			else break;
 		}
 		return result;
@@ -200,13 +200,13 @@ public partial class Npc : Interactable
 			GD.PushError($"Npc {NpcId}: 首帧为空");
 			valid = false;
 		}
-		else if (Frames[0].FromStep != 0)
+		else if (Frames[0].FromMinute != 0)
 		{
-			GD.PushError($"Npc {NpcId}: 首帧 FromStep 必须是 0");
+			GD.PushError($"Npc {NpcId}: 首帧 FromMinute 必须是 0");
 			valid = false;
 		}
 
-		int previousStep = -1;
+		int previousMinute = -1;
 		var textures = new Dictionary<string, Texture2D>();
 		foreach (NpcStateFrame frame in Frames)
 		{
@@ -216,16 +216,16 @@ public partial class Npc : Interactable
 				valid = false;
 				continue;
 			}
-			if (frame.FromStep <= previousStep)
+			if (frame.FromMinute <= previousMinute)
 			{
-				GD.PushError($"Npc {NpcId}: FromStep 必须严格递增（重复或倒退：{frame.FromStep}）");
+				GD.PushError($"Npc {NpcId}: FromMinute 必须严格递增（重复或倒退：{frame.FromMinute}）");
 				valid = false;
 			}
-			previousStep = frame.FromStep;
+			previousMinute = frame.FromMinute;
 
 			if (string.IsNullOrEmpty(frame.StateId))
 			{
-				GD.PushError($"Npc {NpcId}: 第 {frame.FromStep} 帧 StateId 为空");
+				GD.PushError($"Npc {NpcId}: 第 {frame.FromMinute} 分钟帧 StateId 为空");
 				valid = false;
 				continue;
 			}

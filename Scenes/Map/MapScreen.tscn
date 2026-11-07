@@ -51,6 +51,7 @@ text = "教室"
 script = ExtResource("2_button")
 LocationId = "classroom"
 LocationScene = ExtResource("3_classroom")
+TravelMinutes = 30
 
 [node name="BtnPlayground" type="Button" parent="LocationButtons"]
 layout_mode = 0
@@ -62,3 +63,4 @@ text = "操场"
 script = ExtResource("2_button")
 LocationId = "playground"
 LocationScene = ExtResource("4_playground")
+TravelMinutes = 30

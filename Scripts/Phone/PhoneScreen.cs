@@ -168,6 +168,44 @@ public partial class PhoneScreen : CanvasLayer
 		_pendingPage = PhonePage.Notebook;
 	}
 
+	/// <summary>循环开始提示：自动打开手机，把提示追加到记事本并直接显示记事本面板。</summary>
+	public void OpenNotebookWithNote(string note)
+	{
+		if (GameState.Instance == null)
+		{
+			GD.PushError("PhoneScreen.OpenNotebookWithNote: GameState 未就绪");
+			return;
+		}
+		if (string.IsNullOrEmpty(note))
+		{
+			GD.PushError("PhoneScreen.OpenNotebookWithNote: 提示文本为空");
+			return;
+		}
+
+		if (!_open)
+		{
+			Open();
+			if (!_open) return;
+		}
+
+		AppendNotebookNote(note);
+		ShowNotebook();
+	}
+
+	/// <summary>把一条提示追加到记事本末尾；记事本里已有同样内容时不重复追加。</summary>
+	private static void AppendNotebookNote(string note)
+	{
+		string text = GameState.Instance.NotebookText;
+		if (string.IsNullOrEmpty(text))
+		{
+			GameState.Instance.NotebookText = note;
+		}
+		else if (!text.Contains(note))
+		{
+			GameState.Instance.NotebookText = text + "\n" + note;
+		}
+	}
+
 	private void Open()
 	{
 		if (_open) return;

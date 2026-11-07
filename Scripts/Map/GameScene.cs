@@ -23,14 +23,20 @@ public partial class GameScene : Node2D
 	/// <summary>全部可收集文档的注册表。</summary>
 	[Export] public DocumentLibrary DocumentLibrary { get; set; }
 
-	/// <summary>一周目开场的剧情文本：玩家在起点地点醒来时播放。</summary>
+	/// <summary>开场 / 循环开始的剧情文本：一周目播 start，二周目起播 phone_vibrate。</summary>
 	[Export] public Resource OpeningNarration { get; set; }
+
+	/// <summary>手机 UI：循环开始提示要自动打开它的记事本。</summary>
+	[Export] public PhoneScreen Phone { get; set; }
 
 	/// <summary>结局黑屏。</summary>
 	[Export] public EndingOverlay EndingOverlay { get; set; }
 
 	/// <summary>17:30 终末提示。</summary>
 	[Export] public LoopEndNotice LoopEndNotice { get; set; }
+
+	/// <summary>循环开始时自动写入记事本的提示。</summary>
+	private const string LoopStartNote = "下午出去转转吧";
 
 	private LocationRoot _currentLocation;
 	private bool _transitioning;
@@ -42,7 +48,8 @@ public partial class GameScene : Node2D
 	{
 		if (MapConfig == null || StartLocation == null || MapScreen == null
 			|| LocationHost == null || DialogueBalloonScene == null
-			|| DocumentLibrary == null || EndingOverlay == null || LoopEndNotice == null)
+			|| DocumentLibrary == null || EndingOverlay == null || LoopEndNotice == null
+			|| Phone == null)
 		{
 			GD.PushError("GameScene: 有导出引用为空，停止启动");
 			return;
@@ -80,23 +87,43 @@ public partial class GameScene : Node2D
 		await LoadLocationAsync(StartLocation);
 		await Fade.FadeInAsync();
 
-		ShowOpeningNarration();
+		ShowLoopStartIntro();
 	}
 
-	/// <summary>一周目开场：播放「刚醒来」的剧情文本。</summary>
-	private void ShowOpeningNarration()
+	/// <summary>循环开始：一周目播开场旁白；二周目起播手机震动并自动打开记事本。</summary>
+	private async void ShowLoopStartIntro()
 	{
 		if (OpeningNarration == null)
 		{
 			GD.PushError("GameScene: OpeningNarration 为空");
 			return;
 		}
-		if (!GameState.Instance.IsFirstLoop()) return;
 
-		if (DialogueManager.ShowDialogueBalloon(OpeningNarration, "start") == null)
+		if (GameState.Instance.IsFirstLoop())
 		{
-			GD.PushError("GameScene: 开场剧情 ShowDialogueBalloon 返回空");
+			if (DialogueManager.ShowDialogueBalloon(OpeningNarration, "start") == null)
+			{
+				GD.PushError("GameScene: 开场剧情 ShowDialogueBalloon 返回空");
+			}
+			return;
 		}
+
+		Node balloon = DialogueManager.ShowDialogueBalloon(OpeningNarration, "phone_vibrate");
+		if (balloon == null)
+		{
+			GD.PushError("GameScene: 手机震动剧情 ShowDialogueBalloon 返回空");
+			return;
+		}
+		await ToSignal(balloon, Node.SignalName.TreeExited);
+
+		if (!IsInsideTree()) return;
+
+		if (Phone == null)
+		{
+			GD.PushError("GameScene: Phone 为空，无法打开记事本");
+			return;
+		}
+		Phone.OpenNotebookWithNote(LoopStartNote);
 	}
 
 	/// <summary>MapConfig 里写的地点 id 必须在地图按钮中存在，否则是配置写错。</summary>
@@ -203,6 +230,7 @@ public partial class GameScene : Node2D
 		await Fade.FadeInAsync();
 		_transitioning = false;
 		GD.Print("[Loop] 已回到起点地点");
+		ShowLoopStartIntro();
 	}
 
 	private async Task EnterLocationAsync(string locationId, PackedScene scene)

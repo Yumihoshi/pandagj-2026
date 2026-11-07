@@ -33,7 +33,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Scripts/UI/` 新增 `PasswordPanel`、`EndingOverlay`、`LoopEndNotice`。
 - `Dialogue/Objects/`：座位 / 教室门阻挡 / 炸药 / 水管 / 等待点 / 办公室赶人 / 井盖 7 个物体剧本；`Dialogue/Npc/shinji_lab.dialogue` 与 `yamada_underground.dialogue` 是两个新 NPC 剧本。
 - `Scenes/Locations/Classroom.tscn` 新增化学实验室房间 `Room_ChemLab`（背景暂用 `next_classroom.png`）。
-- `Dialogue/day1.dialogue`：一周目开场剧本，两个 cue —— `~ start`（在座位上迷迷糊糊醒来、点名要去找小优香）与 `~ talk_first`（门禁提示）。**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
+- `Dialogue/day1.dialogue`：开场 / 循环开始剧本，三个 cue —— `~ start`（一周目在座位上迷迷糊糊醒来、点名要去找小优香）、`~ phone_vibrate`（二周目起循环开始的「手机在震动。」）与 `~ talk_first`（门禁提示）。**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
 - `Dialogue/Npc/student.dialogue`：旧「同学」demo 剧本，当前未挂到任何 NPC；`yuka.dialogue` / `yamada.dialogue` / `shinji.dialogue` 是三个 NPC 的正式剧本；`shinji_lab.dialogue` / `yamada_underground.dialogue` 是新 NPC 剧本；`Dialogue/Objects/` 是物体剧本。
 - `Scenes/Phone/PhoneScreen.tscn`：手机（`CanvasLayer.layer=45`）：左上角「手机」按钮、遮罩、重要的事列表 / 阅读 / 记事本面板。
 - `Resources/Documents/`：`DocumentLibrary.tres` 注册表与 8 篇正式条目（`shinji_schedule` / `yuka_secret` / `equipment_room` / `yamada_tracks` / `laptop_password` / `chem_lab` / `bomb_weakness` / `yamada_notebook`）；`club_notice.tres` 保留但不注册。
@@ -92,10 +92,10 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 一周目开场（出生在座位 + 先找小优香）
 
-- 出生点：`Room.FirstLoopSpawn`（可选 `Marker2D`）；`LocationRoot._Ready` 的 `ResolveStartSpawn` 在 `GameState.IsFirstLoop()`（`LoopCount == 1`）时优先用它，否则用 `DefaultSpawn`。教室 `Room_Classroom/FirstLoopSpawn` = `(700, 520)`（座位上，紧挨 `BookDesk`）。
-- 开场剧情：`GameScene.OpeningNarration`（`Dialogue/day1.dialogue`）在淡入后仅一周目播 `start` cue；对话期间 `Player.InputLocked` 锁住移动与交互。
+- 出生点：`Room.FirstLoopSpawn`（可选 `Marker2D`）；`LocationRoot._Ready` 的 `ResolveStartSpawn` 始终优先用它，留空时用 `DefaultSpawn`。教室 `Room_Classroom/FirstLoopSpawn` = `(700, 520)`（座位上，紧挨 `BookDesk`），所以每周目循环重置后都在座位上醒来。
+- 开场剧情：`GameScene.OpeningNarration`（`Dialogue/day1.dialogue`）在淡入后按周目播放：一周目播 `start` cue；二周目起播 `phone_vibrate` cue（「手机在震动。」），对话结束后 `PhoneScreen.OpenNotebookWithNote` 自动打开手机记事本并把「下午出去转转吧」追加到 `GameState.NotebookText`（已有这句则不重复，否则换行追加）。`GameScene._Ready` 与 `OnLoopReset` 末尾都调 `ShowLoopStartIntro`；对话与手机界面期间 `Player.InputLocked` 锁住移动与交互。
 - 门禁：`TalkToYukaFirst`（`Scripts/Location/TalkToYukaFirst.cs`）挂在 `Room_Classroom` 下，加入组 `talk_to_yuka_first`；`PlayerInteractor` 在 `_current.Interact()` 之前调 `TryInterceptAny`（排在 `OfficeKickOut` 之后）。判定顺序：本房间（`_room.IsAncestorOf`）→ 目标不是 `RequiredNpcId` 本人 → `IsArmed()`（一周目且无 `yuka_briefed`）；命中就播 `day1.dialogue` 的 `talk_first` 并中止本体逻辑。
-- `yuka_briefed` 由 `yuka.dialogue` 的 `choose_read` / `choose_out` 写入，所以「谈过话」= 走完开场对话并做出选择；`ResetLoop` 后 `LoopCount` 变 2，门禁自动失效、落点回到 `DefaultSpawn`、开场旁白不再播。
+- `yuka_briefed` 由 `yuka.dialogue` 的 `choose_read` / `choose_out` 写入，所以「谈过话」= 走完开场对话并做出选择；`ResetLoop` 后 `LoopCount` 变 2，门禁自动失效、开场旁白不再播。
 - 设计说明见 `docs/superpowers/specs/2026-11-06-map-scene-system-design.md` §7.8。
 
 ## 正式主流程

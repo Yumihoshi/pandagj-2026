@@ -231,7 +231,7 @@ Scripts/
 2. 递归查找本场景内所有 `Room`，全部 `SetActive(false)`。
 3. 递归查找所有 `RoomDoor` / `LocationExit`，连接它们的 `Interacted` 信号（不依赖父子层级查找）。
 4. 校验 `LocationExit` **恰好一个**，0 个或多个都报错。
-5. `StartingRoom.SetActive(true)`，玩家放到该房间的落点（一周目优先 `FirstLoopSpawn`，否则 `DefaultSpawn`，见 `ResolveStartSpawn`），套用相机限位。
+5. `StartingRoom.SetActive(true)`，玩家放到该房间的落点（优先 `FirstLoopSpawn`，留空时 `DefaultSpawn`，见 `ResolveStartSpawn`），套用相机限位。
 
 `TransitionToRoomAsync(RoomDoor door)`：**`GameState.AdvanceTime()`** → 淡出 → 当前房间 `SetActive(false)` → `door.TargetRoom.SetActive(true)` → 玩家放到 `door.TargetSpawn` → 套用 `TargetRoom.CameraBounds` → 淡入。全程走 `_transitioning` 守卫。
 
@@ -244,10 +244,10 @@ Scripts/
 | 字段 | 类型 | 说明 |
 |---|---|---|
 | `DefaultSpawn` | `Marker2D` | 玩家进入本房间的默认落点 |
-| `FirstLoopSpawn` | `Marker2D` | 一周目进入本房间的落点（如教室座位）；留空则沿用默认落点 |
+| `FirstLoopSpawn` | `Marker2D` | 地点载入时的起始落点（如教室座位）；留空则沿用默认落点 |
 | `CameraBounds` | `Rect2I` | 相机限位，房间局部坐标 |
 
-> `LocationRoot` 只在**初始激活**时按周目选落点；`RoomDoor` 切换仍用门上的 `TargetSpawn`。
+> `LocationRoot` 只在**初始激活**时选落点；`RoomDoor` 切换仍用门上的 `TargetSpawn`。
 
 `SetActive(bool active)`：
 
@@ -471,10 +471,10 @@ GameScene._Ready()
 ├── 连接 location.ExitRequested → ReturnToMap
 ├── MapScreen.Refresh()            // 先算好可见性，避免第一次开图闪一下
 ├── ScreenFade.FadeInAsync()
-└── IsFirstLoop() ? 播 OpeningNarration 的 start cue : （无）
+└── IsFirstLoop() ? 播 OpeningNarration 的 start cue : 播 phone_vibrate cue 并自动打开记事本
 ```
 
-落点由 `LocationRoot._Ready` 决定：一周目（`LoopCount == 1`）用 `Room.FirstLoopSpawn`（教室座位），否则用 `DefaultSpawn`。
+落点由 `LocationRoot._Ready` 决定：优先用 `Room.FirstLoopSpawn`（教室座位），留空时用 `DefaultSpawn`。
 
 ### 7.2 地图 → 地点
 
@@ -598,10 +598,9 @@ sequenceDiagram
     participant T as TalkToYukaFirst
     U->>G: 启动游戏
     G->>L: 实例化 Classroom
-    L->>S: IsFirstLoop()？（LoopCount == 1）
     L->>L: 取 Room_Classroom.FirstLoopSpawn（座位 700,520）
-    G->>D: ShowDialogueBalloon(day1.dialogue, "start")
-    D-->>U: 迷迷糊糊醒来的旁白（点名去找小优香）
+    G->>D: ShowDialogueBalloon(day1.dialogue, 一周目 start / 二周目起 phone_vibrate)
+    D-->>U: 一周目：醒来的旁白；二周目起：手机在震动
 
     U->>P: F 与物体交互（座位 / 门 / 山田）
     P->>T: TryInterceptAny(tree, target)

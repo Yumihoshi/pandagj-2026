@@ -29,7 +29,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Resources/MapConfig.tres`：初始解锁地点 `["classroom"]`。
 - `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Npc/`（`Npc`、`NpcStateFrame`）、`Dialogue/`（`DialogueBalloon`）、`Documents/`（`DocumentData`、`DocumentLibrary`）、`Phone/`（`PhoneScreen`）、`Audio/`（`AudioManager`）、`UI/`（`TimeLabel`、`ButtonTextColors`、`InteractPrompt`）、`Demo/`（`PickupItem`、`ReadDocument`，当前未挂场景）。
 - `Scenes/UI/`：`PasswordPanel.tscn`（办公桌密码面板，`CanvasLayer.layer=60`）、`EndingOverlay.tscn`（真结局黑屏 / The End，layer 46）、`LoopEndNotice.tscn`（17:30 闪白，layer 90）、`InteractPrompt.tscn`（头顶「F 交互」提示）。
-- 交互提示：`InteractPrompt`（`Node2D`，`top_level` + `z_index=100`，深色药丸 + 金色键帽 `F` + 白字「交互」）作为 Player 子节点挂在 `player.tscn`，被每处地点实例化的 Player 自动带出；`PlayerInteractor` 每帧用 `_current` 的碰撞形状全局包围盒上边中点定位（目标切换时重算头部坐标），`InputLocked` 或没有可交互目标时淡出隐藏；目标没有可用 `CollisionShape2D` 时 `PushError` 并退到 `FallbackHeadOffset`。
+- 交互提示：`InteractPrompt`（`Node2D`，`top_level` + `z_index=100`，深色药丸 + 金色键帽 `F` + 白字「交互」）作为 Player 子节点挂在 `player.tscn`，被每处地点实例化的 Player 自动带出；`PlayerInteractor` 定位优先级：目标下有 `NameLabel` 时贴到该标签上边中点（避免压住头顶名字），否则用 `_current` 的碰撞形状全局包围盒上边中点（目标切换时重算头部坐标），`InputLocked` 或没有可交互目标时淡出隐藏；目标没有可用 `CollisionShape2D` 时 `PushError` 并退到 `FallbackHeadOffset`。
 - `Scripts/Location/` 新增 `ClassroomDoor`（一周目教室门阻挡）、`LabDoor`（实验室两小时等待）、`OfficeDoor`（办公室 13:30-16:59 开放，14:00-14:59 山田午睡）、`BookDesk`（看书）、`KeyedDrawer`（抽屉钥匙）、`BombInteractable`（炸药，湿完自动跳 17:00 进终局）、`WaterPipe`（接水）、`TalkToYukaFirst`（一周目开场门禁）。
 - `Scripts/UI/` 新增 `PasswordPanel`、`EndingOverlay`、`LoopEndNotice`。
 - `Dialogue/Objects/`：座位 / 教室门阻挡 / 炸药 / 水管 / 办公室赶人 / 井盖 6 个物体剧本；`Dialogue/Npc/shinji_lab.dialogue` 与 `yamada_underground.dialogue` 是两个新 NPC 剧本。
@@ -82,7 +82,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## NPC 系统
 
-- `Npc`（`Area2D`，继承 `Interactable`）：导出 `NpcId`（建议 `地点.名字`）、`Dialogue`、`NpcStateFrame[] Frames`、`Sprite`、`PresentLoopFlag` / `VisibleWhenFlagSet`。`Frames` 首帧 `FromMinute=0`（0=13:00）、严格递增；`Visible=true` 的帧必须有 `Texture`；同一 `StateId` 跨帧贴图必须一致。
+- `Npc`（`Area2D`，继承 `Interactable`）：导出 `NpcId`（建议 `地点.名字`）、`DisplayName`（头顶常驻中文名，写进子节点 `NameLabel`；为空或缺 `NameLabel` 都会 `PushError` 并判为无效）、`Dialogue`、`NpcStateFrame[] Frames`、`Sprite`、`PresentLoopFlag` / `VisibleWhenFlagSet`。`NameLabel` 在 NPC 本地坐标 `offset_top=-245`/`offset_bottom=-205`（头顶约 y≈-198）、字号 20、暖白字 + 深墨描边 6 + 阴影。`Frames` 首帧 `FromMinute=0`（0=13:00）、严格递增；`Visible=true` 的帧必须有 `Texture`；同一 `StateId` 跨帧贴图必须一致。
 - 有效状态：优先取 `GameState.GetNpcLoopState(NpcId)`（本轮覆盖，`SetLoopState` 写入），没有覆盖时取当前时间帧的 `StateId`；**在场 = 当前时间帧的 `Visible` 且 `PresentLoopFlag` 条件满足**，覆盖不改在场。
 - `Npc` 可选 `PresentLoopFlag`（本轮标记 id）与 `VisibleWhenFlagSet`（默认 true）：在场 = 时间帧 `Visible` 且标记条件满足。教室新井 `PresentLoopFlag=shinji_analyzing` + `VisibleWhenFlagSet=false`，实验室新井 `=true`，两者互斥。
 - `GameState.SetLoopFlag` / `HasLoopFlag` 管本轮标记；`ResetLoop` 清空标记后发 `TimeChanged(0)`，Npc 据此刷新。`LoopFlagsChanged` 供运行中即时刷新。

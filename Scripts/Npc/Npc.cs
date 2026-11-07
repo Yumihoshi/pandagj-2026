@@ -8,6 +8,9 @@ public partial class Npc : Interactable
 	/// <summary>全局唯一 id，用于已选记录与本轮状态覆盖；建议 "地点.名字"。</summary>
 	[Export] public string NpcId { get; set; } = "";
 
+	/// <summary>显示在头顶的中文名字。</summary>
+	[Export] public string DisplayName { get; set; } = "";
+
 	/// <summary>这个 NPC 的对话资源。</summary>
 	[Export] public Resource Dialogue { get; set; }
 
@@ -38,6 +41,8 @@ public partial class Npc : Interactable
 
 		_valid = Validate();
 		if (!_valid) return;
+
+		GetNode<Label>("NameLabel").Text = DisplayName;
 
 		RefreshVisual();
 		GameState.Instance.TimeChanged += OnTimeChanged;
@@ -153,12 +158,6 @@ public partial class Npc : Interactable
 		Visible = _present;
 		SetDeferred(Area2D.PropertyName.Monitorable, _present);
 
-		Label debugLabel = GetNodeOrNull<Label>("DebugLabel");
-		if (debugLabel != null)
-		{
-			debugLabel.Text = $"{NpcId}:{_effectiveStateId} @{GameState.Instance.GetClockText()}";
-		}
-
 		GD.Print($"[Npc] {NpcId} {GameState.Instance.GetClockText()} state={_effectiveStateId} present={_present}");
 	}
 
@@ -191,6 +190,16 @@ public partial class Npc : Interactable
 		if (string.IsNullOrEmpty(NpcId))
 		{
 			GD.PushError("Npc: NpcId 为空");
+			valid = false;
+		}
+		if (string.IsNullOrEmpty(DisplayName))
+		{
+			GD.PushError($"Npc {NpcId}: DisplayName 为空");
+			valid = false;
+		}
+		if (GetNodeOrNull<Label>("NameLabel") == null)
+		{
+			GD.PushError($"Npc {NpcId}: 缺少 NameLabel 节点");
 			valid = false;
 		}
 		if (Dialogue == null)

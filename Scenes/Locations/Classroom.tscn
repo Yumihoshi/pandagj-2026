@@ -120,6 +120,7 @@ text = "门（走廊）"
 position = Vector2(500, 520)
 script = ExtResource("8_npc")
 NpcId = "classroom.yuka"
+DisplayName = "小优香"
 Dialogue = ExtResource("10_yuka")
 Frames = [SubResource("NpcStateFrame_yuka_0"), SubResource("NpcStateFrame_yuka_1")]
 Sprite = NodePath("Sprite")
@@ -133,17 +134,27 @@ texture = ExtResource("char_yuka")
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_Classroom/Npc_Yuka" unique_id=2070325950]
+[node name="NameLabel" type="Label" parent="Room_Classroom/Npc_Yuka" unique_id=2070325950]
 offset_left = -80.0
-offset_top = 10.0
+offset_top = -245.0
 offset_right = 80.0
-offset_bottom = 50.0
-text = "classroom.yuka:talking"
+offset_bottom = -205.0
+theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
+theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 6
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "小优香"
+horizontal_alignment = 1
 
 [node name="Npc_Yamada" type="Area2D" parent="Room_Classroom" unique_id=2034364836 node_paths=PackedStringArray("Sprite")]
 position = Vector2(1600, 520)
 script = ExtResource("8_npc")
 NpcId = "classroom.yamada"
+DisplayName = "山田老师"
 Dialogue = ExtResource("11_yamada")
 Frames = [SubResource("NpcStateFrame_yamada_0"), SubResource("NpcStateFrame_yamada_1")]
 Sprite = NodePath("Sprite")
@@ -157,12 +168,21 @@ texture = ExtResource("char_yamada")
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_Classroom/Npc_Yamada" unique_id=748636972]
+[node name="NameLabel" type="Label" parent="Room_Classroom/Npc_Yamada" unique_id=748636972]
 offset_left = -80.0
-offset_top = 10.0
+offset_top = -245.0
 offset_right = 80.0
-offset_bottom = 50.0
-text = "classroom.yamada:writing"
+offset_bottom = -205.0
+theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
+theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 6
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "山田老师"
+horizontal_alignment = 1
 
 [node name="BookDesk" type="Area2D" parent="Room_Classroom" unique_id=1602488800]
 position = Vector2(760, 520)
@@ -348,6 +368,7 @@ text = "门（走廊）"
 position = Vector2(1200, 520)
 script = ExtResource("8_npc")
 NpcId = "classroom.shinji"
+DisplayName = "新井次郎"
 Dialogue = ExtResource("12_shinji")
 Frames = [SubResource("NpcStateFrame_shinji_0")]
 Sprite = NodePath("Sprite")
@@ -363,12 +384,21 @@ texture = ExtResource("char_shinji")
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_NextClassroom/Npc_Shinji" unique_id=1814813677]
+[node name="NameLabel" type="Label" parent="Room_NextClassroom/Npc_Shinji" unique_id=1814813677]
 offset_left = -80.0
-offset_top = 10.0
+offset_top = -245.0
 offset_right = 80.0
-offset_bottom = 50.0
-text = "classroom.shinji:studying"
+offset_bottom = -205.0
+theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
+theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 6
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "新井次郎"
+horizontal_alignment = 1
 
 [node name="Room_ChemLab" type="Node2D" parent="." unique_id=216933270 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
@@ -414,6 +444,7 @@ text = "门（走廊）"
 position = Vector2(1200, 520)
 script = ExtResource("8_npc")
 NpcId = "classroom.shinji_lab"
+DisplayName = "新井次郎"
 Dialogue = ExtResource("18_shinji_lab")
 Frames = [SubResource("NpcStateFrame_shinji_lab_0")]
 Sprite = NodePath("Sprite")
@@ -428,12 +459,21 @@ texture = ExtResource("char_shinji")
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=1814933870]
+[node name="NameLabel" type="Label" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=1814933870]
 offset_left = -80.0
-offset_top = 10.0
+offset_top = -245.0
 offset_right = 80.0
-offset_bottom = 50.0
-text = "classroom.shinji_lab:working"
+offset_bottom = -205.0
+theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
+theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 6
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "新井次郎"
+horizontal_alignment = 1
 
 [node name="Player" parent="." unique_id=763594586 instance=ExtResource("7_player")]
 position = Vector2(350, 520)

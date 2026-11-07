@@ -83,9 +83,16 @@ public partial class PlayerInteractor : Area2D
 		Prompt.ShowAt(_headPoint);
 	}
 
-	/// <summary>目标碰撞盒上边界的中心点（全局坐标）。</summary>
+	/// <summary>目标头顶锚点（全局坐标）：有名字标签时贴到标签上方，否则用碰撞盒上边界。</summary>
 	private Vector2 ResolveHeadPoint(Interactable target)
 	{
+		if (target.GetNodeOrNull<Control>("NameLabel") is Control nameLabel)
+		{
+			return new Vector2(
+				nameLabel.GlobalPosition.X + nameLabel.Size.X * 0.5f,
+				nameLabel.GlobalPosition.Y);
+		}
+
 		Rect2? bounds = CollectBounds(null, target);
 		if (bounds == null)
 		{

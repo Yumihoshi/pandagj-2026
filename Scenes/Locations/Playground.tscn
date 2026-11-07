@@ -137,6 +137,7 @@ text = "门（操场后）"
 position = Vector2(1200, 520)
 script = ExtResource("8_npc")
 NpcId = "playground.yuka"
+DisplayName = "小优香"
 Dialogue = ExtResource("10_yuka_dialogue")
 Frames = [SubResource("NpcStateFrame_yuka_0"), SubResource("NpcStateFrame_yuka_1")]
 Sprite = NodePath("Sprite")
@@ -150,12 +151,21 @@ texture = ExtResource("char_yuka")
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_Playground/Npc_Yuka"]
+[node name="NameLabel" type="Label" parent="Room_Playground/Npc_Yuka"]
 offset_left = -80.0
-offset_top = 10.0
+offset_top = -245.0
 offset_right = 80.0
-offset_bottom = 50.0
-text = "playground.yuka:absent"
+offset_bottom = -205.0
+theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
+theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
+theme_override_constants/outline_size = 6
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "小优香"
+horizontal_alignment = 1
 
 [node name="Room_Behind" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
@@ -399,6 +409,7 @@ text = "炸药"
 position = Vector2(1200, 520)
 script = ExtResource("8_npc")
 NpcId = "playground.yamada"
+DisplayName = "山田老师"
 Dialogue = ExtResource("18_yamada_underground")
 Frames = [SubResource("NpcStateFrame_yamada_0"), SubResource("NpcStateFrame_yamada_1")]
 Sprite = NodePath("Sprite")
@@ -412,12 +423,21 @@ texture = ExtResource("char_yamada")
 position = Vector2(0, -100)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="DebugLabel" type="Label" parent="Room_Underground/Npc_Yamada"]
+[node name="NameLabel" type="Label" parent="Room_Underground/Npc_Yamada"]
 offset_left = -80.0
-offset_top = 10.0
+offset_top = -245.0
 offset_right = 80.0
-offset_bottom = 50.0
-text = "playground.yamada:absent"
+offset_bottom = -205.0
+theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
+theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
+theme_override_constants/outline_size = 6
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 20
+text = "山田老师"
+horizontal_alignment = 1
 
 [node name="Player" parent="." instance=ExtResource("7_player")]
 position = Vector2(350, 520)

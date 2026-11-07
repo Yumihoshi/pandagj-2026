@@ -23,6 +23,12 @@ public partial class GameScene : Node2D
 	/// <summary>全部可收集文档的注册表。</summary>
 	[Export] public DocumentLibrary DocumentLibrary { get; set; }
 
+	/// <summary>结局黑屏。</summary>
+	[Export] public EndingOverlay EndingOverlay { get; set; }
+
+	/// <summary>17:30 终末提示。</summary>
+	[Export] public LoopEndNotice LoopEndNotice { get; set; }
+
 	private LocationRoot _currentLocation;
 	private bool _transitioning;
 	private bool _loopEnding;
@@ -33,7 +39,7 @@ public partial class GameScene : Node2D
 	{
 		if (MapConfig == null || StartLocation == null || MapScreen == null
 			|| LocationHost == null || DialogueBalloonScene == null
-			|| DocumentLibrary == null)
+			|| DocumentLibrary == null || EndingOverlay == null || LoopEndNotice == null)
 		{
 			GD.PushError("GameScene: 有导出引用为空，停止启动");
 			return;
@@ -61,6 +67,9 @@ public partial class GameScene : Node2D
 		GameState.Instance.SeedDocuments(DocumentLibrary);
 		GameState.Instance.LoopReset += OnLoopReset;
 		GameState.Instance.LoopEndReached += OnLoopEndReached;
+		GameState.Instance.EpilogueStarted += OnEpilogueStarted;
+		GameState.Instance.TrueEndingReached += OnTrueEndingReached;
+		GameState.Instance.LoopFailed += OnLoopFailed;
 		MapScreen.LocationSelected += OnLocationSelected;
 		MapScreen.HideMap();
 
@@ -112,7 +121,44 @@ public partial class GameScene : Node2D
 		}
 
 		GD.Print("[Loop] 17:30 爆炸");
-		await ToSignal(GetTree().CreateTimer(0.6), Timer.SignalName.Timeout);
+		LoopEndNotice.Show();
+		await ToSignal(GetTree().CreateTimer(2.0), Timer.SignalName.Timeout);
+
+		GameState.Instance.ResetLoop();
+		_loopEnding = false;
+	}
+
+	private void OnEpilogueStarted()
+	{
+		EndingOverlay.ShowEpilogue();
+	}
+
+	private void OnTrueEndingReached()
+	{
+		EndingOverlay.ShowTheEnd();
+
+		Player player = GetTree().GetFirstNodeInGroup("player") as Player;
+		if (player == null)
+		{
+			GD.PushError("GameScene.OnTrueEndingReached: 找不到 player");
+			return;
+		}
+		player.InputLocked = true;
+	}
+
+	private async void OnLoopFailed()
+	{
+		if (_loopEnding) return;
+		_loopEnding = true;
+
+		if (_currentLocation != null)
+		{
+			_currentLocation.ProcessMode = ProcessModeEnum.Disabled;
+		}
+
+		GD.Print("[Loop] 失败");
+		EndingOverlay.ShowFail();
+		await ToSignal(GetTree().CreateTimer(1.0), Timer.SignalName.Timeout);
 
 		GameState.Instance.ResetLoop();
 		_loopEnding = false;
@@ -128,6 +174,8 @@ public partial class GameScene : Node2D
 
 		_transitioning = true;
 		MapScreen.HideMap();
+		EndingOverlay.HideAll();
+		LoopEndNotice.HideAll();
 		await Fade.FadeOutAsync();
 		UnloadLocation();
 		await LoadLocationAsync(StartLocation);

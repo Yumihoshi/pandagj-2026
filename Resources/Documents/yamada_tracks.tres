@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DocumentData" format=3]
+
+[ext_resource type="Script" uid="uid://ciqtvja815o4p" path="res://Scripts/Documents/DocumentData.cs" id="1_doc"]
+
+[resource]
+script = ExtResource("1_doc")
+Id = "yamada_tracks"
+Title = "山田老师的行踪"
+Body = "小优香说，她最近总能看到山田老师放学后一个人去操场后面。"

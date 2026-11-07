@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://rlo8gfpkfwa2"
+path="res://.godot/imported/underground_bomb.dialogue-116f92831036615e2c2df3bc7ef75f8f.tres"
+
+[deps]
+
+source_file="res://Dialogue/Objects/underground_bomb.dialogue"
+dest_files=["res://.godot/imported/underground_bomb.dialogue-116f92831036615e2c2df3bc7ef75f8f.tres"]
+
+[params]
+
+defaults=true

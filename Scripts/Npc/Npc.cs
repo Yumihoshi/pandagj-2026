@@ -17,6 +17,12 @@ public partial class Npc : Interactable
 	/// <summary>立绘槽。</summary>
 	[Export] public Sprite2D Sprite { get; set; }
 
+	/// <summary>可选的在场条件：本轮标记 id；留空表示不按标记过滤。</summary>
+	[Export] public string PresentLoopFlag { get; set; } = "";
+
+	/// <summary>为 true 时标记存在才在场；为 false 时标记存在则离场。</summary>
+	[Export] public bool VisibleWhenFlagSet { get; set; } = true;
+
 	private bool _valid;
 	private bool _present;
 	private string _effectiveStateId = "";
@@ -35,6 +41,7 @@ public partial class Npc : Interactable
 
 		RefreshVisual();
 		GameState.Instance.TimeChanged += OnTimeChanged;
+		GameState.Instance.LoopFlagsChanged += OnLoopFlagsChanged;
 	}
 
 	public override void _ExitTree()
@@ -42,6 +49,7 @@ public partial class Npc : Interactable
 		if (GodotObject.IsInstanceValid(GameState.Instance))
 		{
 			GameState.Instance.TimeChanged -= OnTimeChanged;
+			GameState.Instance.LoopFlagsChanged -= OnLoopFlagsChanged;
 		}
 	}
 
@@ -112,6 +120,11 @@ public partial class Npc : Interactable
 		RefreshVisual();
 	}
 
+	private void OnLoopFlagsChanged()
+	{
+		RefreshVisual();
+	}
+
 	private void RefreshVisual()
 	{
 		if (!_valid) return;
@@ -133,7 +146,9 @@ public partial class Npc : Interactable
 			return;
 		}
 
-		_present = frame.Visible;
+		bool flagSatisfied = string.IsNullOrEmpty(PresentLoopFlag)
+			|| GameState.Instance.HasLoopFlag(PresentLoopFlag) == VisibleWhenFlagSet;
+		_present = frame.Visible && flagSatisfied;
 		Sprite.Texture = textureFrame.Texture;
 		Visible = _present;
 		SetDeferred(Area2D.PropertyName.Monitorable, _present);

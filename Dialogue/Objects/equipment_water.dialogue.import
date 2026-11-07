@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://dqy31x1utyiix"
+path="res://.godot/imported/equipment_water.dialogue-03bdba63a686422ce556c70e44f4e1c2.tres"
+
+[deps]
+
+source_file="res://Dialogue/Objects/equipment_water.dialogue"
+dest_files=["res://.godot/imported/equipment_water.dialogue-03bdba63a686422ce556c70e44f4e1c2.tres"]
+
+[params]
+
+defaults=true

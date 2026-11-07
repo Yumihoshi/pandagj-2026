@@ -112,7 +112,9 @@ public partial class DialogueBalloon : CanvasLayer
 		{
 			gameState.LoopReset -= OnLoopReset;
 		}
-		if (GodotObject.IsInstanceValid(player) && !KeepPlayerInputLockedOnExit)
+		if (GodotObject.IsInstanceValid(player)
+			&& !KeepPlayerInputLockedOnExit
+			&& !(GodotObject.IsInstanceValid(gameState) && gameState.IsTrueEnding))
 		{
 			player.InputLocked = false;
 		}

@@ -8,6 +8,8 @@
 [ext_resource type="Script" path="res://Scripts/UI/TimeLabel.cs" id="6_time"]
 [ext_resource type="Resource" path="res://Resources/Documents/DocumentLibrary.tres" id="7_docs"]
 [ext_resource type="PackedScene" path="res://Scenes/Phone/PhoneScreen.tscn" id="8_phone"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/EndingOverlay.tscn" id="9_ending"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/LoopEndNotice.tscn" id="10_notice"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_time"]
 content_margin_left = 18.0
@@ -25,7 +27,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[node name="GameScene" type="Node2D" unique_id=1828415781 node_paths=PackedStringArray("MapScreen", "LocationHost")]
+[node name="GameScene" type="Node2D" unique_id=1828415781 node_paths=PackedStringArray("MapScreen", "LocationHost", "EndingOverlay", "LoopEndNotice")]
 script = ExtResource("1_game")
 MapConfig = ExtResource("3_config")
 StartLocation = ExtResource("4_start")
@@ -33,10 +35,16 @@ MapScreen = NodePath("UILayer/MapScreen")
 LocationHost = NodePath("LocationHost")
 DialogueBalloonScene = ExtResource("5_balloon")
 DocumentLibrary = ExtResource("7_docs")
+EndingOverlay = NodePath("EndingOverlay")
+LoopEndNotice = NodePath("LoopEndNotice")
 
 [node name="LocationHost" type="Node2D" parent="." unique_id=715923502]
 
 [node name="PhoneScreen" parent="." instance=ExtResource("8_phone")]
+
+[node name="EndingOverlay" parent="." instance=ExtResource("9_ending")]
+
+[node name="LoopEndNotice" parent="." instance=ExtResource("10_notice")]
 
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=121584597]
 layer = 10

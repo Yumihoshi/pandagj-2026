@@ -1,20 +1,29 @@
 ~ start
 if npc.IsInState("sleeping")
-	山田老师: （趴在折叠床上睡着了。）
-	- 算了 [#repeatable] => END
-elif npc.IsInState("preparing")
-	山田老师: ……你不该来这里的。
-	- 算了 [#repeatable] => END
-elif npc.IsInState("writing")
-	山田老师: （山田老师正在本子上写着什么。）
-	- 关于新井次郎 [ID:ask_shinji_at_desk] => ask_shinji
-	- 算了 [#repeatable] => END
+	=> sleeping
+elif npc.IsInState("working")
+	山田: 哦，是千原啊，有什么事吗，老师这会在处理很重要的文件哦，晚点再来吧
+	=> END
 else
-	山田老师: 有什么事吗？
-	- 关于新井次郎 [ID:ask_shinji] => ask_shinji
+	山田: 哦，这不是千原吗，有什么事吗？
+	- 关于下午的安排 [ID:about_afternoon] => about_afternoon
 	- 算了 [#repeatable] => END
 
-~ ask_shinji
-山田老师: 新井吗？他整个下午都在隔壁教室自习。
-山田老师: 对了，这份[url=doc:club_notice][color=#ffd866]社团活动申请表[/color][/url]你拿去看看吧。
+~ sleeping
+if GameState.HasLoopFlag("office_key_taken")
+	（山田老师还在睡。钥匙已经不在了。）
+	=> END
+else
+	（山田老师趴在折叠床上睡着了。）
+	（桌上放着一串钥匙，抽屉锁着。）
+	do GameState.AddItem("office_key")
+	do GameState.SetLoopFlag("office_key_taken")
+	（……把钥匙拿走了。）
+	=> END
+
+~ about_afternoon
+鸣子: 老师才是，放学了还在教室是有什么事吗？
+山田: 中午的时候隔壁班的新井同学问了我一些问题，出来以后顺便到你们班看看，新井同学似乎[url=doc:shinji_schedule][color=#ffd866]整个下午都要在他们班教室自习[/color][/url]，很刻苦呢
+鸣子: 那个新井同学啊，确实呢
+鸣子: （看来新井同学整个下午都会在隔壁班教室自习啊）
 => END

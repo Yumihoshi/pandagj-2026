@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DocumentData" format=3]
+
+[ext_resource type="Script" uid="uid://ciqtvja815o4p" path="res://Scripts/Documents/DocumentData.cs" id="1_doc"]
+
+[resource]
+script = ExtResource("1_doc")
+Id = "chem_lab"
+Title = "化学实验室"
+Body = "新井次郎会去化学实验室解析炸药。\n他说大概需要两个小时。"

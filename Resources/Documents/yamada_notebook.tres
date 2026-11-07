@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DocumentData" format=3]
+
+[ext_resource type="Script" uid="uid://ciqtvja815o4p" path="res://Scripts/Documents/DocumentData.cs" id="1_doc"]
+
+[resource]
+script = ExtResource("1_doc")
+Id = "yamada_notebook"
+Title = "山田老师的笔记本"
+Body = "9月23日。\n\n我终于确认了。\n仙台市不是真实的。学校地下排列着服务器，整座城市、所有人，都是被模拟出来的数字生命。\n我们的一生，只是别人观察的样本。\n\n我决定在 17:30 引爆地下的服务器。\n让这场梦结束。\n\n通往地下空间的入口在操场后面。那里有一个井盖。\n服务器就在下面。"

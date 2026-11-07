@@ -1,0 +1,11 @@
+~ start
+鸣子: 新井君，怎么样了
+新井: 这似乎是一种[url=doc:bomb_weakness][color=#ffd866]硝铵类炸药[/color][/url]，应该只需要用[url=doc:bomb_weakness][color=#ffd866]大量的水[/color][/url]就可以销毁
+do GameState.AddClue("bomb_weakness")
+鸣子: 啊，帮大忙了，谢谢你新井君
+鸣子: （我激动得拉起了新井的手）
+新井: 咿咿咿咿咿——没，没什么啦，嘿嘿
+鸣子: （这家伙不知为何脸又通红了，不过话说回来，器材准备室是不是就有水管来着）
+新井: 所以，千原同学这个炸药是哪来的？
+鸣子: （没办法，我还是把这一切告诉了他，随后便离开了）
+=> END

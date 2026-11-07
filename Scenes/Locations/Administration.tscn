@@ -11,6 +11,9 @@
 [ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/administration_lobby.png" id="bg_lobby"]
 [ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/office.png" id="bg_office"]
 [ext_resource type="Texture2D" path="res://ArtRes/Characters/yamada.png" id="char_yamada"]
+[ext_resource type="Script" path="res://Scripts/Location/OfficeDoor.cs" id="11_office_door"]
+[ext_resource type="Script" path="res://Scripts/Location/KeyedDrawer.cs" id="12_drawer"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/PasswordPanel.tscn" id="13_password"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
 size = Vector2(120, 200)
@@ -106,12 +109,13 @@ offset_right = 60.0
 offset_bottom = 145.0
 text = "出口"
 
-[node name="DoorToOffice" type="Area2D" parent="Room_Lobby" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToOffice" type="Area2D" parent="Room_Lobby" node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
 position = Vector2(1600, 500)
-script = ExtResource("3_door")
+script = ExtResource("11_office_door")
 TargetRoom = NodePath("../../Room_Office")
 TargetSpawn = NodePath("../../Room_Office/DefaultSpawn")
 TravelMinutes = 5
+LockedHint = NodePath("LockedHint")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Lobby/DoorToOffice"]
 shape = SubResource("RectangleShape2D_zone")
@@ -129,6 +133,13 @@ offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "门（办公室）"
+
+[node name="LockedHint" type="Label" parent="Room_Lobby/DoorToOffice"]
+offset_left = -120.0
+offset_top = -150.0
+offset_right = 120.0
+offset_bottom = -110.0
+text = "（办公室的门关着。晚点再来吧。）"
 
 [node name="Room_Office" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
@@ -193,6 +204,39 @@ offset_top = 10.0
 offset_right = 80.0
 offset_bottom = 50.0
 text = "administration.yamada:absent"
+
+[node name="KeyedDrawer" type="Area2D" parent="Room_Office" node_paths=PackedStringArray("LockedHint", "PasswordPanel")]
+position = Vector2(900, 500)
+script = ExtResource("12_drawer")
+RequiredKeyId = "office_key"
+LockedHint = NodePath("LockedHint")
+PasswordPanel = NodePath("../../PasswordPanel")
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Office/KeyedDrawer"]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_Office/KeyedDrawer"]
+offset_left = -40.0
+offset_top = -100.0
+offset_right = 40.0
+offset_bottom = 100.0
+color = Color(0.55, 0.4, 0.25, 1)
+
+[node name="Caption" type="Label" parent="Room_Office/KeyedDrawer"]
+offset_left = -40.0
+offset_top = 105.0
+offset_right = 60.0
+offset_bottom = 145.0
+text = "办公桌"
+
+[node name="LockedHint" type="Label" parent="Room_Office/KeyedDrawer"]
+offset_left = -60.0
+offset_top = -150.0
+offset_right = 60.0
+offset_bottom = -110.0
+text = "（抽屉锁着）"
+
+[node name="PasswordPanel" parent="." instance=ExtResource("13_password")]
 
 [node name="Player" parent="." instance=ExtResource("7_player")]
 position = Vector2(350, 520)

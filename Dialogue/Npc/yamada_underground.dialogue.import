@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://ov7aa4r2ixn6"
+path="res://.godot/imported/yamada_underground.dialogue-a58b5b5ccc05a1b8223871c658d8ff47.tres"
+
+[deps]
+
+source_file="res://Dialogue/Npc/yamada_underground.dialogue"
+dest_files=["res://.godot/imported/yamada_underground.dialogue-a58b5b5ccc05a1b8223871c658d8ff47.tres"]
+
+[params]
+
+defaults=true

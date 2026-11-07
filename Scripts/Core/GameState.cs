@@ -40,6 +40,15 @@ public partial class GameState : Node
 	/// <summary>本轮已选的一次性选项：npcId → staticId 集合。</summary>
 	private readonly Dictionary<string, HashSet<string>> _npcUsedChoices = new();
 
+	/// <summary>本轮剧情标记；每轮 ResetLoop 清空，跨循环不保留。</summary>
+	private readonly HashSet<string> _loopFlags = new();
+
+	/// <summary>新井分析完成的循环内分钟；-1 表示本轮没有开始分析。</summary>
+	public int BombAnalysisReadyMinute { get; private set; } = -1;
+
+	/// <summary>是否已进入真结局；DialogueBalloon 据此不做退出解锁。</summary>
+	public bool IsTrueEnding { get; private set; }
+
 	/// <summary>文档注册表：id → DocumentData。</summary>
 	private readonly Dictionary<string, DocumentData> _documentsById = new();
 
@@ -59,6 +68,10 @@ public partial class GameState : Node
 	[Signal] public delegate void TimeChangedEventHandler(int elapsedMinutes);
 	[Signal] public delegate void LoopEndReachedEventHandler();
 	[Signal] public delegate void LoopResetEventHandler();
+	[Signal] public delegate void LoopFlagsChangedEventHandler();
+	[Signal] public delegate void EpilogueStartedEventHandler();
+	[Signal] public delegate void TrueEndingReachedEventHandler();
+	[Signal] public delegate void LoopFailedEventHandler();
 
 	public override void _Ready()
 	{
@@ -264,6 +277,63 @@ public partial class GameState : Node
 		GD.Print($"[Npc] {npcId} 已选 {staticId}");
 	}
 
+	/// <summary>本轮是否设置了某个剧情标记。</summary>
+	public bool HasLoopFlag(string flag)
+	{
+		if (string.IsNullOrEmpty(flag))
+		{
+			GD.PushError("GameState.HasLoopFlag: 标记为空");
+			return false;
+		}
+		return _loopFlags.Contains(flag);
+	}
+
+	/// <summary>设置本轮剧情标记；重复设置无副作用，并通知按标记显隐的 NPC 刷新。</summary>
+	public void SetLoopFlag(string flag)
+	{
+		if (string.IsNullOrEmpty(flag))
+		{
+			GD.PushError("GameState.SetLoopFlag: 标记为空");
+			return;
+		}
+		if (!_loopFlags.Add(flag)) return;
+
+		GD.Print($"[LoopFlag] {flag}");
+		EmitSignal(SignalName.LoopFlagsChanged);
+	}
+
+	/// <summary>把炸药样本交给新井：记录两小时后的完成时间，并写入本轮标记。</summary>
+	public void StartBombAnalysis()
+	{
+		BombAnalysisReadyMinute = ElapsedMinutes + 120;
+		SetLoopFlag("shinji_analyzing");
+		GD.Print($"[Bomb] 分析开始，{BombAnalysisReadyMinute} 分钟时完成");
+	}
+
+	/// <summary>移除本轮道具；不存在时无副作用。</summary>
+	public void RemoveItem(string itemId)
+	{
+		if (string.IsNullOrEmpty(itemId))
+		{
+			GD.PushError("GameState.RemoveItem: 道具 id 为空");
+			return;
+		}
+		if (Inventory.Remove(itemId)) GD.Print($"[Item] 失去 {itemId}");
+	}
+
+	/// <summary>由 yamada_underground.dialogue 调用：开始甜品店尾声。</summary>
+	public void EnterEpilogue() => EmitSignal(SignalName.EpilogueStarted);
+
+	/// <summary>由 yamada_underground.dialogue 调用：真结局结束。</summary>
+	public void ReachTrueEnding()
+	{
+		IsTrueEnding = true;
+		EmitSignal(SignalName.TrueEndingReached);
+	}
+
+	/// <summary>由 yamada_underground.dialogue 调用：本轮失败。</summary>
+	public void FailLoop() => EmitSignal(SignalName.LoopFailed);
+
 	/// <summary>推进 minutes 分钟；返回 true 表示本次推进触发或已处于终末。返回 true 时调用方必须中止后续动作（不装载场景 / 不切房间）。</summary>
 	public bool AdvanceTime(int minutes)
 	{
@@ -290,16 +360,19 @@ public partial class GameState : Node
 		return false;
 	}
 
-	/// <summary>循环重置：时间归零、周目 +1，清本轮状态，保留解锁、线索、文档与记事本。</summary>
+	/// <summary>循环重置：时间归零、周目 +1，清本轮标记与道具，保留解锁、线索、文档与记事本。</summary>
 	public void ResetLoop()
 	{
 		ElapsedMinutes = 0;
 		IsLoopEnded = false;
+		IsTrueEnding = false;
 		LoopCount++;
+		BombAnalysisReadyMinute = -1;
 
 		Inventory.Clear();
 		_npcLoopStates.Clear();
 		_npcUsedChoices.Clear();
+		_loopFlags.Clear();
 
 		GD.Print($"[Loop] 第 {LoopCount} 周目开始");
 		EmitSignal(SignalName.TimeChanged, 0);

@@ -3,25 +3,66 @@ if npc.IsInState("running")
 	小优香: 今天的天气真适合跑步呢！鸣子找我有什么事吗？
 	- 关于田径部 [ID:ask_track] => ask_track
 	- 关于山田老师 [ID:ask_yamada] [if GameState.HasClue("yuka_likes_yamada") /] => ask_yamada
+	- 关于山田老师的笔记本电脑 [ID:ask_laptop] [if GameState.HasClue("saw_laptop") /] => ask_laptop
 	- 算了 [#repeatable] => END
 else
-	小优香: 啊，鸣子你醒啦
-	- 小优香接下来在哪 [ID:ask_where] => ask_where
-	- 算了 [#repeatable] => END
+	=> classroom_start
 
-~ ask_where
+~ classroom_start
+if GameState.HasLoopFlag("yuka_briefed")
+	小优香: 那我一会去田径部啦，17:30 一起回家哦
+	=> END
+else
+	小优香: 啊，鸣子你醒啦
+	- 询问现在的情况 [ID:ask_now] => ask_now
+
+~ ask_now
+鸣子: 诶，现在几点了，好像睡过头了……
+小优香: 现在已经放学了哦，你还要和往常一样看一下午书吗？
+- 决定在教室看书 [ID:choose_read] => choose_read
+- 决定出去逛逛 [ID:choose_out] [if GameState.GetLoopCount() > 1 /] [#show_if=true] => choose_out
+
+~ choose_read
+鸣子: 是的，上次的小说还没看完……
+鸣子: （这个时间段通常是大家社团活动的时间，但是我一般会在这个时间在教室里细细品味BL小说）
 小优香: 那我一会去田径部啦，17:30 一起回家哦
+do GameState.SetLoopFlag("chose_reading")
+do GameState.SetLoopFlag("yuka_briefed")
 do GameState.UnlockLocation("playground")
-小优香: （田径部……应该就是操场那边吧）
+=> END
+
+~ choose_out
+鸣子: 今天久违的想在学校里逛逛呢
+鸣子: （不知为何，总感觉今天有些焦躁，看不下去书）
+小优香: 嘿嘿，真少见呢，那我一会去田径部啦，17:30 一起回家哦
+do GameState.SetLoopFlag("chose_going_out")
+do GameState.SetLoopFlag("yuka_briefed")
+do GameState.UnlockLocation("playground")
 => END
 
 ~ ask_track
-小优香: 对了，去操场后的准备室坐一会吧，这是钥匙
+鸣子: 田径部的大家都很努力呢
+鸣子: （小优香从去年刚从国中升上来的时候就已经是田径部的主将了，简直是怪物）
+小优香: 毕竟全国大赛就要开始了嘛，对了，小优香不介意的话去[url=doc:equipment_room][color=#ffd866]操场后的准备室[/color][/url]坐一会吧，嘿嘿，那里有我们中午买来的冰饮哦，这是钥匙
 do GameState.AddItem("equipment_key")
+鸣子: （小优香真体贴呢，不过话说回来，运动后喝冰饮真的正常吗？嘛——毕竟她是怪物啊）
 => END
 
 ~ ask_yamada
-小优香: 山田老师……我最近总看到他放学后一个人去操场后面
+鸣子: 听说你最近和山田老师关系很好嘛
+小优香: 诶诶——你听谁说的这些，我知道了，肯定又是新井那家伙在乱说吧，我回去以后一定要给他点颜色看看
+鸣子: 好啦好啦，说到底，山田到底是怎么一回事
+小优香: 山田老师啊，不过是我最近物理总是不及格，于是他每天午休的时候叫我去他办公室补课了啦，不过说起来，我最近还总是能看到他[url=doc:yamada_tracks][color=#ffd866]放学之后自己一个人来操场后面[/color][/url]呢，总感觉有点可疑……
 do GameState.UnlockLocation("administration")
-小优香: （先去行政楼的办公室看看吧）
+=> END
+
+~ ask_laptop
+鸣子: 重大发现！山田的笔记本密码提示是小优香哦，小优香真的没有什么事瞒着我吗？
+小优香: 诶，居然有这种事，小优香不知道哦……
+鸣子: 盯——————
+小优香: 我知道了啦，老师的密码的确和我有关了啦，是……
+鸣子: 盯————
+小优香: 是[url=doc:laptop_password][color=#ffd866]0721[/color][/url]了啦，那是……我闹着要让老师把密码改成两个人第一次出去玩的日子，不过鸣子你一定要替我保密哦，这件事谁也不要告诉，哪怕是新井也不能说哦
+do GameState.AddClue("laptop_password")
+鸣子: （看来要好好守护友人的少女心呢）
 => END

@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://dab6ayiwwrgql"
+path="res://.godot/imported/underground_wait.dialogue-1979bbedbd978c2a2002ca6d845fc6ff.tres"
+
+[deps]
+
+source_file="res://Dialogue/Objects/underground_wait.dialogue"
+dest_files=["res://.godot/imported/underground_wait.dialogue-1979bbedbd978c2a2002ca6d845fc6ff.tres"]
+
+[params]
+
+defaults=true

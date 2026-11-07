@@ -1,8 +1,15 @@
 [gd_resource type="Resource" script_class="DocumentLibrary" format=3]
 
 [ext_resource type="Script" uid="uid://c5d41r5hcdx4" path="res://Scripts/Documents/DocumentLibrary.cs" id="1_lib"]
-[ext_resource type="Resource" path="res://Resources/Documents/club_notice.tres" id="2_doc"]
+[ext_resource type="Resource" path="res://Resources/Documents/shinji_schedule.tres" id="2_doc"]
+[ext_resource type="Resource" path="res://Resources/Documents/yuka_secret.tres" id="3_doc"]
+[ext_resource type="Resource" path="res://Resources/Documents/equipment_room.tres" id="4_doc"]
+[ext_resource type="Resource" path="res://Resources/Documents/yamada_tracks.tres" id="5_doc"]
+[ext_resource type="Resource" path="res://Resources/Documents/laptop_password.tres" id="6_doc"]
+[ext_resource type="Resource" path="res://Resources/Documents/chem_lab.tres" id="7_doc"]
+[ext_resource type="Resource" path="res://Resources/Documents/bomb_weakness.tres" id="8_doc"]
+[ext_resource type="Resource" path="res://Resources/Documents/yamada_notebook.tres" id="9_doc"]
 
 [resource]
 script = ExtResource("1_lib")
-Documents = [ExtResource("2_doc")]
+Documents = [ExtResource("2_doc"), ExtResource("3_doc"), ExtResource("4_doc"), ExtResource("5_doc"), ExtResource("6_doc"), ExtResource("7_doc"), ExtResource("8_doc"), ExtResource("9_doc")]

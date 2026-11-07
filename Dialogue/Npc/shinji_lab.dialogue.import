@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://cwdq4hub4qur7"
+path="res://.godot/imported/shinji_lab.dialogue-96a94ca8decf40b9429d12dc51e23bb2.tres"
+
+[deps]
+
+source_file="res://Dialogue/Npc/shinji_lab.dialogue"
+dest_files=["res://.godot/imported/shinji_lab.dialogue-96a94ca8decf40b9429d12dc51e23bb2.tres"]
+
+[params]
+
+defaults=true

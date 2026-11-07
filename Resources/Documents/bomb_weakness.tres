@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DocumentData" format=3]
+
+[ext_resource type="Script" uid="uid://ciqtvja815o4p" path="res://Scripts/Documents/DocumentData.cs" id="1_doc"]
+
+[resource]
+script = ExtResource("1_doc")
+Id = "bomb_weakness"
+Title = "炸药的弱点"
+Body = "这是一种硝铵类炸药。\n只需要用大量的水，就可以让它失效。\n\n——新井次郎的分析结果"

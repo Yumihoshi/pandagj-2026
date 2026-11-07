@@ -56,7 +56,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 ## 手机系统
 
 - 左上角 `PhoneScreen`（`Scenes/Phone/PhoneScreen.tscn`，`CanvasLayer.layer=45`）提供手机入口；打开时用 `DialogueBalloon` 加载 `Dialogue/phone.dialogue` 显示「查看文档 / 记事本 / 关闭」，文档列表 / 阅读 / 记事本用 `PhoneScreen` 自己的面板。
-- 文档：`DocumentData`（Id/Title/Body）+ `DocumentLibrary` 注册表放在 `Resources/Documents/`，启动时 `GameScene` 调 `GameState.SeedDocuments` 灌入；对话正文用 `[url=doc:<id>][color=#ffd866]文字[/color][/url]` 标可获取文档，点击只获取、不推进对话；已获取文档跨循环保留。
+- 文档：`DocumentData`（Id/Title/Body）+ `DocumentLibrary` 注册表放在 `Resources/Documents/`，启动时 `GameScene` 调 `GameState.SeedDocuments` 灌入；对话正文用 `[url=doc:<id>][color=#ffd866]文字[/color][/url]` 标可获取文档，点击只获取、不推进对话；已获取文档跨循环保留。已获取的链接由 `DialogueBalloon` 自动换成灰色 `#8a8a8a`（同句收集后立即重绘），再点只提示「已在手机里」；带高亮的选项一律加 `[#repeatable]`，漏点后可再进同一分支补收。
 - 记事本：`GameState.NotebookText` 单个字符串，每次 `TextEdit.TextChanged` 直接写入；跨循环保留但不落盘。
 - `DialogueBalloon.KeepPlayerInputLockedOnExit`：手机会话期间保持玩家输入锁，由 `PhoneScreen` 在关闭 / 循环重置时统一释放。
 - `Player.InputLocked` 从 `true` 变回 `false` 时会 `Input.ActionRelease("move_left"/"move_right")`：在记事本这类 `TextEdit` 里打字时字母键同样写进动作状态，输入法会吞掉 key-up，不清掉的话解锁后玩家会自己一直往一个方向走。

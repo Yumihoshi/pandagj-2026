@@ -1,5 +1,6 @@
 ~ start
 鸣子: 新井君，怎么样了
+新井: 学校的[url=doc:chem_lab][color=#ffd866]化学实验室[/color][/url]设备还算齐全，解析大概要两个小时
 新井: 这似乎是一种[url=doc:bomb_weakness][color=#ffd866]硝铵类炸药[/color][/url]，应该只需要用[url=doc:bomb_weakness][color=#ffd866]大量的水[/color][/url]就可以销毁
 do GameState.AddClue("bomb_weakness")
 鸣子: 啊，帮大忙了，谢谢你新井君

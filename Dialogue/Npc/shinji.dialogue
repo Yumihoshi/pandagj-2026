@@ -2,8 +2,8 @@
 鸣子: 嗨，新井你还是老样子一天到晚都在看书呢
 新井: 诶……诶———千……千原同学你怎么来了
 鸣子: （新井次郎，姑且算是小优香的幼驯染，是个货真价实的处男，每次跟我说话都会脸红，是个很好捉弄的家伙）
-- 关于小优香 [ID:ask_yuka] => ask_yuka
-- 关于炸药 [ID:ask_bomb] [if GameState.HasItem("bomb_sample") /] => ask_bomb
+- 关于小优香 [ID:ask_yuka] [#repeatable] => ask_yuka
+- 关于炸药 [ID:ask_bomb] [#repeatable] [if GameState.HasItem("bomb_sample") /] => ask_bomb
 - 算了 [#repeatable] => END
 
 ~ ask_yuka
@@ -21,9 +21,10 @@ do GameState.AddClue("yuka_likes_yamada")
 鸣子: 说起来很复杂……总之，新井同学可以帮忙解析这种炸药找到让它失效的方法吗？拜托了，这真的很重要！
 鸣子: （我把脸贴近新井，他的脸不知为何霎时红透了）
 新井: 呜哇——千原同学不要靠这么近啦，我知道了，我会去[url=doc:chem_lab][color=#ffd866]化学实验室[/color][/url]尽可能解析这个炸药，不过可能需要两个小时哦
-do GameState.RemoveItem("bomb_sample")
-do GameState.StartBombAnalysis()
-do GameState.AddClue("chem_lab_unlocked")
+if not GameState.HasLoopFlag("shinji_analyzing")
+	do GameState.RemoveItem("bomb_sample")
+	do GameState.StartBombAnalysis()
+	do GameState.AddClue("chem_lab_unlocked")
 鸣子: 拜托了！
 鸣子: （现在直接去化学实验室等他吧）
 => END

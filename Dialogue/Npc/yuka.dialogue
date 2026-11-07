@@ -1,9 +1,9 @@
 ~ start
 if npc.IsInState("running")
 	小优香: 今天的天气真适合跑步呢！鸣子找我有什么事吗？
-	- 关于田径部 [ID:ask_track] => ask_track
-	- 关于山田老师 [ID:ask_yamada] [if GameState.HasClue("yuka_likes_yamada") /] => ask_yamada
-	- 关于山田老师的笔记本电脑 [ID:ask_laptop] [if GameState.HasClue("saw_laptop") /] => ask_laptop
+	- 关于田径部 [ID:ask_track] [#repeatable] => ask_track
+	- 关于山田老师 [ID:ask_yamada] [#repeatable] [if GameState.HasClue("yuka_likes_yamada") /] => ask_yamada
+	- 关于山田老师的笔记本电脑 [ID:ask_laptop] [#repeatable] [if GameState.HasClue("saw_laptop") /] => ask_laptop
 	- 算了 [#repeatable] => END
 else
 	=> classroom_start

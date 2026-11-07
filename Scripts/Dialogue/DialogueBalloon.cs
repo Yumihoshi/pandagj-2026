@@ -1,3 +1,4 @@
+using System;
 using Godot;
 using Godot.Collections;
 using DialogueManagerRuntime;
@@ -22,6 +23,18 @@ public partial class DialogueBalloon : CanvasLayer
 
 	/// <summary>区分「拖拽选择」与「单击推进」的位移阈值（像素）。</summary>
 	[Export] public float ClickDragThreshold = 6.0f;
+
+	/// <summary>对话正文里标记可获取文档的链接前缀。</summary>
+	private const string DocumentLinkPrefix = "[url=doc:";
+
+	/// <summary>文档链接标签的结束标记。</summary>
+	private const string DocumentLinkEnd = "[/url]";
+
+	/// <summary>未收集文档的高亮色。</summary>
+	private const string DocumentHighlightColor = "[color=#ffd866]";
+
+	/// <summary>已收集文档的灰色。</summary>
+	private const string DocumentCollectedColor = "[color=#8a8a8a]";
 
 	private Label copyToast;
 	private Tween copyToastTween;
@@ -266,6 +279,7 @@ public partial class DialogueBalloon : CanvasLayer
 		bool added = gameState.AcquireDocument(documentId);
 		if (added)
 		{
+			RefreshLineAfterDocumentChange();
 			ShowToast("已记录到手机");
 			return;
 		}
@@ -275,6 +289,45 @@ public partial class DialogueBalloon : CanvasLayer
 		{
 			ShowToast("已在手机里");
 		}
+	}
+
+	/// <summary>把当前句里已收集文档的高亮改成灰色；只换颜色不动结构，正文长度不变。</summary>
+	private void ApplyCollectedDocumentStyle()
+	{
+		if (gameState == null || dialogueLine == null) return;
+		if (!dialogueLine.Text.Contains(DocumentLinkPrefix, StringComparison.Ordinal)) return;
+
+		string text = dialogueLine.Text;
+		int searchFrom = 0;
+		while (true)
+		{
+			int open = text.IndexOf(DocumentLinkPrefix, searchFrom, StringComparison.Ordinal);
+			if (open < 0) break;
+
+			int tagEnd = text.IndexOf(']', open);
+			int linkEnd = tagEnd < 0 ? -1 : text.IndexOf(DocumentLinkEnd, tagEnd, StringComparison.Ordinal);
+			if (tagEnd < 0 || linkEnd < 0) break;
+
+			searchFrom = linkEnd + DocumentLinkEnd.Length;
+
+			string documentId = text[(open + DocumentLinkPrefix.Length)..tagEnd];
+			if (string.IsNullOrEmpty(documentId) || !gameState.HasDocument(documentId)) continue;
+
+			string inner = text[tagEnd..linkEnd];
+			text = string.Concat(text[..tagEnd], inner.Replace(DocumentHighlightColor, DocumentCollectedColor), text[linkEnd..]);
+		}
+
+		dialogueLine.Text = text;
+	}
+
+	/// <summary>收集文档后把当前句原地重绘成灰色，不必等下一句。</summary>
+	private void RefreshLineAfterDocumentChange()
+	{
+		if (dialogueLine == null || dialogueLabel.IsTyping) return;
+
+		ApplyCollectedDocumentStyle();
+		dialogueLabel.Text = dialogueLine.Text;
+		dialogueLabel.VisibleCharacters = -1;
 	}
 
 	private void AdvanceAfterMetaClick(string nextId)
@@ -301,6 +354,7 @@ public partial class DialogueBalloon : CanvasLayer
 		characterLabel.Text = Tr(dialogueLine.Character, "dialogue");
 
 		dialogueLabel.Hide();
+		ApplyCollectedDocumentStyle();
 		dialogueLabel.DialogueLine = dialogueLine;
 
 		Array<DialogueResponse> filtered = FilterResponses(dialogueLine);

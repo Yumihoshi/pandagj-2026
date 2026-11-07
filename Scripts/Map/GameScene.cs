@@ -20,6 +20,9 @@ public partial class GameScene : Node2D
 	/// <summary>本游戏的对话 balloon 场景。</summary>
 	[Export] public PackedScene DialogueBalloonScene { get; set; }
 
+	/// <summary>全部可收集文档的注册表。</summary>
+	[Export] public DocumentLibrary DocumentLibrary { get; set; }
+
 	private LocationRoot _currentLocation;
 	private bool _transitioning;
 	private bool _loopEnding;
@@ -29,7 +32,8 @@ public partial class GameScene : Node2D
 	public override async void _Ready()
 	{
 		if (MapConfig == null || StartLocation == null || MapScreen == null
-			|| LocationHost == null || DialogueBalloonScene == null)
+			|| LocationHost == null || DialogueBalloonScene == null
+			|| DocumentLibrary == null)
 		{
 			GD.PushError("GameScene: 有导出引用为空，停止启动");
 			return;
@@ -54,6 +58,7 @@ public partial class GameScene : Node2D
 		ProjectSettings.SetSetting("dialogue_manager/runtime/balloon_path", DialogueBalloonScene.ResourcePath);
 
 		GameState.Instance.SeedInitialUnlocks(MapConfig);
+		GameState.Instance.SeedDocuments(DocumentLibrary);
 		GameState.Instance.LoopReset += OnLoopReset;
 		GameState.Instance.LoopEndReached += OnLoopEndReached;
 		MapScreen.LocationSelected += OnLocationSelected;

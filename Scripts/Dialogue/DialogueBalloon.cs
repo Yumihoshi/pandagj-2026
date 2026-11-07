@@ -8,6 +8,9 @@ public partial class DialogueBalloon : CanvasLayer
 	/// <summary>发起本次对话的 NPC；非 NPC 对话时为空。</summary>
 	public Npc Npc { get; set; }
 
+	/// <summary>为 true 时 _ExitTree 不释放玩家输入锁；由 PhoneScreen 在会话结束时统一释放。</summary>
+	public bool KeepPlayerInputLockedOnExit { get; set; }
+
 	[Export] public string NextAction = "ui_accept";
 	[Export] public string SkipAction = "ui_cancel";
 
@@ -25,6 +28,8 @@ public partial class DialogueBalloon : CanvasLayer
 	private bool pointerPressed;
 	private bool pressStartedInLabel;
 	private Vector2 pressPosition;
+	private Vector2 pressGlobalPosition;
+	private ulong lastMetaClickFrame = ulong.MaxValue;
 
 	private Resource dialogueResource;
 	private string startFromLabel = "";
@@ -69,6 +74,7 @@ public partial class DialogueBalloon : CanvasLayer
 			GD.PushError("DialogueBalloon: 找不到 %CopyToast，复制提示不可用");
 		}
 		dialogueLabel.SelectionEnabled = false;
+		dialogueLabel.MetaClicked += OnDialogueMetaClicked;
 
 		balloon.Hide();
 		balloon.GuiInput += OnBalloonGuiInput;
@@ -98,11 +104,15 @@ public partial class DialogueBalloon : CanvasLayer
 	public override void _ExitTree()
 	{
 		DialogueManager.Mutated -= OnMutated;
+		if (GodotObject.IsInstanceValid(dialogueLabel))
+		{
+			dialogueLabel.MetaClicked -= OnDialogueMetaClicked;
+		}
 		if (GodotObject.IsInstanceValid(gameState))
 		{
 			gameState.LoopReset -= OnLoopReset;
 		}
-		if (GodotObject.IsInstanceValid(player))
+		if (GodotObject.IsInstanceValid(player) && !KeepPlayerInputLockedOnExit)
 		{
 			player.InputLocked = false;
 		}
@@ -177,6 +187,7 @@ public partial class DialogueBalloon : CanvasLayer
 				// 选项菜单 / 自动推进等待期间也记录，否则那两种状态下无法拖拽复制。
 				pointerPressed = true;
 				pressPosition = mouseButton.Position;
+				pressGlobalPosition = mouseButton.GlobalPosition;
 				pressStartedInLabel = dialogueLabel.GetGlobalRect()
 					.HasPoint(mouseButton.GlobalPosition);
 				return;
@@ -202,7 +213,8 @@ public partial class DialogueBalloon : CanvasLayer
 				&& filteredResponses.Count == 0)
 			{
 				GetViewport().SetInputAsHandled();
-				Next(dialogueLine.NextId);
+				string nextId = dialogueLine.NextId;
+				Callable.From(() => AdvanceAfterMetaClick(nextId)).CallDeferred();
 				return;
 			}
 
@@ -218,6 +230,57 @@ public partial class DialogueBalloon : CanvasLayer
 			GetViewport().SetInputAsHandled();
 			Next(dialogueLine.NextId);
 		}
+	}
+
+	private void OnDialogueMetaClicked(Variant meta)
+	{
+		lastMetaClickFrame = Engine.GetProcessFrames();
+
+		// 拖拽选择结束时松开在链接上：算复制，不算点击获取。
+		if (pressGlobalPosition.DistanceTo(GetViewport().GetMousePosition()) > ClickDragThreshold)
+		{
+			return;
+		}
+
+		string url = meta.AsString();
+		if (!url.StartsWith("doc:"))
+		{
+			GD.PushError($"DialogueBalloon: 不支持的高亮链接 {url}");
+			return;
+		}
+
+		string documentId = url["doc:".Length..];
+		if (string.IsNullOrEmpty(documentId))
+		{
+			GD.PushError("DialogueBalloon: 文档链接的 id 为空");
+			return;
+		}
+		if (gameState == null)
+		{
+			GD.PushError("DialogueBalloon: GameState 未就绪，无法记录文档");
+			return;
+		}
+
+		bool added = gameState.AcquireDocument(documentId);
+		if (added)
+		{
+			ShowToast("已记录到手机");
+			return;
+		}
+
+		// 未注册的 id 已由 AcquireDocument 报错；只有重复获取才提示已在手机里。
+		if (gameState.HasDocument(documentId))
+		{
+			ShowToast("已在手机里");
+		}
+	}
+
+	private void AdvanceAfterMetaClick(string nextId)
+	{
+		if (!GodotObject.IsInstanceValid(this)) return;
+		// 同一帧内发生过 meta 点击：这次松开是点链接，不是推进。
+		if (lastMetaClickFrame == Engine.GetProcessFrames()) return;
+		Next(nextId);
 	}
 
 	private async void ApplyDialogueLine()
@@ -376,14 +439,15 @@ public partial class DialogueBalloon : CanvasLayer
 		}
 
 		DisplayServer.ClipboardSet(text);
-		ShowCopyToast();
+		ShowToast("已复制");
 		GD.Print($"[Dialogue] 已复制 {text.Length} 字");
 	}
 
-	private void ShowCopyToast()
+	private void ShowToast(string text)
 	{
 		if (copyToast == null) return;   // 缺失已在 _Ready 报错
 
+		copyToast.Text = text;
 		copyToastTween?.Kill();
 		copyToast.Visible = true;
 		copyToast.Modulate = new Color(1, 1, 1, 0);

@@ -61,7 +61,7 @@ interact={
 
 [internationalization]
 
-locale/translations_pot_files=PackedStringArray("res://Dialogue/day1.dialogue", "res://Dialogue/Npc/student.dialogue", "res://Dialogue/Npc/yuka.dialogue", "res://Dialogue/Npc/yamada.dialogue", "res://Dialogue/Npc/shinji.dialogue")
+locale/translations_pot_files=PackedStringArray("res://Dialogue/day1.dialogue", "res://Dialogue/Npc/student.dialogue", "res://Dialogue/Npc/yuka.dialogue", "res://Dialogue/Npc/yamada.dialogue", "res://Dialogue/Npc/shinji.dialogue", "res://Dialogue/phone.dialogue")
 
 [physics]
 

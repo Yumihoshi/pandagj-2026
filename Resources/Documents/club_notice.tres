@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="DocumentData" format=3]
+
+[ext_resource type="Script" uid="uid://ciqtvja815o4p" path="res://Scripts/Documents/DocumentData.cs" id="1_doc"]
+
+[resource]
+script = ExtResource("1_doc")
+Id = "club_notice"
+Title = "社团活动申请表"
+Body = "社团活动申请表\n\n申请人：文学部 二年级\n活动内容：周五放学后，图书馆二层。\n\n备注：申请理由一栏被涂黑，看不清。"

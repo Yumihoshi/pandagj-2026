@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="DocumentLibrary" format=3]
+
+[ext_resource type="Script" uid="uid://c5d41r5hcdx4" path="res://Scripts/Documents/DocumentLibrary.cs" id="1_lib"]
+[ext_resource type="Resource" path="res://Resources/Documents/club_notice.tres" id="2_doc"]
+
+[resource]
+script = ExtResource("1_lib")
+Documents = [ExtResource("2_doc")]

@@ -40,6 +40,21 @@ public partial class GameState : Node
 	/// <summary>本轮已选的一次性选项：npcId → staticId 集合。</summary>
 	private readonly Dictionary<string, HashSet<string>> _npcUsedChoices = new();
 
+	/// <summary>文档注册表：id → DocumentData。</summary>
+	private readonly Dictionary<string, DocumentData> _documentsById = new();
+
+	/// <summary>已获取文档，按获取顺序；跨循环保留。</summary>
+	private readonly List<DocumentData> _acquiredDocuments = new();
+
+	/// <summary>已获取文档 id，用于 O(1) 判重；跨循环保留。</summary>
+	private readonly HashSet<string> _acquiredDocumentIds = new();
+
+	/// <summary>已获取的文档，按获取顺序。</summary>
+	public IReadOnlyList<DocumentData> AcquiredDocuments => _acquiredDocuments;
+
+	/// <summary>手机记事本内容；跨循环保留，不落盘。</summary>
+	public string NotebookText { get; set; } = "";
+
 	[Signal] public delegate void LocationUnlockedEventHandler(string locationId);
 	[Signal] public delegate void TimeChangedEventHandler(int elapsedMinutes);
 	[Signal] public delegate void LoopEndReachedEventHandler();
@@ -124,6 +139,80 @@ public partial class GameState : Node
 		GD.Print($"[Clue] 获得线索 {clueId}");
 	}
 
+	/// <summary>把 DocumentLibrary 里的文档灌入注册表；重复调用只重建注册表。</summary>
+	public void SeedDocuments(DocumentLibrary library)
+	{
+		if (library == null)
+		{
+			GD.PushError("GameState.SeedDocuments: DocumentLibrary 为空");
+			return;
+		}
+		if (library.Documents == null)
+		{
+			GD.PushError("GameState.SeedDocuments: Documents 为空");
+			return;
+		}
+
+		_documentsById.Clear();
+		foreach (DocumentData document in library.Documents)
+		{
+			if (document == null)
+			{
+				GD.PushError("GameState.SeedDocuments: Documents 里有 null 项");
+				continue;
+			}
+			if (string.IsNullOrEmpty(document.Id))
+			{
+				GD.PushError($"GameState.SeedDocuments: {document.ResourcePath} 的 Id 为空");
+				continue;
+			}
+			if (!_documentsById.TryAdd(document.Id, document))
+			{
+				GD.PushError($"GameState.SeedDocuments: 文档 id 重复 —— {document.Id}");
+				continue;
+			}
+			if (string.IsNullOrEmpty(document.Title))
+			{
+				GD.PushError($"GameState.SeedDocuments: 文档 {document.Id} 的 Title 为空");
+			}
+			if (string.IsNullOrEmpty(document.Body))
+			{
+				GD.PushError($"GameState.SeedDocuments: 文档 {document.Id} 的 Body 为空");
+			}
+		}
+	}
+
+	/// <summary>获取一篇文档；已获取或 id 未注册时返回 false。</summary>
+	public bool AcquireDocument(string documentId)
+	{
+		if (string.IsNullOrEmpty(documentId))
+		{
+			GD.PushError("GameState.AcquireDocument: 文档 id 为空");
+			return false;
+		}
+		if (!_documentsById.TryGetValue(documentId, out DocumentData document))
+		{
+			GD.PushError($"GameState.AcquireDocument: 文档 {documentId} 没有在 DocumentLibrary 里注册");
+			return false;
+		}
+		if (!_acquiredDocumentIds.Add(documentId)) return false;
+
+		_acquiredDocuments.Add(document);
+		GD.Print($"[Doc] 获取 {documentId}");
+		return true;
+	}
+
+	/// <summary>是否已经获取过某篇文档。</summary>
+	public bool HasDocument(string documentId)
+	{
+		if (string.IsNullOrEmpty(documentId))
+		{
+			GD.PushError("GameState.HasDocument: 文档 id 为空");
+			return false;
+		}
+		return _acquiredDocumentIds.Contains(documentId);
+	}
+
 	/// <summary>本轮某个 NPC 的状态覆盖；没有时返回空字符串。</summary>
 	public string GetNpcLoopState(string npcId)
 	{
@@ -201,7 +290,7 @@ public partial class GameState : Node
 		return false;
 	}
 
-	/// <summary>循环重置：时间归零、周目 +1，清本轮状态，保留解锁与线索。</summary>
+	/// <summary>循环重置：时间归零、周目 +1，清本轮状态，保留解锁、线索、文档与记事本。</summary>
 	public void ResetLoop()
 	{
 		ElapsedMinutes = 0;

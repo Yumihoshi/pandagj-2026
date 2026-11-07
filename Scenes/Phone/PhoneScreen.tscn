@@ -1,0 +1,291 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://brnnps4bw4j1r" path="res://Scripts/Phone/PhoneScreen.cs" id="1_phone"]
+[ext_resource type="PackedScene" uid="uid://uk6kxcc2r3rl" path="res://Scenes/Dialogue/DialogueBalloon.tscn" id="2_balloon"]
+[ext_resource type="Resource" path="res://Dialogue/phone.dialogue" id="3_dialogue"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
+bg_color = Color(0.0470588, 0.0470588, 0.0705882, 0.62)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.16)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.6, 0.6, 0.6, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_focus"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
+content_margin_left = 20.0
+content_margin_top = 10.0
+content_margin_right = 20.0
+content_margin_bottom = 10.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.329412, 0.329412, 0.329412, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Theme" id="Theme_phone"]
+default_font_size = 20
+Button/styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+Button/styles/focus = SubResource("StyleBoxFlat_btn_focus")
+Button/styles/hover = SubResource("StyleBoxFlat_btn_hover")
+Button/styles/normal = SubResource("StyleBoxFlat_btn_normal")
+MarginContainer/constants/margin_bottom = 15
+MarginContainer/constants/margin_left = 30
+MarginContainer/constants/margin_right = 30
+MarginContainer/constants/margin_top = 15
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_panel")
+RichTextLabel/colors/selection_color = Color(1, 1, 1, 0.35)
+TextEdit/colors/selection_color = Color(1, 1, 1, 0.35)
+
+[node name="PhoneScreen" type="CanvasLayer"]
+layer = 45
+script = ExtResource("1_phone")
+DialogueBalloonScene = ExtResource("2_balloon")
+PhoneDialogue = ExtResource("3_dialogue")
+
+[node name="PhoneButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 144.0
+offset_bottom = 80.0
+focus_mode = 0
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_hud")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hud")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_hud")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_hud")
+theme_override_styles/focus = SubResource("StyleBoxFlat_hud")
+text = "手机"
+
+[node name="Overlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme = SubResource("Theme_phone")
+
+[node name="Dim" type="ColorRect" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.45)
+
+[node name="Center" type="CenterContainer" parent="Overlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DocListPanel" type="PanelContainer" parent="Overlay/Center"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(1000, 760)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/Center/DocListPanel"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Overlay/Center/DocListPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="Label" parent="Overlay/Center/DocListPanel/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "文档"
+
+[node name="DocScroll" type="ScrollContainer" parent="Overlay/Center/DocListPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DocList" type="VBoxContainer" parent="Overlay/Center/DocListPanel/MarginContainer/VBox/DocScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="DocEmpty" type="Label" parent="Overlay/Center/DocListPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+text = "还没有记录任何文档。\n在对话里点击高亮文字即可记录。"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="DocListBack" type="Button" parent="Overlay/Center/DocListPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "返回"
+
+[node name="DocReadPanel" type="PanelContainer" parent="Overlay/Center"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(1100, 800)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/Center/DocReadPanel"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Overlay/Center/DocReadPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="DocReadTitle" type="Label" parent="Overlay/Center/DocReadPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+
+[node name="DocReadScroll" type="ScrollContainer" parent="Overlay/Center/DocReadPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DocReadBody" type="RichTextLabel" parent="Overlay/Center/DocReadPanel/MarginContainer/VBox/DocReadScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+autowrap_mode = 3
+selection_enabled = false
+
+[node name="DocCopyToast" type="Label" parent="Overlay/Center/DocReadPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 16
+text = "已复制"
+horizontal_alignment = 2
+
+[node name="DocReadBack" type="Button" parent="Overlay/Center/DocReadPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "返回列表"
+
+[node name="NotebookPanel" type="PanelContainer" parent="Overlay/Center"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(1000, 760)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/Center/NotebookPanel"]
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="Overlay/Center/NotebookPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="Label" parent="Overlay/Center/NotebookPanel/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "记事本"
+
+[node name="NotebookEdit" type="TextEdit" parent="Overlay/Center/NotebookPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(900, 560)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
+theme_override_colors/selection_color = Color(1, 1, 1, 0.35)
+theme_override_font_sizes/font_size = 20
+placeholder_text = "在这里整理线索、粘贴对话……"
+wrap_mode = 1
+
+[node name="NotebookBack" type="Button" parent="Overlay/Center/NotebookPanel/MarginContainer/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "返回"

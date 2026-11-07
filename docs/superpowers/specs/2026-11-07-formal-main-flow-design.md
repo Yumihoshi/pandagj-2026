@@ -19,7 +19,7 @@
 | # | 决策 |
 |---|---|
 | Q1 | 采用「现有系统 + 少量交互物」：每个 NPC 一个 `.dialogue` 按状态/线索分支，门/抽屉/炸药/水管/座位各做一个 `Interactable`，跨场景状态放 `GameState`；不引入任务系统或事件总线 |
-| Q2 | 一周目被锁教室后，回座位「看书」推进时间：前 4 次各 +60 分钟，第 5 次 +30 分钟到 17:30 并触发爆炸；每次配一句 BL 小说独白 |
+| Q2 | 一周目被锁教室后，回座位「看书」推进时间：前 4 次各 +60 分钟，第 5 次 +30 分钟到 17:30 并触发爆炸；每次配一句 BL 小说独白（2026-11-08 改为一次交互播完整段，退出对话时直接到 17:30） |
 | Q3 | 选「决定在教室看书」后，教室→走廊的门被挡住，播 BL 小说独白；一周目的「决定出去逛逛」选项灰显不可点，二周目起可选 |
 | Q4 | 剧本转换规则：同编号选项同屏显示；编号递增是先后菜单；无编号 `——>` 是单选项菜单；斜杠拆分同一说话者的连续台词；括号旁白不加说话者；`鸣子/新井：` 是双人同喊，保留合并名 |
 | Q5 | 长台词按标点拆成多行，避免超出 `DialogueLabel` 固定高度；动作说明保留为旁白 |
@@ -158,7 +158,7 @@ graph TD
 | `RoomDoor` | 房间切换、钥匙锁、线索锁、锁定提示 | 剧情台词 |
 | `ClassroomDoor` | 一周目始终挡住教室→走廊（只能看书），播 BL 独白 | 其它房间 |
 | `LabDoor` | 首次进化学实验室时跳到分析完成时间 | 房门锁（交给基类） |
-| `BookDesk` | 一周目看书 +60 分钟；第 5 次播 `last` 并推进 30 分钟 | 剧情文本 |
+| `BookDesk` | 一周目一次交互播完整段看书剧本，读完后一次推进到 17:30 | 剧情文本 |
 | `KeyedDrawer` | 检查办公室钥匙；打开密码面板 | 密码校验（交给面板） |
 | `PasswordPanel` | 4 位密码 UI、校验 0721、获取笔记本文档、写入地下线索 | 场景切换 |
 | `BombInteractable` | 取样、湿炸药、状态文案；湿炸药旁白结束后自动推进到 17:00 并播放山田终局对质 | 结局分支（交给剧本） |
@@ -505,29 +505,33 @@ public partial class LabDoor : RoomDoor
 #### 4.4.3 `BookDesk`
 
 ```csharp
-/// <summary>教室座位：一周目看书推进时间，第 5 次进入 last 分支。</summary>
+/// <summary>教室座位：一周目一次坐下读完整段 BL 小说，读完后时间直接到 17:30 终末。</summary>
 public partial class BookDesk : Interactable
 {
     /// <summary>看书剧本。</summary>
     [Export] public Resource Dialogue { get; set; }
 
-    private int _readCount;
-
     public override void Interact()
     {
         if (!GameState.Instance.IsFirstLoop()) { Show("later"); return; }
-        if (_readCount >= 4 || GameState.Instance.ElapsedMinutes >= 240) { Show("last"); return; }
-        if (GameState.Instance.AdvanceTime(60)) return;
-        _readCount++;
-        Show($"read_{_readCount}");
+        Node balloon = Show("read");
+        if (balloon != null) balloon.TreeExited += OnReadingExited;
     }
 
-    private void Show(string cue) { /* 校验 Dialogue 后 DialogueManager.ShowDialogueBalloon(Dialogue, cue) */ }
+    /// <summary>整段阅读结束后把时间推进到 17:30，触发本轮终末。</summary>
+    private void OnReadingExited()
+    {
+        if (!IsInsideTree() || GameState.Instance == null) return;
+        int remain = GameState.LoopDurationMinutes - GameState.Instance.ElapsedMinutes;
+        if (remain > 0) GameState.Instance.AdvanceTime(remain);
+    }
+
+    private Node Show(string cue) { /* 校验 Dialogue 后 DialogueManager.ShowDialogueBalloon(Dialogue, cue) */ }
 }
 ```
 
-- 前 4 次由 C# 推进 60 分钟；第 5 次只播 `last`，由剧本里的 `do GameState.AdvanceTime(30)` 推进并触发 17:30。
-- `_readCount` 随地点实例存在；循环重置重新实例化后归零。
+- 一周目一次交互播完整个 `read` 剧本（原 `read_1`…`read_4`、`last` 已合并），中途不结束、不需要重新交互。
+- 时间在对话退出时一次性推进到 17:30，避免对话中途触发 `LoopEndReached` 把气球冲掉。
 - 二周目起只播 `later`，不推进时间。
 
 #### 4.4.4 `KeyedDrawer`
@@ -843,7 +847,7 @@ flowchart TD
 
 | 周目 | 玩家做什么 | 结束方式 |
 |---|---|---|
-| 一周目 | 小优香开场 → 只能选看书 → 山田问下午安排 → 回座位看书 5 次 | 17:30 爆炸重置 |
+| 一周目 | 小优香开场 → 只能选看书 → 山田问下午安排 → 回座位看一次书 | 17:30 爆炸重置 |
 | 二周目 | 新井问小优香 → 操场问田径部拿钥匙、问山田解锁行政楼 → 行政楼办公室被赶出 → 器材准备室探索 | 17:30 爆炸重置 |
 | 三周目 | 14:00 偷钥匙 → 抽屉 → 问小优香密码 → 打开笔记本 → 地下取样 → 交给新井 → 实验室等两小时 | 17:25 左右拿到「用水」线索，17:30 重置 |
 | 四周目 | 拿钥匙 → 器材准备室接水 → 地下湿炸药 → 等到 17:00 → 对质 | 真结局 / 失败 |
@@ -864,8 +868,8 @@ flowchart TD
    - 鸣子：「（刚看到最关键的地方……BL 小说还没看完，还是回去继续看吧。）」
    - 鸣子：「（反正今天也没什么特别的事。）」
 7. 座位 `BookDesk`：
-   - 第 1-4 次：`AdvanceTime(60)`，播 `read_1`…`read_4`。
-   - 第 5 次（`_readCount >= 4` 或时间已到 17:00）：播 `last`；剧本内 `do GameState.AdvanceTime(30)` 到 17:30，触发终末。
+   - 一周目一次交互播完整个 `read` 剧本（翻书 → 告白 → 天色变暗 → 「已经这个时候了？」），不需要多次交互。
+   - 剧本退出后由 C# 把时间一次性推进到 17:30，触发终末。
    - 二周目起：只播 `later`，不推进时间。
 8. 17:30：`LoopEndReached` → 冻结地点 → `LoopEndNotice.Show()` → 2 秒后 `ResetLoop()`。
 
@@ -966,7 +970,7 @@ flowchart TD
 | `Dialogue/Npc/shinji_lab.dialogue` | 新井 化学实验室 | `start` |
 | `Dialogue/Npc/yamada.dialogue` | 山田 教室 / 办公室 | `start`（writing / working / sleeping）、`about_afternoon` |
 | `Dialogue/Npc/yamada_underground.dialogue` | 山田 17:00 地下 | `start`、`ending_dry`、`ending_wet` |
-| `Dialogue/Objects/classroom_desk.dialogue` | 座位看书 | `read_1`…`read_4`、`last`、`later` |
+| `Dialogue/Objects/classroom_desk.dialogue` | 座位看书 | `read`、`later` |
 | `Dialogue/Objects/classroom_block.dialogue` | 一周目教室门阻挡 | `start` |
 | `Dialogue/Objects/underground_bomb.dialogue` | 地下炸药 | `sample`、`wet`、`already_wet`、`nothing` |
 | `Dialogue/Objects/equipment_water.dialogue` | 器材准备室水管 | `hint`、`fill`、`already` |
@@ -1113,7 +1117,7 @@ flowchart TD
 
 - `GameState.AdvanceTime` 到 270 → `LoopEndReached`。
 - `GameScene`：冻结当前地点 `ProcessMode`；`LoopEndNotice.Show()`；等约 2.0 秒；`ResetLoop()`。
-- 若终末时对话框还开着（例如看书 `last`），`LoopReset` 会让 `DialogueBalloon` 自行 `QueueFree`；`LoopEndNotice` 在对话框之上（90 > 50），玩家看得到「轰———」。
+- 若终末时对话框还开着，`LoopReset` 会让 `DialogueBalloon` 自行 `QueueFree`；`LoopEndNotice` 在对话框之上（90 > 50），玩家看得到「轰———」。看书改为对话退出后才推进时间，不再出现「终末时气球还开着」的情况。
 - 真结局 / 失败不经过 17:30 终末：真结局对话期间不推进时间；失败由 `FailLoop` 直接重置。
 
 ### 8.4 结局状态图
@@ -1144,13 +1148,13 @@ sequenceDiagram
     participant B as DialogueBalloon
     participant G as GameScene
 
-    U->>D: 按 F 看书（第 1-4 次）
-    D->>GS: IsFirstLoop + AdvanceTime(60)
-    GS-->>D: false
-    D->>B: ShowDialogueBalloon(desk, "read_n")
-    U->>D: 第 5 次看书
-    D->>B: ShowDialogueBalloon(desk, "last")
-    B->>GS: do GameState.AdvanceTime(30)
+    U->>D: 按 F 看书（一周目一次）
+    D->>GS: IsFirstLoop
+    GS-->>D: true
+    D->>B: ShowDialogueBalloon(desk, "read")
+    B-->>U: 整段 BL 小说独白（逐句点击）
+    B->>D: TreeExited
+    D->>GS: AdvanceTime(270 - 已过分钟)
     GS-->>G: LoopEndReached
     G->>G: 冻结地点 + LoopEndNotice.Show()
     G->>GS: ResetLoop()
@@ -1341,7 +1345,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 - [ ] 教室醒来，小优香开场；「决定出去逛逛」灰显不可点
 - [ ] 选「决定在教室看书」→ 写 `chose_reading` → 再次搭话只说「17:30 一起回家」
 - [ ] 尝试出教室 → 播 BL 小说独白，不切房间
-- [ ] 座位看书 4 次各 +60 分钟；第 5 次播 `last` 并到 17:30
+- [ ] 座位看书一次播完整段 BL 小说，退出后直接到 17:30
 - [ ] 17:30 出现「轰———」闪白，随后回到 13:00 教室；周目 +1
 
 **二周目**
@@ -1447,7 +1451,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 9. 剧本导入：yuka / shinji / shinji_lab / yamada / yamada_underground / 5 个物体剧本；POT 登记。
 10. 文档：9 篇 `.tres` + `DocumentLibrary.tres`；移除 `club_notice` 注册。
 11. `--import` + `--build-solutions` + `--quit-after 120`；修编译/启动错误。
-12. 按 §12.2 手动走四周目；重点验证一周目锁、看书 5 次、实验室两小时、密码、湿炸药、真结局/失败。
+12. 按 §12.2 手动走四周目；重点验证一周目锁、看书一次到 17:30、实验室两小时、密码、湿炸药、真结局/失败。
 13. 同步 `AGENTS.md`；更新本规格状态；**不执行 git commit**。
 
 ---
@@ -1458,7 +1462,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 |---|---|
 | 对话框高度 | `DialogueLabel` 固定高度、不滚动；长台词必须按 §6.4 拆行，否则溢出 |
 | 一周目锁 | 门只在 `IsFirstLoop && chose_reading` 时挡；玩家在选看书前仍可离开，这是剧本「对话结束后才无法离开」的直译 |
-| 看书次数 | 13:00 + 4×60 = 17:00，第 5 次只 +30；不要写成 4 次到 17:30 |
+| 看书节奏 | 一周目一次交互播完整段看书剧本，退出时一次推进到 17:30；不要再拆成多次交互 / 多段 cue |
 | 实验室时间 | `BombAnalysisReadyMinute` 是本轮分钟；`AdvanceTime` 夹到 270，晚交样本可能拿不到结果，这是时间压力的一部分 |
 | 办公室时间窗 | 办公室门在 13:30-16:59（山田在办公室）开放，13:00-13:29 与 17:00 后锁着。剧本三周目路线 13:45 进办公室，门锁到 14:00 会让剧本路线走不通。偷钥匙的时间压力由 NPC 状态保证：只有 14:00-14:59 `sleeping` 分支发 `office_key`；其余时段由 `OfficeKickOut` 把交互者赶回入口，避免玩家在办公室里磨到 14:00 |
 | 实验室背景 | 暂无化学实验室背景，暂用 `next_classroom.png`；后续换图只改 `Bg.texture` |

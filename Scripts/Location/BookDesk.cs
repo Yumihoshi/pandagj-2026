@@ -1,13 +1,11 @@
 using Godot;
 using DialogueManagerRuntime;
 
-/// <summary>教室座位：一周目看书推进时间，第 5 次进入 last 分支。</summary>
+/// <summary>教室座位：一周目一次坐下读完整段 BL 小说，读完后时间直接到 17:30 终末。</summary>
 public partial class BookDesk : Interactable
 {
 	/// <summary>看书剧本。</summary>
 	[Export] public Resource Dialogue { get; set; }
-
-	private int _readCount;
 
 	public override void Interact()
 	{
@@ -26,21 +24,27 @@ public partial class BookDesk : Interactable
 			Show("later");
 			return;
 		}
-		if (_readCount >= 4 || GameState.Instance.ElapsedMinutes >= 240)
-		{
-			Show("last");
-			return;
-		}
-		if (GameState.Instance.AdvanceTime(60)) return;
-		_readCount++;
-		Show($"read_{_readCount}");
+
+		Node balloon = Show("read");
+		if (balloon != null) balloon.TreeExited += OnReadingExited;
 	}
 
-	private void Show(string cue)
+	/// <summary>整段阅读结束后把时间推进到 17:30，触发本轮终末。</summary>
+	private void OnReadingExited()
 	{
-		if (DialogueManager.ShowDialogueBalloon(Dialogue, cue) == null)
+		if (!IsInsideTree() || GameState.Instance == null) return;
+
+		int remain = GameState.LoopDurationMinutes - GameState.Instance.ElapsedMinutes;
+		if (remain > 0) GameState.Instance.AdvanceTime(remain);
+	}
+
+	private Node Show(string cue)
+	{
+		Node balloon = DialogueManager.ShowDialogueBalloon(Dialogue, cue);
+		if (balloon == null)
 		{
 			GD.PushError($"BookDesk {Name}: ShowDialogueBalloon({cue}) 返回空");
 		}
+		return balloon;
 	}
 }

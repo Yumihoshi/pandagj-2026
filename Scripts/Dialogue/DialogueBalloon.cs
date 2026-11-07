@@ -468,7 +468,7 @@ public partial class DialogueBalloon : CanvasLayer
 			Color? color = ResponseColorResolver(response);
 			if (color.HasValue)
 			{
-				button.AddThemeColorOverride("font_color", color.Value);
+				ButtonTextColors.Apply(button, color.Value);
 			}
 		}
 	}

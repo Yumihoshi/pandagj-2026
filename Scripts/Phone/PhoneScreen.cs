@@ -393,7 +393,7 @@ public partial class PhoneScreen : CanvasLayer
 			};
 			if (GameState.Instance != null && !GameState.Instance.IsDocumentRead(document.Id))
 			{
-				button.AddThemeColorOverride("font_color", UnreadHighlightColor);
+				ButtonTextColors.Apply(button, UnreadHighlightColor);
 			}
 			button.Pressed += () => ShowDocumentRead(document);
 			DocList.AddChild(button);

@@ -35,9 +35,9 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Scenes/Locations/Classroom.tscn` 新增化学实验室房间 `Room_ChemLab`（背景暂用 `next_classroom.png`）。
 - `Dialogue/day1.dialogue`：占位剧本，**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
 - `Dialogue/Npc/student.dialogue`：旧「同学」demo 剧本，当前未挂到任何 NPC；`yuka.dialogue` / `yamada.dialogue` / `shinji.dialogue` 是三个 NPC 的正式剧本；`shinji_lab.dialogue` / `yamada_underground.dialogue` 是新 NPC 剧本；`Dialogue/Objects/` 是物体剧本。
-- `Scenes/Phone/PhoneScreen.tscn`：手机（`CanvasLayer.layer=45`）：左上角「手机」按钮、遮罩、文档列表 / 阅读 / 记事本面板。
-- `Resources/Documents/`：`DocumentLibrary.tres` 注册表与 8 篇正式文档（`shinji_schedule` / `yuka_secret` / `equipment_room` / `yamada_tracks` / `laptop_password` / `chem_lab` / `bomb_weakness` / `yamada_notebook`）；`club_notice.tres` 保留但不注册。
-- `Dialogue/phone.dialogue`：手机主菜单剧本（查看文档 / 记事本 / 关闭）。
+- `Scenes/Phone/PhoneScreen.tscn`：手机（`CanvasLayer.layer=45`）：左上角「手机」按钮、遮罩、重要的事列表 / 阅读 / 记事本面板。
+- `Resources/Documents/`：`DocumentLibrary.tres` 注册表与 8 篇正式条目（`shinji_schedule` / `yuka_secret` / `equipment_room` / `yamada_tracks` / `laptop_password` / `chem_lab` / `bomb_weakness` / `yamada_notebook`）；`club_notice.tres` 保留但不注册。
+- `Dialogue/phone.dialogue`：手机主菜单剧本（重要的事 / 记事本 / 关闭）。
 - `ArtRes/`：临时美术素材 —— `Backgrounds/`（9 张 1920x600 场景背景）、`Characters/`（4 张 240x300 透明立绘）、`CREDITS.md`（来源与许可）；`Source/` 保留原图与裁切源。
 - `Audio/Sfx/`：Kenney UI Audio 音效，按 `Click`(5) / `Rollover`(6) / `Switch`(38) / `Mouse`(2) 分组，保留 `License.txt`；`Audio/Bgm/` 目前为空。
 - `default_bus_layout.tres`：音频总线 `SFX` / `BGM`（`send = Master`），播放器按总线独立控音量。
@@ -55,19 +55,20 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 手机系统
 
-- 左上角 `PhoneScreen`（`Scenes/Phone/PhoneScreen.tscn`，`CanvasLayer.layer=45`）提供手机入口；打开时用 `DialogueBalloon` 加载 `Dialogue/phone.dialogue` 显示「查看文档 / 记事本 / 关闭」，文档列表 / 阅读 / 记事本用 `PhoneScreen` 自己的面板。
-- 文档：`DocumentData`（Id/Title/Body）+ `DocumentLibrary` 注册表放在 `Resources/Documents/`，启动时 `GameScene` 调 `GameState.SeedDocuments` 灌入；对话正文用 `[url=doc:<id>][color=#ffd866]文字[/color][/url]` 标可获取文档，点击只获取、不推进对话；已获取文档跨循环保留。已获取的链接由 `DialogueBalloon` 自动换成灰色 `#8a8a8a`（同句收集后立即重绘），再点只提示「已在手机里」；带高亮的选项一律加 `[#repeatable]`，漏点后可再进同一分支补收。
+- 左上角 `PhoneScreen`（`Scenes/Phone/PhoneScreen.tscn`，`CanvasLayer.layer=45`）提供手机入口；打开时用 `DialogueBalloon` 加载 `Dialogue/phone.dialogue` 显示「重要的事 / 记事本 / 关闭」，重要的事列表 / 阅读 / 记事本用 `PhoneScreen` 自己的面板。
+- 重要的事（玩家面向术语，原「文档」）：`DocumentData`（Id/Title/Body）+ `DocumentLibrary` 注册表放在 `Resources/Documents/`，启动时 `GameScene` 调 `GameState.SeedDocuments` 灌入；对话正文用 `[url=doc:<id>][color=#ffd866]文字[/color][/url]` 标可获取的重要的事，点击只获取、不推进对话；已获取的跨循环保留。已获取的链接由 `DialogueBalloon` 自动换成灰色 `#8a8a8a`（同句收集后立即重绘），再点只提示「已在手机里」；带高亮的选项一律加 `[#repeatable]`，漏点后可再进同一分支补收。
 - 记事本：`GameState.NotebookText` 单个字符串，每次 `TextEdit.TextChanged` 直接写入；跨循环保留但不落盘。
 - `DialogueBalloon.KeepPlayerInputLockedOnExit`：手机会话期间保持玩家输入锁，由 `PhoneScreen` 在关闭 / 循环重置时统一释放。
 - `Player.InputLocked` 从 `true` 变回 `false` 时会 `Input.ActionRelease("move_left"/"move_right")`：在记事本这类 `TextEdit` 里打字时字母键同样写进动作状态，输入法会吞掉 key-up，不清掉的话解锁后玩家会自己一直往一个方向走。
 - `PhoneScreen` 的面板容器 `Center` 必须 `mouse_filter = IGNORE`，否则全屏容器会抢走面板鼠标事件。
+- 术语：玩家可见文案统一写「重要的事」，不写「文档」；代码侧类名 / 节点名 / 资源 id（`DocumentData`、`DocumentLibrary`、`AcquireDocument`、`DocListPanel` 等）保持不变，避免破坏 `.tres` 的 uid 与场景唯一名引用。
 
 ## 时间系统
 
 - `GameState.ElapsedMinutes`：循环内分钟，0 = 13:00，270 = 17:30；`AdvanceTime(int minutes)` 返回 `true` 表示本次推进触发或已处于终末，**调用方必须随即中止后续动作**（不装载场景 / 不切房间）。
 - 默认扣时点：地图旅行（`MapLocationButton.TravelMinutes`，默认 30）与房间切换（`RoomDoor.TravelMinutes`，默认 5）。当前值：地图→教室 30、地图→操场 35、地图→行政楼 25；教室↔走廊 15、走廊↔隔壁班 20、操场↔操场后 10、操场后↔器材准备室 5、操场后↔地下空间 5（剧本未给，初值）、行政楼入口↔办公室 5。从地点退回地图不扣时；对话 / 调查 / 拾取不扣时。
 - `TimeChanged(int elapsedMinutes)` 驱动 NPC 换帧；`NpcStateFrame.FromMinute` 是循环内分钟（0 = 13:00，45 = 13:45）。
-- 17:30 发 `LoopEndReached`；`GameScene` 显示 `LoopEndNotice` 并等 2.0 秒后调 `ResetLoop()`。`ResetLoop()` 把时间归零、`LoopCount++`、清背包 / 本轮 NPC 状态 / 已选选项 / 本轮标记；`UnlockedLocations` / `Clues` / 文档 / 记事本保留。
+- 17:30 发 `LoopEndReached`；`GameScene` 显示 `LoopEndNotice` 并等 2.0 秒后调 `ResetLoop()`。`ResetLoop()` 把时间归零、`LoopCount++`、清背包 / 本轮 NPC 状态 / 已选选项 / 本轮标记；`UnlockedLocations` / `Clues` / 已收集的重要的事 / 记事本保留。
 - 右上角 `UILayer/TimePanel/TimeLabel`（`Scripts/UI/TimeLabel.cs`）显示 `GameState.GetClockText()`，订阅 `TimeChanged` 刷新；`ResetLoop()` 也会发 `TimeChanged(0)`，所以重置后自动回到 13:00。
 - `LoopCount` 只在当前进程内有效，只用于一周目固定锁；二 / 三 / 四周目是预期打法，不是系统强制的状态机，不按周目数限制地点 / 道具 / 对话 / 路线。
 - 工程只保留 `move_left` / `move_right` / `interact` 三个输入；循环重置由 17:30 终末或 17:00 地下失败（`FailLoop`）触发；真结局不重置。
@@ -95,7 +96,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 本轮标记：`chose_reading` / `chose_going_out` / `yuka_briefed` / `shinji_analyzing` / `bomb_sample_taken` / `bomb_wet` / `water_taken` / `office_key_taken`；每轮清空。
 - 办公室（行政楼）：门在 13:30-16:59 开放（`OfficeDoor`）；不在 14:00-14:59 时，玩家在办公室里与门 / 出口以外的任何东西交互，都会由 `OfficeKickOut` 播 `Dialogue/Objects/office_kick_out.dialogue` 并赶回入口（走 `DoorToLobby`，5 分钟）。偷 `office_key` 仍只限 14:00-14:59 山田午睡时。
 - 跨轮线索：`yuka_likes_yamada` / `saw_laptop` / `laptop_password` / `chem_lab_unlocked` / `bomb_weakness` / `underground_access`。
-- 8 篇文档的高亮语法与位置见 `docs/superpowers/specs/2026-11-07-formal-main-flow-design.md` §7。
+- 8 篇重要的事的高亮语法与位置见 `docs/superpowers/specs/2026-11-07-formal-main-flow-design.md` §7。
 
 ## 音频
 

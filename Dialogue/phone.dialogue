@@ -1,6 +1,6 @@
 ~ start
 手机: 要看什么？
-- 查看文档 [ID:open_documents] [#repeatable] => documents
+- 重要的事 [ID:open_documents] [#repeatable] => documents
 - 记事本 [ID:open_notes] [#repeatable] => notes
 - 关闭 [#repeatable] => END
 

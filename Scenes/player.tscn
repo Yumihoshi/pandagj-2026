@@ -23,6 +23,7 @@ size = Vector2(120, 120)
 
 [node name="Player" type="CharacterBody2D" unique_id=1248814557 node_paths=PackedStringArray("Camera")]
 script = ExtResource("1_player")
+MoveSpeed = 500.0
 Camera = NodePath("Camera2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1501031974]

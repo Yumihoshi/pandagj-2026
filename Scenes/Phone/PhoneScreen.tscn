@@ -451,9 +451,19 @@ focus_mode = 0
 theme_override_font_sizes/font_size = 28
 text = "▼"
 
-[node name="TimeSkipConfirm" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox"]
+[node name="Actions" type="HBoxContainer" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TimeSkipClose" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/Actions"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 56)
 layout_mode = 2
-size_flags_horizontal = 4
+text = "关闭"
+
+[node name="TimeSkipConfirm" type="Button" parent="Overlay/Center/TimeSkipPanel/MarginContainer/VBox/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 56)
+layout_mode = 2
 text = "确定"

@@ -106,6 +106,7 @@ public partial class PhoneScreen : CanvasLayer
 		NotebookBack.Pressed += BackToMainMenu;
 		NotebookEdit.TextChanged += OnNotebookTextChanged;
 		TimeSkipPanel.Confirmed += OnTimeSkipConfirmed;
+		GetNode<Button>("%TimeSkipClose").Pressed += BackToMainMenu;
 		DocReadBody.GuiInput += OnDocReadGuiInput;
 		DocReadBody.MetaClicked += OnDocMetaClicked;
 		LinkTextColors.ApplyUnderline(DocReadBody);

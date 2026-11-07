@@ -1,0 +1,75 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/UI/InteractPrompt.cs" id="1_prompt"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pill"]
+content_margin_left = 6.0
+content_margin_top = 5.0
+content_margin_right = 9.0
+content_margin_bottom = 5.0
+bg_color = Color(0.0431373, 0.0509804, 0.0705882, 0.862745)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.847059, 0.4, 0.313726)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_right = 7
+corner_radius_bottom_left = 7
+shadow_color = Color(0, 0, 0, 0.392157)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_key"]
+bg_color = Color(1, 0.847059, 0.4, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_color = Color(0, 0, 0, 0.25098)
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
+
+[node name="InteractPrompt" type="Node2D" node_paths=PackedStringArray("Pill")]
+top_level = true
+z_index = 100
+script = ExtResource("1_prompt")
+Pill = NodePath("Pill")
+
+[node name="Pill" type="PanelContainer" parent="."]
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_pill")
+
+[node name="Row" type="HBoxContainer" parent="Pill"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+
+[node name="Keycap" type="Panel" parent="Pill/Row"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_key")
+
+[node name="KeyLabel" type="Label" parent="Pill/Row/Keycap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.0862745, 0.0941176, 0.113725, 1)
+theme_override_font_sizes/font_size = 20
+text = "F"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Caption" type="Label" parent="Pill/Row"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.94902, 0.956863, 0.976471, 1)
+theme_override_font_sizes/font_size = 18
+text = "交互"
+vertical_alignment = 1

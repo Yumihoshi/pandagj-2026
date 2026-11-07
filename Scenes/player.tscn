@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cupnmch46w0gi" path="res://Scripts/Player/Player.cs" id="1_player"]
 [ext_resource type="Script" uid="uid://dnjwlnyt674ag" path="res://Scripts/Player/PlayerInteractor.cs" id="2_interactor"]
 [ext_resource type="Texture2D" uid="uid://c3ag7qq4h1nms" path="res://ArtRes/Characters/muriko.png" id="3_icon"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/InteractPrompt.tscn" id="4_prompt"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_icon"]
 animations = [{
@@ -36,8 +37,11 @@ shape = SubResource("RectangleShape2D_body")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1258448375]
 
-[node name="InteractionRange" type="Area2D" parent="." unique_id=304796731]
+[node name="InteractionRange" type="Area2D" parent="." unique_id=304796731 node_paths=PackedStringArray("Prompt")]
 script = ExtResource("2_interactor")
+Prompt = NodePath("../InteractPrompt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionRange" unique_id=2001912824]
 shape = SubResource("RectangleShape2D_range")
+
+[node name="InteractPrompt" parent="." instance=ExtResource("4_prompt")]

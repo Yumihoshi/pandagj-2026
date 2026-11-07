@@ -67,6 +67,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `PhoneScreen` 的面板容器 `Center` 必须 `mouse_filter = IGNORE`，否则全屏容器会抢走面板鼠标事件。
 - 术语：玩家可见文案统一写「重要的事」，不写「文档」；代码侧类名 / 节点名 / 资源 id（`DocumentData`、`DocumentLibrary`、`AcquireDocument`、`DocListPanel` 等）保持不变，避免破坏 `.tres` 的 uid 与场景唯一名引用。
 - 玩手机消磨时间：主菜单 `[ID:waste_time]` → `phone.OpenTimeSkip()` → `PhoneScreen` 打开 `TimeSkipPanel`（四位数显 HH:MM，每格 ▲▼ 按本位权值 600 / 60 / 10 / 1 分钟调整；可选范围 13:00–17:30，时十位恒为 1 所以它的箭头常禁用）。目标 ≤ 当前时刻时「确定」置灰；确认后先 `CloseSession()` 释放输入锁，再 `AdvanceTime(目标 - 当前)`，目标 17:30 照常触发终末重置。设计见 `docs/superpowers/specs/2026-11-07-phone-time-skip-design.md`。
+- 钥匙 HUD：`PhoneScreen` 的 `KeyRing`（`Scripts/UI/KeyRing.cs`）在手机按钮右侧显示已持有的钥匙图标 —— `office_key`「办公室抽屉的钥匙」、`equipment_key`「器材准备室的钥匙」，鼠标悬浮时在图标下方显示名称；图标与药丸底、悬浮框都由代码绘制，不依赖图标素材。`GameState.InventoryChanged` 驱动刷新，手机打开 / 17:30 终末时随手机按钮一起隐藏，循环重置清空背包后自动消失。
 
 ## 时间系统
 

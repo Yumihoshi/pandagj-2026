@@ -28,6 +28,7 @@ public partial class PhoneScreen : CanvasLayer
 	}
 
 	private Button PhoneButton;
+	private KeyRing KeyRing;
 	private Control Overlay;
 	private Control DocListPanel;
 	private ScrollContainer DocScroll;
@@ -62,6 +63,7 @@ public partial class PhoneScreen : CanvasLayer
 	public override void _Ready()
 	{
 		PhoneButton = GetNode<Button>("%PhoneButton");
+		KeyRing = GetNode<KeyRing>("%KeyRing");
 		Overlay = GetNode<Control>("%Overlay");
 		DocListPanel = GetNode<Control>("%DocListPanel");
 		DocScroll = GetNode<ScrollContainer>("%DocScroll");
@@ -95,6 +97,7 @@ public partial class PhoneScreen : CanvasLayer
 		{
 			GameState.Instance.LoopEndReached += OnLoopEndReached;
 			GameState.Instance.LoopReset += OnLoopReset;
+			GameState.Instance.InventoryChanged += OnInventoryChanged;
 		}
 
 		PhoneButton.Pressed += Open;
@@ -124,6 +127,7 @@ public partial class PhoneScreen : CanvasLayer
 		{
 			GameState.Instance.LoopEndReached -= OnLoopEndReached;
 			GameState.Instance.LoopReset -= OnLoopReset;
+			GameState.Instance.InventoryChanged -= OnInventoryChanged;
 		}
 
 		if (GodotObject.IsInstanceValid(_menuBalloon))
@@ -250,6 +254,7 @@ public partial class PhoneScreen : CanvasLayer
 		_open = true;
 		_player.InputLocked = true;
 		PhoneButton.Hide();
+		KeyRing.SetHudVisible(false);
 		GD.Print("[Phone] 打开");
 		ShowMainMenu();
 	}
@@ -355,6 +360,7 @@ public partial class PhoneScreen : CanvasLayer
 
 		HideAllPages();
 		PhoneButton.Show();
+		KeyRing.SetHudVisible(true);
 		_open = false;
 
 		if (GodotObject.IsInstanceValid(_player))
@@ -656,6 +662,7 @@ public partial class PhoneScreen : CanvasLayer
 		_loopEnded = true;
 		if (_open) CloseSession();
 		PhoneButton.Hide();
+		KeyRing.SetHudVisible(false);
 	}
 
 	private void OnLoopReset()
@@ -663,5 +670,11 @@ public partial class PhoneScreen : CanvasLayer
 		_loopEnded = false;
 		if (_open) CloseSession();
 		PhoneButton.Show();
+		KeyRing.SetHudVisible(true);
+	}
+
+	private void OnInventoryChanged()
+	{
+		KeyRing.Refresh();
 	}
 }

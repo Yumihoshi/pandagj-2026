@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://uk6kxcc2r3rl" path="res://Scenes/Dialogue/DialogueBalloon.tscn" id="2_balloon"]
 [ext_resource type="Resource" uid="uid://dhofpyrqo3u64" path="res://Dialogue/phone.dialogue" id="3_dialogue"]
 [ext_resource type="Script" uid="uid://t8qrk8mh15o1" path="res://Scripts/Phone/TimeSkipPanel.cs" id="4_timeskip"]
+[ext_resource type="Script" uid="uid://c4od4ae02085v" path="res://Scripts/UI/KeyRing.cs" id="5_keyring"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud"]
 content_margin_left = 18.0
@@ -131,6 +132,14 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hud")
 theme_override_styles/disabled = SubResource("StyleBoxFlat_hud")
 theme_override_styles/focus = SubResource("StyleBoxFlat_hud")
 text = "手机"
+
+[node name="KeyRing" type="Control" parent="." unique_id=1056391701]
+unique_name_in_owner = true
+offset_left = 160.0
+offset_top = 28.0
+offset_right = 268.0
+offset_bottom = 76.0
+script = ExtResource("5_keyring")
 
 [node name="Overlay" type="Control" parent="." unique_id=1348052107]
 unique_name_in_owner = true

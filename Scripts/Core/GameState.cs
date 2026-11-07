@@ -72,6 +72,7 @@ public partial class GameState : Node
 	[Signal] public delegate void LoopEndReachedEventHandler();
 	[Signal] public delegate void LoopResetEventHandler();
 	[Signal] public delegate void LoopFlagsChangedEventHandler();
+	[Signal] public delegate void InventoryChangedEventHandler();
 	[Signal] public delegate void EpilogueStartedEventHandler();
 	[Signal] public delegate void TrueEndingReachedEventHandler();
 	[Signal] public delegate void LoopFailedEventHandler();
@@ -129,6 +130,7 @@ public partial class GameState : Node
 		}
 		Inventory.Add(itemId);
 		GD.Print($"[Item] 获得 {itemId}");
+		EmitSignal(SignalName.InventoryChanged);
 	}
 
 	/// <summary>手机里是否记录了某条线索。</summary>
@@ -363,7 +365,11 @@ public partial class GameState : Node
 			GD.PushError("GameState.RemoveItem: 道具 id 为空");
 			return;
 		}
-		if (Inventory.Remove(itemId)) GD.Print($"[Item] 失去 {itemId}");
+		if (Inventory.Remove(itemId))
+		{
+			GD.Print($"[Item] 失去 {itemId}");
+			EmitSignal(SignalName.InventoryChanged);
+		}
 	}
 
 	/// <summary>由 yamada_underground.dialogue 调用：开始甜品店尾声。</summary>
@@ -420,6 +426,7 @@ public partial class GameState : Node
 		_loopFlags.Clear();
 
 		GD.Print($"[Loop] 第 {LoopCount} 周目开始");
+		EmitSignal(SignalName.InventoryChanged);
 		EmitSignal(SignalName.TimeChanged, 0);
 		EmitSignal(SignalName.LoopReset);
 	}

@@ -289,9 +289,9 @@ return $"{total / 60:00}:{total % 60:00}";
 [Export] public int TravelMinutes { get; set; } = 30;
 ```
 
-- 默认 30，对应剧本「前往操场 / 去行政楼 30」。
+- 默认 30；具体地点在按钮上覆盖（地图 → 操场 35、地图 → 行政楼 25）。
 - 0 合法（免费旅行）；负数在 `MapScreen.Validate` 里 `PushError`。
-- 耗时属于**目的地**：从任何地点去操场都读操场按钮的 30；不按出发地计算。
+- 耗时属于**目的地**：从任何地点去操场都读操场按钮的 35；不按出发地计算。
 
 ### 4.3 `MapScreen`（`Scripts/Map/MapScreen.cs`）
 
@@ -433,8 +433,8 @@ private async Task TransitionToRoomAsync(RoomDoor door)
 |---|---|---|---|
 | 教室 ↔ 走廊 | `RoomDoor.TravelMinutes` | 15 | 剧本「出教室门 15」；反向按同值 |
 | 走廊 ↔ 隔壁班 | `RoomDoor.TravelMinutes` | 20 | 剧本「进/出隔壁班 20」 |
-| 地图 → 操场 | `MapLocationButton.TravelMinutes` | 30 | 剧本「前往操场 30」 |
-| 地图 → 行政楼 | `MapLocationButton.TravelMinutes` | 30 | 剧本「去行政楼 30」 |
+| 地图 → 操场 | `MapLocationButton.TravelMinutes` | 35 | 剧本「前往操场 35」 |
+| 地图 → 行政楼 | `MapLocationButton.TravelMinutes` | 25 | 剧本「去行政楼 25」 |
 | 行政楼 ↔ 办公室 | `RoomDoor.TravelMinutes` | 5 | 剧本「进/出办公室 5」 |
 | 操场 → 操场后 | `RoomDoor.TravelMinutes` | 10 | 剧本「去操场后 10」 |
 | 操场后 → 器材准备室 | `RoomDoor.TravelMinutes` | 5（初值） | 剧本没写；可在场景里改 |

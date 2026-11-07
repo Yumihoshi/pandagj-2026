@@ -104,7 +104,7 @@ graph TD
         Rooms["Room[]<br/>互斥激活"]
         Doors["RoomDoor / ClassroomDoor / LabDoor / OfficeDoor"]
         Npcs["Npc[]<br/>时间帧 + 本轮标记显隐"]
-        Objects["座位 / 抽屉 / 密码面板 / 炸药 / 水管 / 等待点"]
+        Objects["座位 / 抽屉 / 密码面板 / 炸药 / 水管"]
         Player["Player"]
     end
 
@@ -161,9 +161,8 @@ graph TD
 | `BookDesk` | 一周目看书 +60 分钟；第 5 次播 `last` 并推进 30 分钟 | 剧情文本 |
 | `KeyedDrawer` | 检查办公室钥匙；打开密码面板 | 密码校验（交给面板） |
 | `PasswordPanel` | 4 位密码 UI、校验 0721、获取笔记本文档、写入地下线索 | 场景切换 |
-| `BombInteractable` | 取样、湿炸药、状态文案 | 结局对质 |
+| `BombInteractable` | 取样、湿炸药、状态文案；湿炸药旁白结束后自动推进到 17:00 并播放山田终局对质 | 结局分支（交给剧本） |
 | `WaterPipe` | 已知炸药解法后接水 | 炸药状态 |
-| `WaitSpot` | 湿炸药后等到 17:00 | 结局对质 |
 | `EndingOverlay` | 黑屏、The End、失败黑屏 | 剧情文本 |
 | `LoopEndNotice` | 17:30 闪白与「轰———」 | 重置逻辑 |
 | `GameScene` | 地点装载、地图、过渡、循环重置、结局信号转发 | 剧情内容 |
@@ -189,7 +188,6 @@ graph TD
   Scripts/Location/KeyedDrawer.cs
   Scripts/Location/BombInteractable.cs
   Scripts/Location/WaterPipe.cs
-  Scripts/Location/WaitSpot.cs
   Scripts/UI/PasswordPanel.cs
   Scripts/UI/EndingOverlay.cs
   Scripts/UI/LoopEndNotice.cs
@@ -202,7 +200,6 @@ graph TD
   Dialogue/Objects/classroom_block.dialogue
   Dialogue/Objects/underground_bomb.dialogue
   Dialogue/Objects/equipment_water.dialogue
-  Dialogue/Objects/underground_wait.dialogue
   Resources/Documents/{shinji_schedule,yuka_secret,equipment_room,yamada_tracks,
                        laptop_password,chem_lab,bomb_weakness,yamada_notebook,yamada_nap}.tres
   docs/superpowers/specs/2026-11-07-formal-main-flow-design.md（本文件）
@@ -215,7 +212,7 @@ graph TD
   Scripts/Map/GameScene.cs               结局信号、循环终末提示
   Scenes/Locations/Classroom.tscn        化学实验室房间 / 门 / 座位 / 新井显隐 / 教室门
   Scenes/Locations/Administration.tscn   抽屉 / 密码面板 / 山田帧
-  Scenes/Locations/Playground.tscn       炸药 / 水管 / 等待点 / 地下门线索锁 / 山田剧本
+  Scenes/Locations/Playground.tscn       炸药 / 水管 / 地下门线索锁 / 山田剧本
   Scenes/Root/GameScene.tscn              EndingOverlay / LoopEndNotice
   Dialogue/Npc/yuka.dialogue             正式剧本
   Dialogue/Npc/shinji.dialogue           正式剧本
@@ -559,10 +556,13 @@ public partial class KeyedDrawer : Interactable
 #### 4.4.5 `BombInteractable`
 
 ```csharp
-/// <summary>地下炸药：取样 / 湿炸药 / 状态提示。</summary>
+/// <summary>地下炸药：取样 / 湿炸药后直接进入 17:00 终局对质。</summary>
 public partial class BombInteractable : Interactable
 {
     [Export] public Resource Dialogue { get; set; }
+    [Export] public Resource EndingDialogue { get; set; }
+
+    private const int EndingMinute = 240;
 
     public override void Interact()
     {
@@ -577,13 +577,23 @@ public partial class BombInteractable : Interactable
         {
             if (GameState.Instance.HasItem("water_bucket") && GameState.Instance.HasClue("bomb_weakness"))
             {
+                if (EndingDialogue == null) { PushError("EndingDialogue 为空"); return; }
                 GameState.Instance.SetLoopFlag("bomb_wet");
-                Show("wet");
+                Node balloon = Show("wet");
+                if (balloon != null) balloon.TreeExited += OnWetDialogueExited;
             }
             else Show("nothing");
             return;
         }
         Show("already_wet");
+    }
+
+    /// <summary>湿炸药旁白结束后把时间推到 17:00，山田登场并直接进入终局对质。</summary>
+    private void OnWetDialogueExited()
+    {
+        int now = GameState.Instance.ElapsedMinutes;
+        if (now < EndingMinute && GameState.Instance.AdvanceTime(EndingMinute - now)) return;
+        ShowDialogueBalloon(EndingDialogue, "start");
     }
 }
 ```
@@ -611,27 +621,11 @@ public partial class WaterPipe : Interactable
 }
 ```
 
-#### 4.4.7 `WaitSpot`
+#### 4.4.7 湿炸药 → 17:00 终局
 
-```csharp
-/// <summary>地下服务器：湿炸药后等到 17:00。</summary>
-public partial class WaitSpot : Interactable
-{
-    [Export] public Resource Dialogue { get; set; }
-
-    public override void Interact()
-    {
-        if (!GameState.Instance.HasLoopFlag("bomb_wet")) { Show("not_yet"); return; }
-        int now = GameState.Instance.ElapsedMinutes;
-        if (now >= 240) { Show("already"); return; }
-        if (GameState.Instance.AdvanceTime(240 - now)) return;
-        Show("waited");
-    }
-}
-```
-
-- 未湿炸药只提示，不推进；湿了之后一次到 17:00，山田的出现由 `TimeChanged` 驱动。
-- 17:00 之后再用只播 `already`。
+- `wet` 旁白关闭后（`TreeExited`）立刻 `AdvanceTime(240 - now)`：时间跳到 17:00，山田按时间帧出现。
+- 随后直接 `ShowDialogueBalloon(yamada_underground, "start")` 进入终局对质，玩家不需要再去找山田搭话。
+- 不再有单独的「服务器 / 等到傍晚」交互物；时间跳跃只由湿炸药触发，未湿炸药不会推进时间。
 
 #### 4.4.8 `OfficeDoor`
 
@@ -899,18 +893,14 @@ flowchart TD
 1. `DoorToUnderground` 需要 `underground_access`（来自笔记本）。
 2. 地下炸药：
    - 未取样 → 获得 `bomb_sample`，写 `bomb_sample_taken`，提示「可以让新井同学看看」。
-   - 已取样、未湿、有 `water_bucket` + `bomb_weakness` → 写 `bomb_wet`，播湿炸药文本。
+   - 已取样、未湿、有 `water_bucket` + `bomb_weakness` → 写 `bomb_wet`，播湿炸药文本；文本结束后自动跳到 17:00 并接 `yamada_underground.dialogue` 的 `start`。
    - 已湿 → 「炸药已经被水浸透了」。
    - 其它 → 「得想办法让它们失效」。
 3. 器材准备室水管：有 `bomb_weakness` 才接水；获得 `water_bucket`，写 `water_taken`。
-4. 等待点：
-   - 未湿 → 「现在还不是时候」。
-   - 已湿且 `now < 240` → `AdvanceTime(240 - now)` 到 17:00；山田出现。
-   - 已过 17:00 → 「时间已经差不多了」。
-5. 17:00 地下山田（`playground.yamada`，`preparing`）：
-   - `bomb_wet` → `yamada_underground.dialogue` 真结局分支。
+4. 17:00 地下山田（`playground.yamada`，`preparing`）：
+   - `bomb_wet` → `yamada_underground.dialogue` 真结局分支（湿炸药时已自动进入，不需要再交互）。
    - 未湿 → 失败分支。
-6. 17:30 前未处理 → 现有爆炸重置。
+5. 17:30 前未处理 → 现有爆炸重置。
 
 ### 5.7 办公室时间窗
 
@@ -980,7 +970,6 @@ flowchart TD
 | `Dialogue/Objects/classroom_block.dialogue` | 一周目教室门阻挡 | `start` |
 | `Dialogue/Objects/underground_bomb.dialogue` | 地下炸药 | `sample`、`wet`、`already_wet`、`nothing` |
 | `Dialogue/Objects/equipment_water.dialogue` | 器材准备室水管 | `hint`、`fill`、`already` |
-| `Dialogue/Objects/underground_wait.dialogue` | 地下等待点 | `not_yet`、`waited`、`already` |
 | `Dialogue/Objects/office_kick_out.dialogue` | 办公室赶人 | `start`（13:30-13:59）、`woken`（15:00-16:59） |
 
 场景文本以附录 A 的飞书剧本为准；以上 cue 是实现结构，台词逐段搬运。
@@ -1115,7 +1104,7 @@ flowchart TD
 
 ### 8.2 失败
 
-- 触发：未湿炸药时在 17:00 地下与山田交互；或等待点未湿时被提示后仍等到 17:00 再交互（等待点本身不推进）。
+- 触发：未湿炸药时，17:00 之后进入地下与山田交互。
 - `GameState.FailLoop()` → `GameScene` 播 `EndingOverlay.ShowFail()` → 1 秒 → `GameState.ResetLoop()`。
 - `OnLoopReset` 继续现有流程：淡出、卸载、重载起点、淡入；`EndingOverlay.HideAll()`。
 - 失败不保留任何本轮物品 / 标记；线索 / 文档 / 解锁保留。
@@ -1233,8 +1222,10 @@ sequenceDiagram
     participant G as GameScene
     participant E as EndingOverlay
 
-    U->>Y: 17:00 交互
-    Y->>B: yamada_underground.start
+    U->>B: 湿炸药旁白结束（wet TreeExited）
+    B->>GS: AdvanceTime(240 - now) → 17:00
+    B->>B: 自动播 yamada_underground.start
+    Note over U,Y: 未湿时改为 17:00 后与山田交互
     B->>GS: HasLoopFlag("bomb_wet") ?
     alt 已湿
         B->>GS: EnterEpilogue()
@@ -1268,7 +1259,7 @@ flowchart LR
         GS["GameState<br/>时间 / 周目 / 解锁 / 物品 / 线索<br/>本轮标记 / 分析分钟 / 文档 / 结局"]
         Npc["Npc<br/>时间帧 + PresentLoopFlag"]
         Door["RoomDoor<br/>钥匙 / 线索"]
-        Obj["座位 / 抽屉 / 炸药 / 水管 / 等待点"]
+        Obj["座位 / 抽屉 / 炸药 / 水管"]
         Balloon["DialogueBalloon"]
         Phone["PhoneScreen"]
         Game["GameScene"]
@@ -1308,16 +1299,17 @@ flowchart LR
 | `RoomDoor.RequiredClueId` 非空但 `LockedHint` 为空 | `_Ready` `PushError`；门仍可按线索逻辑拦截 |
 | `ClassroomDoor.BlockingDialogue` 为空 | 交互时 `PushError`，不切房间 |
 | `BookDesk.Dialogue` 为空 | 交互时 `PushError`，不推进时间 |
-| `BombInteractable/WaterPipe/WaitSpot` 的 `Dialogue` 为空 | 交互时 `PushError`，状态变更前先校验，避免只改状态不播文本 |
+| `BombInteractable/WaterPipe` 的 `Dialogue` 为空 | 交互时 `PushError`，状态变更前先校验，避免只改状态不播文本 |
+| `BombInteractable.EndingDialogue` 为空 | 湿炸药前 `PushError`，不写 `bomb_wet`，避免只改状态不进终局 |
 | `KeyedDrawer.PasswordPanel` 为空 | 交互时 `PushError`，不打开面板 |
 | 没有钥匙开抽屉 | `LockedHint` 显示 1.5 秒，不打开面板 |
 | 密码错误 | 面板内红字「密码错误」，清空输入，不关闭 |
 | 文档 id 未注册 | 现有 `AcquireDocument` `PushError`；不获取、不推进 |
 | 重复获取文档 | 面板提示「已经解锁过了」；点击高亮提示「已在手机里」 |
 | 分析开始时间 + 120 ≥ 17:30 | `LabDoor` 的 `AdvanceTime` 夹到 270 并触发终末；本轮拿不到结果 |
-| 17:00 前湿炸药 | 等待点未到 17:00 时正常推进到 240；到点后山田出现 |
-| 17:00 后湿炸药 | 等待点播「时间已经差不多了」；直接与山田交互 |
-| 未湿炸药等待 | 等待点不推进，只提示；玩家必须去湿炸药或等 17:30 爆炸 |
+| 17:00 前湿炸药 | `wet` 旁白结束即 `AdvanceTime` 到 240，山田出现并自动进入终局对质 |
+| 17:00 后湿炸药 | 不推进时间，直接进入终局对质 |
+| 未湿炸药 | 时间不推进；17:00 后与地下山田交互才进失败分支，否则等 17:30 爆炸 |
 | 17:30 时对话框开着 | 地点冻结；`LoopEndNotice` 在气球之上；`ResetLoop` 释放气球 |
 | 真结局气球退出 | `GameState.IsTrueEnding` 为真，`DialogueBalloon._ExitTree` 不解锁玩家 |
 | 失败重置时面板/气球开着 | `LoopReset` 释放气球；地点卸载释放面板；玩家重新实例化 |
@@ -1378,9 +1370,9 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 
 **四周目 / 结局**
 
-- [ ] 湿炸药后等待点出现「等到傍晚」并推进到 17:00
-- [ ] 未湿炸药等待只提示，不推进
-- [ ] 17:00 地下山田：已湿 → 完整对质 → 黑屏 → 甜品店尾声 → The End
+- [ ] 湿炸药旁白结束后自动跳到 17:00，并自动进入与山田的终局对质
+- [ ] 未湿炸药不推进时间
+- [ ] 已湿 → 完整对质 → 黑屏 → 甜品店尾声 → The End
 - [ ] The End 后玩家不能移动
 - [ ] 未湿 → 被绑旁白 → 黑屏 → 循环重置
 - [ ] 17:30 未处理 → 爆炸重置
@@ -1414,9 +1406,8 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | `Scripts/Player/PlayerInteractor.cs` | 修改 | 交互前先问 `OfficeKickOut` 是否要拦下 |
 | `Scripts/Location/BookDesk.cs` | 新增 | 看书推进 |
 | `Scripts/Location/KeyedDrawer.cs` | 新增 | 抽屉钥匙 |
-| `Scripts/Location/BombInteractable.cs` | 新增 | 炸药取样 / 湿炸药 |
+| `Scripts/Location/BombInteractable.cs` | 新增 | 炸药取样 / 湿炸药 → 17:00 终局 |
 | `Scripts/Location/WaterPipe.cs` | 新增 | 接水 |
-| `Scripts/Location/WaitSpot.cs` | 新增 | 等到 17:00 |
 | `Scripts/UI/PasswordPanel.cs` | 新增 | 密码面板 |
 | `Scripts/UI/EndingOverlay.cs` | 新增 | 黑屏 / The End |
 | `Scripts/UI/LoopEndNotice.cs` | 新增 | 17:30 闪白 |
@@ -1433,7 +1424,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | `Resources/Documents/DocumentLibrary.tres` | 修改 | 注册 9 篇；移除 club_notice |
 | `Scenes/Locations/Classroom.tscn` | 修改 | 实验室房间 / 门 / 座位 / 新井 / 教室门 |
 | `Scenes/Locations/Administration.tscn` | 修改 | 抽屉 / 密码面板 |
-| `Scenes/Locations/Playground.tscn` | 修改 | 炸药 / 水管 / 等待点 / 地下门 / 山田剧本 |
+| `Scenes/Locations/Playground.tscn` | 修改 | 炸药 / 水管 / 地下门 / 山田剧本 |
 | `Scenes/Root/GameScene.tscn` | 修改 | EndingOverlay / LoopEndNotice |
 | `project.godot` | 修改 | POT 登记新增剧本 |
 | `AGENTS.md` | 文档同步 | 主流程、NPC 显隐、文档、结构 |
@@ -1449,7 +1440,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 2. `GameState`：本轮标记、分析时间、`RemoveItem`、结局信号、`IsTrueEnding`；编译。
 3. `Npc`：`PresentLoopFlag` / `VisibleWhenFlagSet` + `LoopFlagsChanged`；编译。
 4. `RoomDoor`：`RequiredClueId`；编译。
-5. 新增 `ClassroomDoor` / `LabDoor` / `OfficeDoor` / `BookDesk` / `KeyedDrawer` / `BombInteractable` / `WaterPipe` / `WaitSpot`；编译。
+5. 新增 `ClassroomDoor` / `LabDoor` / `OfficeDoor` / `BookDesk` / `KeyedDrawer` / `BombInteractable` / `WaterPipe`；编译。
 6. 新增 `PasswordPanel` / `EndingOverlay` / `LoopEndNotice` 脚本与场景；编译。
 7. `GameScene` / `GameScene.tscn`：结局信号、终末提示；编译。
 8. 场景改造：Classroom / Administration / Playground；每个场景单独跑无头验证。

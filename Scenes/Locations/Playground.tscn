@@ -17,10 +17,8 @@
 [ext_resource type="Texture2D" path="res://ArtRes/Characters/yamada.png" id="char_yamada"]
 [ext_resource type="Script" path="res://Scripts/Location/BombInteractable.cs" id="12_bomb"]
 [ext_resource type="Script" path="res://Scripts/Location/WaterPipe.cs" id="13_water"]
-[ext_resource type="Script" path="res://Scripts/Location/WaitSpot.cs" id="14_wait"]
 [ext_resource type="Resource" path="res://Dialogue/Objects/underground_bomb.dialogue" id="15_bomb_dialogue"]
 [ext_resource type="Resource" path="res://Dialogue/Objects/equipment_water.dialogue" id="16_water_dialogue"]
-[ext_resource type="Resource" path="res://Dialogue/Objects/underground_wait.dialogue" id="17_wait_dialogue"]
 [ext_resource type="Resource" path="res://Dialogue/Npc/yamada_underground.dialogue" id="18_yamada_underground"]
 [ext_resource type="Resource" path="res://Dialogue/Objects/manhole_locked.dialogue" id="19_manhole_locked"]
 
@@ -378,6 +376,7 @@ text = "门（操场后）"
 position = Vector2(900, 500)
 script = ExtResource("12_bomb")
 Dialogue = ExtResource("15_bomb_dialogue")
+EndingDialogue = ExtResource("18_yamada_underground")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Underground/Bomb"]
 shape = SubResource("RectangleShape2D_zone")
@@ -395,28 +394,6 @@ offset_top = 105.0
 offset_right = 60.0
 offset_bottom = 145.0
 text = "炸药"
-
-[node name="WaitSpot" type="Area2D" parent="Room_Underground"]
-position = Vector2(600, 500)
-script = ExtResource("14_wait")
-Dialogue = ExtResource("17_wait_dialogue")
-
-[node name="Shape" type="CollisionShape2D" parent="Room_Underground/WaitSpot"]
-shape = SubResource("RectangleShape2D_zone")
-
-[node name="Placeholder" type="ColorRect" parent="Room_Underground/WaitSpot"]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
-color = Color(0.25, 0.25, 0.3, 1)
-
-[node name="Caption" type="Label" parent="Room_Underground/WaitSpot"]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
-text = "服务器"
 
 [node name="Npc_Yamada" type="Area2D" parent="Room_Underground" node_paths=PackedStringArray("Sprite")]
 position = Vector2(1200, 520)

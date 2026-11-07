@@ -30,9 +30,9 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Scripts/`：按模块分目录 —— `Core/`（`GameState`、`ScreenFade`、`Interactable`）、`Map/`（`GameScene`、`MapScreen`、`MapLocationButton`、`MapConfig`）、`Location/`（`LocationRoot`、`Room`、`RoomDoor`、`LocationExit`）、`Player/`（`Player`、`PlayerInteractor`）、`Npc/`（`Npc`、`NpcStateFrame`）、`Dialogue/`（`DialogueBalloon`）、`Documents/`（`DocumentData`、`DocumentLibrary`）、`Phone/`（`PhoneScreen`）、`Audio/`（`AudioManager`）、`UI/`（`TimeLabel`、`ButtonTextColors`、`InteractPrompt`）、`Demo/`（`PickupItem`、`ReadDocument`，当前未挂场景）。
 - `Scenes/UI/`：`PasswordPanel.tscn`（办公桌密码面板，`CanvasLayer.layer=60`）、`EndingOverlay.tscn`（真结局黑屏 / The End，layer 46）、`LoopEndNotice.tscn`（17:30 闪白，layer 90）、`InteractPrompt.tscn`（头顶「F 交互」提示）。
 - 交互提示：`InteractPrompt`（`Node2D`，`top_level` + `z_index=100`，深色药丸 + 金色键帽 `F` + 白字「交互」）作为 Player 子节点挂在 `player.tscn`，被每处地点实例化的 Player 自动带出；`PlayerInteractor` 每帧用 `_current` 的碰撞形状全局包围盒上边中点定位（目标切换时重算头部坐标），`InputLocked` 或没有可交互目标时淡出隐藏；目标没有可用 `CollisionShape2D` 时 `PushError` 并退到 `FallbackHeadOffset`。
-- `Scripts/Location/` 新增 `ClassroomDoor`（一周目教室门阻挡）、`LabDoor`（实验室两小时等待）、`OfficeDoor`（办公室 13:30-16:59 开放，14:00-14:59 山田午睡）、`BookDesk`（看书）、`KeyedDrawer`（抽屉钥匙）、`BombInteractable`（炸药）、`WaterPipe`（接水）、`WaitSpot`（等到 17:00）、`TalkToYukaFirst`（一周目开场门禁）。
+- `Scripts/Location/` 新增 `ClassroomDoor`（一周目教室门阻挡）、`LabDoor`（实验室两小时等待）、`OfficeDoor`（办公室 13:30-16:59 开放，14:00-14:59 山田午睡）、`BookDesk`（看书）、`KeyedDrawer`（抽屉钥匙）、`BombInteractable`（炸药，湿完自动跳 17:00 进终局）、`WaterPipe`（接水）、`TalkToYukaFirst`（一周目开场门禁）。
 - `Scripts/UI/` 新增 `PasswordPanel`、`EndingOverlay`、`LoopEndNotice`。
-- `Dialogue/Objects/`：座位 / 教室门阻挡 / 炸药 / 水管 / 等待点 / 办公室赶人 / 井盖 7 个物体剧本；`Dialogue/Npc/shinji_lab.dialogue` 与 `yamada_underground.dialogue` 是两个新 NPC 剧本。
+- `Dialogue/Objects/`：座位 / 教室门阻挡 / 炸药 / 水管 / 办公室赶人 / 井盖 6 个物体剧本；`Dialogue/Npc/shinji_lab.dialogue` 与 `yamada_underground.dialogue` 是两个新 NPC 剧本。
 - `Scenes/Locations/Classroom.tscn` 新增化学实验室房间 `Room_ChemLab`（背景暂用 `next_classroom.png`）。
 - `Dialogue/day1.dialogue`：开场 / 循环开始剧本，三个 cue —— `~ start`（一周目在座位上迷迷糊糊醒来、点名要去找小优香）、`~ phone_vibrate`（二周目起循环开始的「手机在震动。」）与 `~ talk_first`（门禁提示）。**必须存在**，否则每次跑 Godot 都会把 `project.godot` 的 `[internationalization]` 段删掉。
 - `Dialogue/Npc/student.dialogue`：旧「同学」demo 剧本，当前未挂到任何 NPC；`yuka.dialogue` / `yamada.dialogue` / `shinji.dialogue` 是三个 NPC 的正式剧本；`shinji_lab.dialogue` / `yamada_underground.dialogue` 是新 NPC 剧本；`Dialogue/Objects/` 是物体剧本。
@@ -106,7 +106,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 一周目：小优香开场 → 只能选看书 → 教室门被 `ClassroomDoor` 挡住 → 座位看书 4×60 分钟 + 第 5 次 30 分钟到 17:30。
 - 二周目：新井「关于小优香」拿 `yuka_likes_yamada` → 操场小优香拿钥匙 / 解锁行政楼 → 办公室 14:00-14:59 偷 `office_key`。
 - 三周目：抽屉 + 密码面板 0721 → `yamada_notebook`（电脑日志）→ 手机里点黄色文字「我发现了操场后面那个井盖下的秘密空间」→ `underground_access` → 地下取样 → 新井分析两小时 → `bomb_weakness`。
-- 四周目：器材准备室接水 → 地下湿炸药 → 等待点到 17:00 → 真结局；未湿则 `FailLoop`。
+- 四周目：器材准备室接水 → 地下湿炸药 → 湿炸药旁白结束即自动跳到 17:00 并直接进入山田终局对质 → 真结局；未湿则 17:00 后与地下山田对话触发 `FailLoop`。地下空间没有单独的「服务器 / 等到傍晚」交互物。
 - 本轮标记：`chose_reading` / `chose_going_out` / `yuka_briefed` / `shinji_analyzing` / `bomb_sample_taken` / `bomb_wet` / `water_taken` / `office_key_taken`；每轮清空。
 - 办公室（行政楼）：门在 13:30-16:59 开放（`OfficeDoor`）；不在 14:00-14:59 时，玩家在办公室里与门 / 出口以外的任何东西交互，都会由 `OfficeKickOut` 播 `Dialogue/Objects/office_kick_out.dialogue` 并赶回入口（走 `DoorToLobby`，5 分钟）。赶人台词按时间选 cue：13:30-13:59 用 `start`，15:00-16:59 用 `woken`（山田打哈欠说「我刚刚直到15:00都在睡觉」，黄字给出 `yamada_nap`「山田老师的午睡」= 老师 14:00-15:00 在办公室睡觉）。偷 `office_key` 仍只限 14:00-14:59 山田午睡时。
 - 跨轮线索：`yuka_likes_yamada` / `saw_laptop` / `laptop_password` / `chem_lab_unlocked` / `bomb_weakness` / `underground_access`。

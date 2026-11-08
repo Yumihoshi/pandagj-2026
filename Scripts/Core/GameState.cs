@@ -236,6 +236,22 @@ public partial class GameState : Node
 		return _acquiredDocumentIds.Contains(documentId);
 	}
 
+	/// <summary>按 id 取文档标题；id 为空或没有注册时报错并返回空串。</summary>
+	public string GetDocumentTitle(string documentId)
+	{
+		if (string.IsNullOrEmpty(documentId))
+		{
+			GD.PushError("GameState.GetDocumentTitle: 文档 id 为空");
+			return "";
+		}
+		if (!_documentsById.TryGetValue(documentId, out DocumentData document))
+		{
+			GD.PushError($"GameState.GetDocumentTitle: 文档 {documentId} 没有在 DocumentLibrary 里注册");
+			return "";
+		}
+		return document.Title;
+	}
+
 	/// <summary>把一篇已获取的文档标记为已读；跨循环保留，重复标记无副作用。</summary>
 	public void MarkDocumentRead(string documentId)
 	{

@@ -5,76 +5,136 @@
 [ext_resource type="Script" uid="uid://bf0gf4upyxj5l" path="res://addons/dialogue_manager/nodes/responses_menu/DialogueResponsesMenu.cs" id="3_72ixx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_spyqn"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
-bg_color = Color(0, 0, 0, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.329412, 0.329412, 0.329412, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+content_margin_left = 36.0
+content_margin_top = 15.0
+content_margin_right = 36.0
+content_margin_bottom = 15.0
+bg_color = Color(0.658824, 0.584314, 0.607843, 0.5)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85098, 0.803922, 0.819608, 0.5)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ri4m3"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
-bg_color = Color(0.121569, 0.121569, 0.121569, 1)
+content_margin_left = 36.0
+content_margin_top = 15.0
+content_margin_right = 36.0
+content_margin_bottom = 15.0
+bg_color = Color(0, 0, 0, 0)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+border_color = Color(0.968627, 0.937255, 0.945098, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e0njw"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
-bg_color = Color(0, 0, 0, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.6, 0.6, 0.6, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+content_margin_left = 36.0
+content_margin_top = 15.0
+content_margin_right = 36.0
+content_margin_bottom = 15.0
+bg_color = Color(0.713725, 0.556863, 0.607843, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.952941, 0.917647, 0.92549, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.239216, 0.164706, 0.192157, 0.5)
+shadow_size = 10
+shadow_offset = Vector2(0, 4)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qkmqt"]
-bg_color = Color(0, 0, 0, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btnnormal"]
+content_margin_left = 36.0
+content_margin_top = 15.0
+content_margin_right = 36.0
+content_margin_bottom = 15.0
+bg_color = Color(0.603922, 0.458824, 0.505882, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.894118, 0.839216, 0.854902, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.239216, 0.164706, 0.192157, 0.45)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prs"]
+content_margin_left = 36.0
+content_margin_top = 16.0
+content_margin_right = 36.0
+content_margin_bottom = 14.0
+bg_color = Color(0.498039, 0.364706, 0.407843, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.847059, 0.768627, 0.792157, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0.239216, 0.164706, 0.192157, 0.35)
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
 
 [sub_resource type="Theme" id="Theme_qq3yp"]
-default_font_size = 20
+default_font_size = 26
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_disabled_color = Color(0.85098, 0.803922, 0.819608, 0.6)
+Button/colors/font_focus_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_pressed_color = Color(1, 1, 1, 1)
+Button/colors/font_outline_color = Color(0.239216, 0.164706, 0.192157, 1)
+Button/colors/font_pressed_color = Color(1, 1, 1, 1)
+Button/constants/outline_size = 5
+Button/font_sizes/font_size = 30
 Button/styles/disabled = SubResource("StyleBoxFlat_spyqn")
 Button/styles/focus = SubResource("StyleBoxFlat_ri4m3")
 Button/styles/hover = SubResource("StyleBoxFlat_e0njw")
-Button/styles/normal = SubResource("StyleBoxFlat_e0njw")
+Button/styles/normal = SubResource("StyleBoxFlat_btnnormal")
+Button/styles/pressed = SubResource("StyleBoxFlat_prs")
 MarginContainer/constants/margin_bottom = 15
 MarginContainer/constants/margin_left = 30
 MarginContainer/constants/margin_right = 30
 MarginContainer/constants/margin_top = 15
-PanelContainer/styles/panel = SubResource("StyleBoxFlat_qkmqt")
+PanelContainer/styles/panel = SubResource("StyleBoxEmpty_panel")
+RichTextLabel/colors/font_outline_color = Color(0.239216, 0.164706, 0.192157, 0.95)
+RichTextLabel/colors/font_shadow_color = Color(0.239216, 0.164706, 0.192157, 0.5)
 RichTextLabel/colors/selection_color = Color(1, 1, 1, 0.35)
+RichTextLabel/constants/outline_size = 5
+RichTextLabel/constants/shadow_offset_x = 2
+RichTextLabel/constants/shadow_offset_y = 2
+RichTextLabel/font_sizes/bold_font_size = 26
+RichTextLabel/font_sizes/normal_font_size = 26
+
+[sub_resource type="Gradient" id="Gradient_pink"]
+offsets = PackedFloat32Array(0, 0.28, 0.62, 0.84, 1)
+colors = PackedColorArray(0.560784, 0.419608, 0.458824, 0.94, 0.611765, 0.478431, 0.517647, 0.92, 0.701961, 0.619608, 0.643137, 0.7, 0.768627, 0.713725, 0.729412, 0.34, 0.823529, 0.784314, 0.796078, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pink"]
+gradient = SubResource("Gradient_pink")
+width = 8
+height = 256
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.5, 0)
 
 [sub_resource type="Animation" id="Animation_nlsx6"]
 length = 0.001
@@ -112,6 +172,25 @@ _data = {
 &"progress": SubResource("Animation_qkmqt")
 }
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_doccard"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.690196, 0.501961, 0.54902, 0.98)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.941176, 0.894118, 0.905882, 0.95)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+shadow_color = Color(0.239216, 0.164706, 0.192157, 0.5)
+shadow_size = 20
+shadow_offset = Vector2(0, 8)
+
 [node name="DialogueBalloon" type="CanvasLayer" unique_id=1753587942]
 layer = 50
 script = ExtResource("1_36de5")
@@ -132,17 +211,30 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -219.0
+offset_top = -252.0
 grow_horizontal = 2
 grow_vertical = 0
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
 
 [node name="PanelContainer" type="PanelContainer" parent="Balloon/MarginContainer" unique_id=66397601]
-clip_children = 2
 layout_mode = 2
 mouse_filter = 1
 
+[node name="PinkGradient" type="TextureRect" parent="Balloon/MarginContainer/PanelContainer" unique_id=1958749541]
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_pink")
+expand_mode = 1
+
 [node name="MarginContainer" type="MarginContainer" parent="Balloon/MarginContainer/PanelContainer" unique_id=338276858]
 layout_mode = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 24
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Balloon/MarginContainer/PanelContainer/MarginContainer" unique_id=587923225]
 layout_mode = 2
@@ -150,12 +242,16 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="Balloon/MarginContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=141270408]
 layout_mode = 2
 size_flags_horizontal = 3
+alignment = 1
 
 [node name="CharacterLabel" type="RichTextLabel" parent="Balloon/MarginContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1867683141]
 unique_name_in_owner = true
-modulate = Color(1, 1, 1, 0.501961)
 layout_mode = 2
 mouse_filter = 1
+theme_override_colors/default_color = Color(1, 0.913725, 0.658824, 1)
+theme_override_colors/font_outline_color = Color(0.239216, 0.164706, 0.192157, 1)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
 text = "Character"
 fit_content = true
@@ -164,7 +260,7 @@ scroll_active = false
 [node name="DialogueLabel" parent="Balloon/MarginContainer/PanelContainer/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1739101537 instance=ExtResource("2_a8ve6")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_vertical = 4
 text = "Dialogue..."
 
 [node name="Control" type="Control" parent="Balloon/MarginContainer/PanelContainer/MarginContainer/HBoxContainer" unique_id=534060310]
@@ -182,18 +278,18 @@ autoplay = &"progress"
 
 [node name="CenterContainer" type="CenterContainer" parent="Balloon" unique_id=473552711]
 layout_mode = 1
-mouse_filter = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="ResponsesMenu" type="VBoxContainer" parent="Balloon/CenterContainer" unique_id=1321351341 node_paths=PackedStringArray("ResponseTemplate")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
-theme_override_constants/separation = 2
+theme_override_constants/separation = 12
 alignment = 1
 script = ExtResource("3_72ixx")
 ResponseTemplate = NodePath("ResponseExample")
@@ -203,7 +299,7 @@ AutoFocusFirstItem = false
 layout_mode = 2
 text = "Response example"
 
-[node name="CopyToast" type="Label" parent="Balloon"]
+[node name="CopyToast" type="Label" parent="Balloon" unique_id=3362337]
 unique_name_in_owner = true
 visible = false
 modulate = Color(1, 1, 1, 0)
@@ -214,13 +310,104 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -150.0
-offset_top = -246.0
+offset_top = -280.0
 offset_right = -34.0
-offset_bottom = -226.0
+offset_bottom = -260.0
 grow_horizontal = 0
 grow_vertical = 0
-mouse_filter = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.75)
+theme_override_colors/font_color = Color(1, 1, 1, 0.92)
+theme_override_colors/font_outline_color = Color(0.239216, 0.164706, 0.192157, 0.9)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 16
 text = "已复制"
 horizontal_alignment = 2
+
+[node name="DocumentPopup" type="Control" parent="Balloon" unique_id=515889642]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Backdrop" type="ColorRect" parent="Balloon/DocumentPopup" unique_id=835679813]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.172549, 0.117647, 0.137255, 0.42)
+
+[node name="Center" type="CenterContainer" parent="Balloon/DocumentPopup" unique_id=1666458791]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -120.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DocumentPopupCard" type="PanelContainer" parent="Balloon/DocumentPopup/Center" unique_id=83571319]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(680, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_doccard")
+
+[node name="Padding" type="MarginContainer" parent="Balloon/DocumentPopup/Center/DocumentPopupCard" unique_id=437495995]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 44
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 44
+theme_override_constants/margin_bottom = 26
+
+[node name="VBox" type="VBoxContainer" parent="Balloon/DocumentPopup/Center/DocumentPopupCard/Padding" unique_id=2075987177]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="Header" type="Label" parent="Balloon/DocumentPopup/Center/DocumentPopupCard/Padding/VBox" unique_id=1791725181]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.847059, 0.4, 1)
+theme_override_colors/font_outline_color = Color(0.239216, 0.164706, 0.192157, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 22
+text = "获得重要的事"
+horizontal_alignment = 1
+
+[node name="DocumentPopupTitle" type="Label" parent="Balloon/DocumentPopup/Center/DocumentPopupCard/Padding/VBox" unique_id=625118533]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.239216, 0.164706, 0.192157, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 36
+text = "文档标题"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Gap" type="Control" parent="Balloon/DocumentPopup/Center/DocumentPopupCard/Padding/VBox" unique_id=545930187]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Hint" type="Label" parent="Balloon/DocumentPopup/Center/DocumentPopupCard/Padding/VBox" unique_id=1382127433]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.88)
+theme_override_font_sizes/font_size = 19
+text = "已存入手机，随时都能翻看"
+horizontal_alignment = 1
+
+[node name="TapHint" type="Label" parent="Balloon/DocumentPopup/Center/DocumentPopupCard/Padding/VBox" unique_id=191522366]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.941176, 0.894118, 0.905882, 0.65)
+theme_override_font_sizes/font_size = 15
+text = "点击任意处关闭"
+horizontal_alignment = 1

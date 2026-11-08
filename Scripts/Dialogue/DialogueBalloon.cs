@@ -43,6 +43,14 @@ public partial class DialogueBalloon : CanvasLayer
 
 	private Label copyToast;
 	private Tween copyToastTween;
+
+	/// <summary>收集到重要的事时弹出的提示卡片；节点缺失时 _Ready 报错。</summary>
+	private Control documentPopup;
+	private Label documentPopupTitle;
+	private PanelContainer documentPopupCard;
+	private Tween documentPopupTween;
+	private bool documentPopupOpen;
+
 	private bool pointerPressed;
 	private bool pressStartedInLabel;
 	private Vector2 pressPosition;
@@ -94,6 +102,22 @@ public partial class DialogueBalloon : CanvasLayer
 		{
 			GD.PushError("DialogueBalloon: 找不到 %CopyToast，复制提示不可用");
 		}
+
+		documentPopup = GetNodeOrNull<Control>("%DocumentPopup");
+		documentPopupTitle = GetNodeOrNull<Label>("%DocumentPopupTitle");
+		documentPopupCard = GetNodeOrNull<PanelContainer>("%DocumentPopupCard");
+		if (documentPopup == null || documentPopupTitle == null || documentPopupCard == null)
+		{
+			GD.PushError("DialogueBalloon: 缺少 %DocumentPopup / %DocumentPopupTitle / %DocumentPopupCard，获取提示不可用");
+		}
+		else
+		{
+			documentPopup.Hide();
+			documentPopup.GuiInput += OnDocumentPopupGuiInput;
+			// 卡片宽度随标题变化：每次重新排版都把缩放支点摆回中心。
+			documentPopupCard.Resized += () => documentPopupCard.PivotOffset = documentPopupCard.Size * 0.5f;
+		}
+
 		dialogueLabel.SelectionEnabled = false;
 		dialogueLabel.MetaClicked += OnDialogueMetaClicked;
 		LinkTextColors.ApplyUnderline(dialogueLabel);
@@ -157,7 +181,8 @@ public partial class DialogueBalloon : CanvasLayer
 		{
 			progress.Visible = !dialogueLabel.IsTyping
 				&& filteredResponses.Count == 0
-				&& !dialogueLine.HasTag("voice");
+				&& !dialogueLine.HasTag("voice")
+				&& !documentPopupOpen;
 		}
 	}
 
@@ -195,6 +220,9 @@ public partial class DialogueBalloon : CanvasLayer
 
 	private void OnBalloonGuiInput(InputEvent @event)
 	{
+		// 获取提示还开着：这一下点击属于弹窗，不推进对话。
+		if (documentPopupOpen) return;
+
 		// 打字中：点击或 Esc 都是跳过打字（现有行为）。
 		if (dialogueLabel.IsTyping)
 		{
@@ -289,7 +317,7 @@ public partial class DialogueBalloon : CanvasLayer
 		if (added)
 		{
 			RefreshLineAfterDocumentChange();
-			ShowToast("已记录到手机");
+			ShowDocumentPopup(gameState.GetDocumentTitle(documentId));
 			return;
 		}
 
@@ -404,6 +432,7 @@ public partial class DialogueBalloon : CanvasLayer
 		hoveredLinkMeta = "";
 		copyToastTween?.Kill();
 		if (copyToast != null) copyToast.Visible = false;
+		HideDocumentPopup(immediate: true);
 
 		mutationCooldown.Stop();
 		isWaitingForInput = false;
@@ -593,6 +622,73 @@ public partial class DialogueBalloon : CanvasLayer
 		copyToastTween.TweenInterval(0.35f);
 		copyToastTween.TweenProperty(copyToast, "modulate:a", 0.0f, 0.25f);
 		copyToastTween.TweenCallback(Callable.From(() => copyToast.Visible = false));
+	}
+
+	/// <summary>弹出「获得重要的事」提示卡片；标题为空时按缺文档报错。</summary>
+	private void ShowDocumentPopup(string title)
+	{
+		// 节点缺失已在 _Ready 报错。
+		if (documentPopup == null || documentPopupTitle == null || documentPopupCard == null) return;
+		if (string.IsNullOrEmpty(title))
+		{
+			GD.PushError("DialogueBalloon: 获取提示的文档标题为空");
+			return;
+		}
+
+		documentPopupOpen = true;
+		// 打开弹窗那次点击的松开事件还没走完，先把推进用的按压状态清掉。
+		pointerPressed = false;
+		documentPopupTitle.Text = title;
+
+		documentPopupTween?.Kill();
+		documentPopup.Show();
+		documentPopup.Modulate = new Color(1, 1, 1, 0);
+		documentPopupCard.PivotOffset = documentPopupCard.Size * 0.5f;
+		documentPopupCard.Scale = new Vector2(0.94f, 0.94f);
+
+		documentPopupTween = CreateTween().SetParallel();
+		documentPopupTween.TweenProperty(documentPopup, "modulate:a", 1.0f, 0.16f);
+		documentPopupTween.TweenProperty(documentPopupCard, "scale", Vector2.One, 0.24f)
+			.SetTrans(Tween.TransitionType.Back)
+			.SetEase(Tween.EaseType.Out);
+	}
+
+	/// <summary>点击画面任意处关闭获取提示：左键按下即关，并把这次点击挡在对话推进之外。</summary>
+	private void OnDocumentPopupGuiInput(InputEvent @event)
+	{
+		if (!documentPopupOpen) return;
+		if (@event is not InputEventMouseButton mouseButton) return;
+		if (mouseButton.ButtonIndex != MouseButton.Left || !mouseButton.Pressed) return;
+
+		GetViewport().SetInputAsHandled();
+		HideDocumentPopup();
+	}
+
+	/// <summary>关掉获取提示；<paramref name="immediate"/> 为 true 时跳过淡出（换句 / 重置时用）。</summary>
+	private void HideDocumentPopup(bool immediate = false)
+	{
+		if (documentPopup == null || documentPopupCard == null) return;
+
+		documentPopupOpen = false;
+		documentPopupTween?.Kill();
+		documentPopupTween = null;
+
+		if (immediate)
+		{
+			documentPopup.Hide();
+			documentPopupCard.Scale = Vector2.One;
+			return;
+		}
+
+		documentPopupTween = CreateTween().SetParallel();
+		documentPopupTween.TweenProperty(documentPopup, "modulate:a", 0.0f, 0.12f);
+		documentPopupTween.TweenProperty(documentPopupCard, "scale", new Vector2(0.97f, 0.97f), 0.12f);
+		documentPopupTween.Chain().TweenCallback(Callable.From(() =>
+		{
+			if (!GodotObject.IsInstanceValid(documentPopup) || !GodotObject.IsInstanceValid(documentPopupCard)) return;
+			documentPopup.Hide();
+			documentPopupCard.Scale = Vector2.One;
+		}));
 	}
 
 	private void OnMutated(Dictionary mutation)

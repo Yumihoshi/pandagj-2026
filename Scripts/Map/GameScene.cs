@@ -32,6 +32,9 @@ public partial class GameScene : Node2D
 	/// <summary>结局黑屏。</summary>
 	[Export] public EndingOverlay EndingOverlay { get; set; }
 
+	/// <summary>剧情立绘舞台：甜品店 CG 与登场角色立绘。</summary>
+	[Export] public CutsceneStage CutsceneStage { get; set; }
+
 	/// <summary>17:30 终末提示。</summary>
 	[Export] public LoopEndNotice LoopEndNotice { get; set; }
 
@@ -49,7 +52,7 @@ public partial class GameScene : Node2D
 		if (MapConfig == null || StartLocation == null || MapScreen == null
 			|| LocationHost == null || DialogueBalloonScene == null
 			|| DocumentLibrary == null || EndingOverlay == null || LoopEndNotice == null
-			|| Phone == null)
+			|| Phone == null || CutsceneStage == null)
 		{
 			GD.PushError("GameScene: 有导出引用为空，停止启动");
 			return;
@@ -78,6 +81,7 @@ public partial class GameScene : Node2D
 		GameState.Instance.LoopReset += OnLoopReset;
 		GameState.Instance.LoopEndReached += OnLoopEndReached;
 		GameState.Instance.EpilogueStarted += OnEpilogueStarted;
+		GameState.Instance.CharacterPortraitShown += OnCharacterPortraitShown;
 		GameState.Instance.TrueEndingReached += OnTrueEndingReached;
 		GameState.Instance.LoopFailed += OnLoopFailed;
 		MapScreen.LocationSelected += OnLocationSelected;
@@ -168,6 +172,16 @@ public partial class GameScene : Node2D
 			_currentLocation.ProcessMode = ProcessModeEnum.Disabled;
 		}
 
+		// 爆炸 CG 期间不放 BGM；CG 播完、重置并重载地点后由 PlayLocationBgm 接上。
+		if (AudioManager.Instance == null)
+		{
+			GD.PushError("GameScene.OnLoopEndReached: AudioManager 未就绪，无法停止 BGM");
+		}
+		else
+		{
+			AudioManager.Instance.StopBgm();
+		}
+
 		GD.Print("[Loop] 17:30 爆炸");
 		await LoopEndNotice.PlayAsync();
 
@@ -177,7 +191,12 @@ public partial class GameScene : Node2D
 
 	private void OnEpilogueStarted()
 	{
-		EndingOverlay.ShowEpilogue();
+		CutsceneStage.ShowEpilogue();
+	}
+
+	private void OnCharacterPortraitShown(string characterId)
+	{
+		CutsceneStage.ShowRightCharacter(characterId);
 	}
 
 	private void OnTrueEndingReached()
@@ -223,6 +242,7 @@ public partial class GameScene : Node2D
 		MapScreen.HideMap();
 		EndingOverlay.HideAll();
 		LoopEndNotice.HideAll();
+		CutsceneStage.HideAll();
 		await Fade.FadeOutAsync();
 		UnloadLocation();
 		await LoadLocationAsync(StartLocation, loopStart: true);

@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://dnjwlnyt674ag" path="res://Scripts/Player/PlayerInteractor.cs" id="2_interactor"]
 [ext_resource type="SpriteFrames" path="res://ArtRes/Characters/muriko/muriko_frames.tres" id="3_frames"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/InteractPrompt.tscn" id="4_prompt"]
+[ext_resource type="AudioStream" uid="uid://buvkpauvpfyi5" path="res://Audio/Sfx/脚步声_上楼梯_x3.wav" id="5_footsteps"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(72, 144)
@@ -11,11 +12,12 @@ size = Vector2(72, 144)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_range"]
 size = Vector2(216, 216)
 
-[node name="Player" type="CharacterBody2D" unique_id=1248814557 node_paths=PackedStringArray("Camera", "Sprite")]
+[node name="Player" type="CharacterBody2D" unique_id=1248814557 node_paths=PackedStringArray("Camera", "Sprite", "Footsteps")]
 script = ExtResource("1_player")
 MoveSpeed = 900.0
 Camera = NodePath("Camera2D")
 Sprite = NodePath("AnimatedSprite2D")
+Footsteps = NodePath("Footsteps")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1501031974]
 offset = Vector2(0, -1053)
@@ -37,3 +39,8 @@ Prompt = NodePath("../InteractPrompt")
 shape = SubResource("RectangleShape2D_range")
 
 [node name="InteractPrompt" parent="." instance=ExtResource("4_prompt")]
+
+[node name="Footsteps" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_footsteps")
+volume_db = -10.0
+bus = &"SFX"

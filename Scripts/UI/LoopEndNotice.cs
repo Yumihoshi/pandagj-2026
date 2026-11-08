@@ -17,6 +17,9 @@ public partial class LoopEndNotice : CanvasLayer
 	[Export] public Texture2D Explosion2 { get; set; }
 	[Export] public Texture2D Explosion3 { get; set; }
 
+	/// <summary>爆炸音效，在定格到第 3 张时播放。</summary>
+	[Export] public AudioStream ExplosionSfx { get; set; }
+
 	private TextureRect _frame;
 
 	public override void _Ready()
@@ -24,6 +27,10 @@ public partial class LoopEndNotice : CanvasLayer
 		if (Explosion1 == null || Explosion2 == null || Explosion3 == null)
 		{
 			GD.PushError("LoopEndNotice: 爆炸贴图未配置");
+		}
+		if (ExplosionSfx == null)
+		{
+			GD.PushError("LoopEndNotice: 爆炸音效未配置");
 		}
 
 		_frame = GetNode<TextureRect>("%Frame");
@@ -47,6 +54,14 @@ public partial class LoopEndNotice : CanvasLayer
 
 		// 定格在爆炸 3，并震屏一次。
 		_frame.Texture = Explosion3;
+		if (AudioManager.Instance == null)
+		{
+			GD.PushError("LoopEndNotice: AudioManager 未就绪，爆炸音效无法播放");
+		}
+		else
+		{
+			AudioManager.Instance.PlaySfxStream(ExplosionSfx);
+		}
 		await ShakeAsync();
 		await ToSignal(GetTree().CreateTimer(HoldAfterShake), SceneTreeTimer.SignalName.Timeout);
 

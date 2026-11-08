@@ -28,7 +28,7 @@
 | Q8 | 化学实验室挂在教室地点的走廊，背景暂用 `next_classroom.png` 占位；首次进实验室时门交互跳到「样本交给新井后 120 分钟」，进出实验室本身不耗时 |
 | Q9 | 地下空间入口由线索 `underground_access` 锁；化学实验室由线索 `chem_lab_unlocked` 锁；器材准备室继续用钥匙 `equipment_key` |
 | Q10 | 地下空间加「服务器 / 等到傍晚」交互：湿完炸药后可一次推进到 17:00；未湿时只给提示不推进；保留其他地点的时间压力 |
-| Q11 | 真结局：17:00 地下对质 → `EnterEpilogue()` 黑屏 → 甜品店尾声继续用同一 `DialogueBalloon` 演完 → `ReachTrueEnding()` 显示 The End；不新建甜品店场景 |
+| Q11 | 真结局：17:00 地下对质 → `EnterEpilogue()` 切甜品店 CG + 三人立绘 → 甜品店尾声继续用同一 `DialogueBalloon` 演完 → 山田登场时右侧补老师立绘 → `ReachTrueEnding()` 显示 The End；甜品店是 `CutsceneStage` 的 CG 舞台，不新建可移动地点 |
 | Q12 | 失败：未湿炸药在 17:00 地下交互（或等到 17:00）→ 被绑旁白 → `FailLoop()` → 黑屏 1 秒 → 循环重置 |
 | Q13 | 17:30 终末加「轰———」闪白与文案，再走现有 `ResetLoop()`；这是正式剧情的爆炸钩子 |
 | Q14 | 保健室在剧本里只有场景名、没有内容，本轮不做；不新增地图地点 |
@@ -55,7 +55,7 @@
 ### 1.2 本规格不覆盖
 
 - 保健室场景与剧情（剧本没有内容）
-- 甜品店独立场景 / 背景图（用黑屏 + 对话框）
+- 甜品店独立可移动场景（甜品店尾声用 `CutsceneStage` 的 CG 舞台 + 对话框演出）
 - 新的地图大地点、新的地图按钮
 - 存档 / 跨进程持久化
 - 音频 BGM（只沿用现有 SFX 接口，不新增曲目）
@@ -94,7 +94,8 @@ graph TD
         LocationHost["LocationHost<br/>当前地点 LocationRoot"]
         UILayer["UILayer（layer 10）<br/>MapScreen / TimePanel"]
         Phone["PhoneScreen（layer 45）"]
-        Ending["EndingOverlay（layer 46）<br/>黑屏 / The End"]
+        Stage["CutsceneStage（layer 44）<br/>甜品店 CG + 登场立绘"]
+        Ending["EndingOverlay（layer 46）<br/>The End / 失败黑屏"]
         Balloon["DialogueBalloon（layer 50）"]
         LoopEnd["LoopEndNotice（layer 90）<br/>爆炸 1/2 轮切 → 3 + 震屏"]
         Fade["ScreenFade（layer 100）"]
@@ -131,6 +132,7 @@ graph TD
     DM --> Balloon
     Balloon --> GS
     GameScene -->|"结局信号"| Ending
+    GameScene -->|"EpilogueStarted / CharacterPortraitShown"| Stage
     GameScene -->|"LoopEndReached"| LoopEnd
     Lib --> Docs
     GameScene -->|"SeedDocuments"| GS
@@ -142,8 +144,9 @@ graph TD
 | 层 | 内容 | 说明 |
 |---|---|---|
 | 10 | 地图、右上角时钟 | 现有 `UILayer` |
+| 44 | `CutsceneStage` | 甜品店 CG 与登场角色立绘；低于对话，高于世界 |
 | 45 | `PhoneScreen` | 现有手机 |
-| 46 | `EndingOverlay` | 黑屏 + The End；高于手机、低于对话 |
+| 46 | `EndingOverlay` | The End / 失败黑屏；高于舞台、低于对话 |
 | 50 | `DialogueBalloon` | NPC 与物体对话、手机主菜单、尾声 |
 | 90 | `LoopEndNotice` | 17:30 爆炸 1/2 轮切 → 爆炸 3 + 震屏；高于对话，低于黑幕 |
 | 100 | `ScreenFade` | 过渡时遮挡一切 |
@@ -161,10 +164,11 @@ graph TD
 | `BookDesk` | 一周目一次交互播完整段看书剧本，读完后一次推进到 17:30 | 剧情文本 |
 | `KeyedDrawer` | 检查办公室钥匙；打开密码面板 | 密码校验（交给面板） |
 | `PasswordPanel` | 4 位密码 UI、校验 0721、获取笔记本文档、写入地下线索 | 场景切换 |
-| `BombInteractable` | 取样、湿炸药、状态文案；湿炸药旁白结束后自动推进到 17:00 并播放山田终局对质 | 结局分支（交给剧本） |
+| `BombInteractable` | 带水交互直接浇灭，否则首次取样；湿炸药旁白结束后自动推进到 17:00 并播放山田终局对质 | 结局分支（交给剧本） |
 | `WaterPipe` | 已知炸药解法后接水 | 炸药状态 |
+| `CutsceneStage` | 甜品店 CG、左侧三人立绘、右侧单人立绘 | 剧情文本 |
 | `EndingOverlay` | 黑屏、The End、失败黑屏 | 剧情文本 |
-| `LoopEndNotice` | 17:30 爆炸 1/2 轮切 → 爆炸 3 + 震屏 | 重置逻辑 |
+| `LoopEndNotice` | 17:30 爆炸 1/2 轮切 → 爆炸 3 + 震屏 + 爆炸音效 | 重置逻辑 |
 | `GameScene` | 地点装载、地图、过渡、循环重置、结局信号转发 | 剧情内容 |
 | `Dialogue/*.dialogue` | 对白、旁白、选项、条件、文档高亮 | C# 状态与 UI |
 
@@ -189,9 +193,11 @@ graph TD
   Scripts/Location/BombInteractable.cs
   Scripts/Location/WaterPipe.cs
   Scripts/UI/PasswordPanel.cs
+  Scripts/UI/CutsceneStage.cs
   Scripts/UI/EndingOverlay.cs
   Scripts/UI/LoopEndNotice.cs
   Scenes/UI/PasswordPanel.tscn
+  Scenes/UI/CutsceneStage.tscn
   Scenes/UI/EndingOverlay.tscn
   Scenes/UI/LoopEndNotice.tscn
   Dialogue/Npc/yamada_underground.dialogue
@@ -213,7 +219,7 @@ graph TD
   Scenes/Locations/Classroom.tscn        化学实验室房间 / 门 / 座位 / 新井显隐 / 教室门
   Scenes/Locations/Administration.tscn   抽屉 / 密码面板 / 山田帧
   Scenes/Locations/Playground.tscn       炸药 / 水管 / 地下门线索锁 / 山田剧本
-  Scenes/Root/GameScene.tscn              EndingOverlay / LoopEndNotice
+  Scenes/Root/GameScene.tscn              CutsceneStage / EndingOverlay / LoopEndNotice
   Dialogue/Npc/yuka.dialogue             正式剧本
   Dialogue/Npc/shinji.dialogue           正式剧本
   Dialogue/Npc/yamada.dialogue           正式剧本
@@ -322,8 +328,11 @@ public void RemoveItem(string itemId)
 #### 4.1.4 结局信号
 
 ```csharp
-/// <summary>真结局尾声开始：黑屏淡入，对话继续演甜品店。</summary>
+/// <summary>真结局尾声开始：甜品店 CG 淡入，对话继续演甜品店。</summary>
 [Signal] public delegate void EpilogueStartedEventHandler();
+
+/// <summary>剧本请求某个角色在剧情立绘舞台右侧登场。</summary>
+[Signal] public delegate void CharacterPortraitShownEventHandler(string characterId);
 
 /// <summary>真结局结束：显示 The End，锁玩家输入。</summary>
 [Signal] public delegate void TrueEndingReachedEventHandler();
@@ -763,16 +772,38 @@ EndingOverlay（CanvasLayer, layer = 46, 脚本 EndingOverlay.cs）
 
 | 方法 | 行为 |
 |---|---|
-| `ShowEpilogue()` | `Black.Visible = true`；alpha 0→1 淡入 1.0 秒 |
 | `ShowTheEnd()` | 保持黑屏；显示 The End / 感谢游玩；`Black.MouseFilter = STOP` |
 | `ShowFail()` | 黑屏淡入 0.6 秒 |
 | `HideAll()` | 隐藏黑屏与文字，alpha 归 0，MouseFilter 回 IGNORE |
 
-- `EndingOverlay` 在 `DialogueBalloon`（50）之下，所以甜品店尾声的对话框仍然可见。
+- `EndingOverlay` 在 `DialogueBalloon`（50）之下，所以真结局的对话框仍然可见。
 - `ShowTheEnd()` 不直接解锁/锁定玩家；玩家锁由 `GameScene` 处理，`DialogueBalloon` 因 `IsTrueEnding` 不会解锁。
 - `HideAll()` 在 `LoopReset` 时调用。
 
-#### 4.6.2 `LoopEndNotice`
+#### 4.6.2 `CutsceneStage`
+
+`CanvasLayer.layer = 44`，挂在 `GameScene.tscn` 根下。
+
+```
+CutsceneStage（CanvasLayer, layer = 44, 脚本 CutsceneStage.cs）
+└── Root（Control, 全屏, visible = false, mouse_filter = IGNORE）
+    ├── Background（TextureRect, 全屏, dessert_shop.png, KEEP_ASPECT_COVERED）
+    ├── Muriko / Yuka / Shinji（TextureRect, 400×712, 从左到右排在画面左侧）
+    └── Right（TextureRect, 400×712, 画面右侧）
+```
+
+方法：
+
+| 方法 | 行为 |
+|---|---|
+| `ShowEpilogue()` | 显示甜品店背景与左侧三人（鸣子 / 小优香 / 新井）立绘，0.6 秒淡入 |
+| `ShowRightCharacter(id)` | 让 `muriko` / `yuka` / `shinji` / `yamada` 在右侧独自登场 |
+| `HideAll()` | 隐藏整个舞台；`LoopReset` 时调用 |
+
+- 由 `GameState.EpilogueStarted` / `GameState.CharacterPortraitShown(characterId)` 驱动，剧本里写 `do GameState.EnterEpilogue()` / `do GameState.ShowCharacterPortrait("shinji")`。
+- 立绘在 `DialogueBalloon`（50）之下，底部被对话框遮住一部分，符合 galgame 站位。
+
+#### 4.6.3 `LoopEndNotice`
 
 `CanvasLayer.layer = 90`，挂在 `GameScene.tscn` 根下。
 
@@ -781,7 +812,7 @@ LoopEndNotice（CanvasLayer, layer = 90, 脚本 LoopEndNotice.cs）
 └── Frame（TextureRect, 全屏且四边各外扩 60px, stretch = KEEP_ASPECT_COVERED, mouse_filter = IGNORE）
 ```
 
-`PlayAsync()`：爆炸 1 起手 → 爆炸 1 / 2 每 0.07 秒轮切一次、共 6 次 → 切到爆炸 3 → 震屏一次（`CanvasLayer.Offset` 随机偏移 26px 衰减，0.45 秒）→ 停留 1.0 秒 → 0.3 秒淡出，共约 2.0 秒。`GameScene.OnLoopEndReached` 等 `PlayAsync()` 结束再 `ResetLoop()`。
+`PlayAsync()`：爆炸 1 起手 → 爆炸 1 / 2 每 0.07 秒轮切一次、共 6 次 → 切到爆炸 3 → 播放 `爆炸,重启.wav` 并震屏一次（`CanvasLayer.Offset` 随机偏移 26px 衰减，0.45 秒）→ 停留 1.0 秒 → 0.3 秒淡出，共约 2.0 秒。`GameScene.OnLoopEndReached` 等 `PlayAsync()` 结束再 `ResetLoop()`。
 
 ### 4.7 文档资源
 
@@ -1099,10 +1130,10 @@ flowchart TD
 1. 共用开场：鸣子「老师，你来了呢」→ 山田 → 鸣子「我全都知道了」→ 山田「密码是小优香告诉你的吧」→ 鸣子「你也喜欢小优香吧」→ 山田「…… / 没错」→ 鸣子「那为什么要这样做 / 我也是，小优香也是……」→ 山田「…… / 正因为我在乎你们，所以要给你们自由」→ 鸣子「为什么」→ 山田「…… / 我们的一生都只是他人观察的样品」→ 鸣子「但那又怎么了 / 新井君含蓄的感情……」→ 山田「…… / 够了 / 这里已经被炸药填满了，你阻止不了我了」。
 2. 分支：
    - **未湿**：鸣子「我知道 / 但总会有那一天，我会阻止你的……」→ 旁白「（山田老师把我按在了服务器的机架上……）」→ `do GameState.FailLoop()` → END。
-   - **已湿**：鸣子「我曾经无数次站在这里听到你这段话 / 但是今天，我不会让你如偿所愿了」→ 山田「是……回档吗？」→ 鸣子「我不记得我经历了多少次轮回……」→ 山田的长段自白（拆行）→ 鸣子的长段反驳（拆行）→ 山田「已经……来不及了……」→ 鸣子「你把小优香的心意当成什么了……」→ 旁白「（此时，我们背后突然传来井盖打开的声音……）」→ 新井「你们怎么还在这里……」→ 山田「看来是最后一批货的问题啊……」→ 鸣子「（这个卑鄙的男人）」→ `do GameState.EnterEpilogue()`。
+   - **已湿**：鸣子「我曾经无数次站在这里听到你这段话 / 但是今天，我不会让你如偿所愿了」→ 山田「是……回档吗？」→ 鸣子「我不记得我经历了多少次轮回……」→ 山田的长段自白（拆行）→ 鸣子的长段反驳（拆行）→ 山田「已经……来不及了……」→ 鸣子「你把小优香的心意当成什么了……」→ 旁白「（此时，我们背后突然传来井盖打开的声音……）」→ `do GameState.ShowCharacterPortrait("shinji")` 新井立绘从右侧登场 → 新井「你们怎么还在这里……」→ 山田「看来是最后一批货的问题啊……」→ 鸣子「（这个卑鄙的男人）」→ `do GameState.EnterEpilogue()`。
 3. 尾声：
-   - 黑屏淡入（`EndingOverlay.ShowEpilogue()`）。
-   - 旁白「（17:30 甜品店）」→ 小优香 → 鸣子 → 旁白 → 新井 → 小优香 → 新井 → 旁白（门被推开）→ 山田 → 山田 → 鸣子＆新井「你这个笨蛋老师！！！！！！！！！」。
+   - `CutsceneStage.ShowEpilogue()`：甜品店 CG 淡入，左侧出现鸣子 / 小优香 / 新井三人立绘。
+   - 旁白「（17:30 甜品店）」→ 小优香 → 鸣子 → 旁白 → `do AudioManager.PlayEndingExplosion()` + 旁白（远处的闷响）→ 新井 → 小优香 → 新井 → 旁白（门被推开）→ `do GameState.ShowCharacterPortrait("yamada")` 山田立绘出现在右侧 → 山田 → 山田 → 鸣子＆新井「你这个笨蛋老师！！！！！！！！！」。
    - `do GameState.ReachTrueEnding()` → END；`EndingOverlay.ShowTheEnd()`；玩家锁定。
 
 ### 8.2 失败
@@ -1224,6 +1255,7 @@ sequenceDiagram
     participant GS as GameState
     participant G as GameScene
     participant E as EndingOverlay
+    participant S as CutsceneStage
 
     U->>B: 湿炸药旁白结束（wet TreeExited）
     B->>GS: AdvanceTime(240 - now) → 17:00
@@ -1231,8 +1263,12 @@ sequenceDiagram
     Note over U,Y: 未湿时改为 17:00 后与山田交互
     B->>GS: HasLoopFlag("bomb_wet") ?
     alt 已湿
+        B->>GS: ShowCharacterPortrait("shinji")
+        GS-->>S: 右侧显示新井立绘
         B->>GS: EnterEpilogue()
-        GS-->>E: EpilogueStarted → 黑屏淡入
+        GS-->>S: EpilogueStarted → 甜品店 CG + 左侧三人立绘
+        B->>GS: ShowCharacterPortrait("yamada")
+        GS-->>S: 右侧显示山田立绘
         B->>B: 甜品店尾声
         B->>GS: ReachTrueEnding()
         GS-->>E: TrueEndingReached → The End
@@ -1375,7 +1411,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 
 - [ ] 湿炸药旁白结束后自动跳到 17:00，并自动进入与山田的终局对质
 - [ ] 未湿炸药不推进时间
-- [ ] 已湿 → 完整对质 → 黑屏 → 甜品店尾声 → The End
+- [ ] 已湿 → 完整对质 → 新井立绘登场 → 甜品店 CG + 三人立绘 → 山田立绘 → The End
 - [ ] The End 后玩家不能移动
 - [ ] 未湿 → 被绑旁白 → 黑屏 → 循环重置
 - [ ] 17:30 未处理 → 爆炸重置
@@ -1409,12 +1445,14 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | `Scripts/Player/PlayerInteractor.cs` | 修改 | 交互前先问 `OfficeKickOut` 是否要拦下 |
 | `Scripts/Location/BookDesk.cs` | 新增 | 看书推进 |
 | `Scripts/Location/KeyedDrawer.cs` | 新增 | 抽屉钥匙 |
-| `Scripts/Location/BombInteractable.cs` | 新增 | 炸药取样 / 湿炸药 → 17:00 终局 |
+| `Scripts/Location/BombInteractable.cs` | 新增 | 炸药：带水直接浇灭，否则取样 → 17:00 终局 |
 | `Scripts/Location/WaterPipe.cs` | 新增 | 接水 |
 | `Scripts/UI/PasswordPanel.cs` | 新增 | 密码面板 |
+| `Scripts/UI/CutsceneStage.cs` | 新增 | 甜品店 CG + 剧情立绘 |
 | `Scripts/UI/EndingOverlay.cs` | 新增 | 黑屏 / The End |
 | `Scripts/UI/LoopEndNotice.cs` | 新增 | 17:30 闪白 |
 | `Scenes/UI/PasswordPanel.tscn` | 新增 | 密码面板 UI |
+| `Scenes/UI/CutsceneStage.tscn` | 新增 | 剧情立绘舞台 |
 | `Scenes/UI/EndingOverlay.tscn` | 新增 | 结局黑屏 |
 | `Scenes/UI/LoopEndNotice.tscn` | 新增 | 终末闪白 |
 | `Dialogue/Npc/yuka.dialogue` | 修改 | 正式剧本 |
@@ -1428,12 +1466,12 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | `Scenes/Locations/Classroom.tscn` | 修改 | 实验室房间 / 门 / 座位 / 新井 / 教室门 |
 | `Scenes/Locations/Administration.tscn` | 修改 | 抽屉 / 密码面板 |
 | `Scenes/Locations/Playground.tscn` | 修改 | 炸药 / 水管 / 地下门 / 山田剧本 |
-| `Scenes/Root/GameScene.tscn` | 修改 | EndingOverlay / LoopEndNotice |
+| `Scenes/Root/GameScene.tscn` | 修改 | CutsceneStage / EndingOverlay / LoopEndNotice |
 | `project.godot` | 修改 | POT 登记新增剧本 |
 | `AGENTS.md` | 文档同步 | 主流程、NPC 显隐、文档、结构 |
 | `docs/superpowers/specs/2026-11-07-formal-main-flow-design.md` | 新增 | 本规格 |
 
-不改：`addons/dialogue_manager/**`、`Scenes/Dialogue/DialogueBalloon.tscn`、`Scenes/Phone/PhoneScreen.tscn`、`Scripts/Player/Player.cs`、`Scripts/Map/MapScreen.cs`、`Resources/MapConfig.tres`、`default_bus_layout.tres`。
+不改：`addons/dialogue_manager/**`、`Scenes/Dialogue/DialogueBalloon.tscn`、`Scenes/Phone/PhoneScreen.tscn`、`Scripts/Map/MapScreen.cs`、`Resources/MapConfig.tres`、`default_bus_layout.tres`。（`Scripts/Player/Player.cs` 已在 2026-11-08 为跑步脚步声改动。）
 
 ---
 
@@ -1469,7 +1507,7 @@ $godot = "D:\Downloads\Compressed\Godot_v4.7.2-stable_mono_win64\Godot_v4.7.2-st
 | NPC 显隐规则 | 现有规则「在场只看时间帧」扩展为「时间帧 + 可选标记」；同步 AGENTS.md，避免后续误改 |
 | 密码面板 | 4 位 `LineEdit`；`Center` 必须 `mouse_filter = IGNORE`；打开时锁玩家输入，关闭/重置时解锁 |
 | 真结局解锁竞态 | `ReachTrueEnding` 在气球退出前触发；`DialogueBalloon._ExitTree` 必须检查 `IsTrueEnding`，否则 The End 后还能走动 |
-| 结局层级 | `EndingOverlay` 46、气球 50、`LoopEndNotice` 90、`ScreenFade` 100；改层级会破坏黑屏/对话框/闪白关系 |
+| 结局层级 | `CutsceneStage` 44、`EndingOverlay` 46、气球 50、`LoopEndNotice` 90、`ScreenFade` 100；改层级会破坏 CG / 黑屏 / 对话框 / 闪白关系 |
 | 失败重置 | `FailLoop` 只发信号；`GameScene` 负责黑屏、等待、`ResetLoop`；不要在剧本里直接调 `ResetLoop` |
 | 17:30 终末 | 现有 0.6 秒改为约 2.0 秒并显示 `LoopEndNotice`；地点冻结与地图按钮拦截保留 |
 | 文档正文 | `.tres` 里用 `\n`；正文含 BBCode 时按 `RichTextLabel` 规则渲染，避免单独 `[` |

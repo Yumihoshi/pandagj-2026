@@ -77,6 +77,7 @@ public partial class GameState : Node
 	[Signal] public delegate void LoopFlagsChangedEventHandler();
 	[Signal] public delegate void InventoryChangedEventHandler();
 	[Signal] public delegate void EpilogueStartedEventHandler();
+	[Signal] public delegate void CharacterPortraitShownEventHandler(string characterId);
 	[Signal] public delegate void TrueEndingReachedEventHandler();
 	[Signal] public delegate void LoopFailedEventHandler();
 	[Signal] public delegate void StageChangedEventHandler(string stage);
@@ -403,6 +404,17 @@ public partial class GameState : Node
 
 	/// <summary>由 yamada_underground.dialogue 调用：开始甜品店尾声。</summary>
 	public void EnterEpilogue() => EmitSignal(SignalName.EpilogueStarted);
+
+	/// <summary>由剧本调用：让指定角色在剧情立绘舞台右侧登场。</summary>
+	public void ShowCharacterPortrait(string characterId)
+	{
+		if (string.IsNullOrEmpty(characterId))
+		{
+			GD.PushError("GameState.ShowCharacterPortrait: 角色 id 为空");
+			return;
+		}
+		EmitSignal(SignalName.CharacterPortraitShown, characterId);
+	}
 
 	/// <summary>由 yamada_underground.dialogue 调用：真结局结束。</summary>
 	public void ReachTrueEnding()

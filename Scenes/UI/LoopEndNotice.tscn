@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://Scripts/UI/LoopEndNotice.cs" id="1_notice"]
 [ext_resource type="Texture2D" uid="uid://b8krof1qrsak7" path="res://ArtRes/爆炸1..png" id="2_explosion1"]
 [ext_resource type="Texture2D" uid="uid://bf20ex4o7xycl" path="res://ArtRes/爆炸2..png" id="3_explosion2"]
 [ext_resource type="Texture2D" uid="uid://pecgpexxa37k" path="res://ArtRes/爆炸3..png" id="4_explosion3"]
+[ext_resource type="AudioStream" uid="uid://c638m1voq8jgs" path="res://Audio/Sfx/爆炸,重启.wav" id="5_explosion_sfx"]
 
 [node name="LoopEndNotice" type="CanvasLayer"]
 layer = 90
@@ -11,6 +12,7 @@ script = ExtResource("1_notice")
 Explosion1 = ExtResource("2_explosion1")
 Explosion2 = ExtResource("3_explosion2")
 Explosion3 = ExtResource("4_explosion3")
+ExplosionSfx = ExtResource("5_explosion_sfx")
 
 [node name="Frame" type="TextureRect" parent="."]
 unique_name_in_owner = true

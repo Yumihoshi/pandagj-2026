@@ -1,40 +1,28 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://gaty11pj75n4"]
 
-[ext_resource type="Script" path="res://Scripts/Location/LocationRoot.cs" id="1_root"]
-[ext_resource type="Script" path="res://Scripts/Location/Room.cs" id="2_room"]
-[ext_resource type="Script" path="res://Scripts/Location/RoomDoor.cs" id="3_door"]
-[ext_resource type="Script" path="res://Scripts/Location/LocationExit.cs" id="4_exit"]
-[ext_resource type="PackedScene" path="res://Scenes/player.tscn" id="7_player"]
-[ext_resource type="Script" path="res://Scripts/Npc/Npc.cs" id="8_npc"]
-[ext_resource type="Script" path="res://Scripts/Npc/NpcStateFrame.cs" id="9_frame"]
-[ext_resource type="Resource" path="res://Dialogue/Npc/yuka.dialogue" id="10_yuka_dialogue"]
-[ext_resource type="Resource" path="res://Dialogue/Npc/yamada.dialogue" id="11_yamada_dialogue"]
-[ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/Playground/playground.png" id="bg_playground"]
-[ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/Playground/playground_back.png" id="bg_playground_back"]
-[ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/Playground/playground_back_2.png" id="bg_playground_back2"]
-[ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/Playground/equipment_room.png" id="bg_equipment_room"]
-[ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/Playground/underground.png" id="bg_underground"]
-[ext_resource type="Texture2D" path="res://ArtRes/Characters/yuka/yuka_portrait.png" id="char_yuka"]
-[ext_resource type="Texture2D" path="res://ArtRes/Characters/yamada/yamada_portrait.png" id="char_yamada"]
-[ext_resource type="Script" path="res://Scripts/Location/BombInteractable.cs" id="12_bomb"]
-[ext_resource type="Script" path="res://Scripts/Location/WaterPipe.cs" id="13_water"]
-[ext_resource type="Resource" path="res://Dialogue/Objects/underground_bomb.dialogue" id="15_bomb_dialogue"]
-[ext_resource type="Resource" path="res://Dialogue/Objects/equipment_water.dialogue" id="16_water_dialogue"]
-[ext_resource type="Resource" path="res://Dialogue/Npc/yamada_underground.dialogue" id="18_yamada_underground"]
-[ext_resource type="Resource" path="res://Dialogue/Objects/manhole_locked.dialogue" id="19_manhole_locked"]
+[ext_resource type="Script" uid="uid://ufdnpwm7qrj4" path="res://Scripts/Location/LocationRoot.cs" id="1_root"]
+[ext_resource type="Script" uid="uid://d26l5mnemjkl" path="res://Scripts/Location/Room.cs" id="2_room"]
+[ext_resource type="Script" uid="uid://burkcfqxunta0" path="res://Scripts/Location/RoomDoor.cs" id="3_door"]
+[ext_resource type="Script" uid="uid://dmr2d5m5twca8" path="res://Scripts/Location/LocationExit.cs" id="4_exit"]
+[ext_resource type="PackedScene" uid="uid://cijlhrgfnh804" path="res://Scenes/player.tscn" id="7_player"]
+[ext_resource type="Script" uid="uid://c3su5mw6h1kl4" path="res://Scripts/Npc/Npc.cs" id="8_npc"]
+[ext_resource type="Script" uid="uid://bprjrbj35gc5c" path="res://Scripts/Npc/NpcStateFrame.cs" id="9_frame"]
+[ext_resource type="Resource" uid="uid://buvi5cxeca7g5" path="res://Dialogue/Npc/yuka.dialogue" id="10_yuka_dialogue"]
+[ext_resource type="Script" uid="uid://xpt1jxv6c513" path="res://Scripts/Location/BombInteractable.cs" id="12_bomb"]
+[ext_resource type="Script" uid="uid://dbbajbeevklm0" path="res://Scripts/Location/WaterPipe.cs" id="13_water"]
+[ext_resource type="Resource" uid="uid://rlo8gfpkfwa2" path="res://Dialogue/Objects/underground_bomb.dialogue" id="15_bomb_dialogue"]
+[ext_resource type="Resource" uid="uid://dqy31x1utyiix" path="res://Dialogue/Objects/equipment_water.dialogue" id="16_water_dialogue"]
+[ext_resource type="Resource" uid="uid://ov7aa4r2ixn6" path="res://Dialogue/Npc/yamada_underground.dialogue" id="18_yamada_underground"]
+[ext_resource type="Resource" uid="uid://dxcwwq5o84wgu" path="res://Dialogue/Objects/manhole_locked.dialogue" id="19_manhole_locked"]
+[ext_resource type="Texture2D" uid="uid://dwjqnybdk62j3" path="res://ArtRes/Backgrounds/Playground/equipment_room.png" id="bg_equipment_room"]
+[ext_resource type="Texture2D" uid="uid://t7ymq1nxo4cd" path="res://ArtRes/Backgrounds/Playground/playground.png" id="bg_playground"]
+[ext_resource type="Texture2D" uid="uid://bk8637xtju1tn" path="res://ArtRes/Backgrounds/Playground/playground_back_2.png" id="bg_playground_back2"]
+[ext_resource type="Texture2D" uid="uid://o6ongur68kf7" path="res://ArtRes/Backgrounds/Playground/underground.png" id="bg_underground"]
+[ext_resource type="Texture2D" uid="uid://8ovy6kduxehn" path="res://ArtRes/Characters/yamada/yamada_portrait.png" id="char_yamada"]
+[ext_resource type="Texture2D" uid="uid://bnanuh10a1ci" path="res://ArtRes/Characters/yuka/yuka_portrait.png" id="char_yuka"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
 size = Vector2(216, 360)
-
-[sub_resource type="Gradient" id="Gradient_yuka_running"]
-colors = PackedColorArray(0.95, 0.78, 0.66, 1, 0.62, 0.42, 0.3, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_yuka_running"]
-gradient = SubResource("Gradient_yuka_running")
-width = 120
-height = 200
-fill_from = Vector2(0.5, 0)
-fill_to = Vector2(0.5, 1)
 
 [sub_resource type="Resource" id="NpcStateFrame_yuka_0"]
 script = ExtResource("9_frame")
@@ -47,16 +35,6 @@ FromMinute = 45
 StateId = "running"
 Texture = ExtResource("char_yuka")
 
-[sub_resource type="Gradient" id="Gradient_yamada_preparing"]
-colors = PackedColorArray(0.4, 0.15, 0.2, 1, 0.12, 0.05, 0.08, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_yamada_preparing"]
-gradient = SubResource("Gradient_yamada_preparing")
-width = 120
-height = 200
-fill_from = Vector2(0.5, 0)
-fill_to = Vector2(0.5, 1)
-
 [sub_resource type="Resource" id="NpcStateFrame_yamada_0"]
 script = ExtResource("9_frame")
 StateId = "absent"
@@ -68,17 +46,17 @@ FromMinute = 240
 StateId = "preparing"
 Texture = ExtResource("char_yamada")
 
-[node name="Playground" type="Node2D" node_paths=PackedStringArray("StartingRoom", "PlayerNode")]
+[node name="Playground" type="Node2D" unique_id=1261445796 node_paths=PackedStringArray("StartingRoom", "PlayerNode")]
 script = ExtResource("1_root")
 StartingRoom = NodePath("Room_Playground")
 PlayerNode = NodePath("Player")
 
-[node name="Room_Playground" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+[node name="Room_Playground" type="Node2D" parent="." unique_id=868521606 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 CameraBounds = Rect2i(0, 0, 3844, 1080)
 
-[node name="Bg" type="TextureRect" parent="Room_Playground"]
+[node name="Bg" type="TextureRect" parent="Room_Playground" unique_id=1508321450]
 offset_right = 3843.5
 offset_bottom = 1080.0
 mouse_filter = 2
@@ -86,57 +64,57 @@ texture = ExtResource("bg_playground")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DefaultSpawn" type="Marker2D" parent="Room_Playground"]
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Playground" unique_id=1224027062]
 position = Vector2(700.638, 1008)
 
-[node name="ExitToMap" type="Area2D" parent="Room_Playground"]
+[node name="ExitToMap" type="Area2D" parent="Room_Playground" unique_id=408385971]
 position = Vector2(160.1458, 900)
 script = ExtResource("4_exit")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Playground/ExitToMap"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Playground/ExitToMap" unique_id=559692043]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Playground/ExitToMap"]
+[node name="Placeholder" type="ColorRect" parent="Room_Playground/ExitToMap" unique_id=1396684262]
 visible = false
 offset_left = -80.0729
-offset_top = -180
+offset_top = -180.0
 offset_right = 80.0729
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.2, 0.5, 0.8, 1)
 
-[node name="Caption" type="Label" parent="Room_Playground/ExitToMap"]
+[node name="Caption" type="Label" parent="Room_Playground/ExitToMap" unique_id=1832211671]
 offset_left = -80.0729
-offset_top = 189
+offset_top = 189.0
 offset_right = 120.1094
-offset_bottom = 261
+offset_bottom = 261.0
 text = "出口"
 
-[node name="DoorToBehind" type="Area2D" parent="Room_Playground" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
-position = Vector2(3202.9167, 900)
+[node name="DoorToBehind" type="Area2D" parent="Room_Playground" unique_id=631861541 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+position = Vector2(3733, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Behind")
 TargetSpawn = NodePath("../../Room_Behind/DefaultSpawn")
 TravelMinutes = 10
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Playground/DoorToBehind"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Playground/DoorToBehind" unique_id=467145841]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Playground/DoorToBehind"]
+[node name="Placeholder" type="ColorRect" parent="Room_Playground/DoorToBehind" unique_id=968298655]
 visible = false
 offset_left = -80.0729
-offset_top = -180
+offset_top = -180.0
 offset_right = 80.0729
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Playground/DoorToBehind"]
+[node name="Caption" type="Label" parent="Room_Playground/DoorToBehind" unique_id=423138301]
 offset_left = -80.0729
-offset_top = 189
+offset_top = 189.0
 offset_right = 120.1094
-offset_bottom = 261
+offset_bottom = 261.0
 text = "门（操场后）"
 
-[node name="Npc_Yuka" type="Area2D" parent="Room_Playground" node_paths=PackedStringArray("Sprite")]
+[node name="Npc_Yuka" type="Area2D" parent="Room_Playground" unique_id=676189559 node_paths=PackedStringArray("Sprite")]
 position = Vector2(2402.1875, 1083.5)
 script = ExtResource("8_npc")
 NpcId = "playground.yuka"
@@ -145,39 +123,40 @@ Dialogue = ExtResource("10_yuka_dialogue")
 Frames = [SubResource("NpcStateFrame_yuka_0"), SubResource("NpcStateFrame_yuka_1")]
 Sprite = NodePath("Sprite")
 
-[node name="Sprite" type="Sprite2D" parent="Room_Playground/Npc_Yuka"]
-position = Vector2(0, -180)
-offset = Vector2(0, -760.35)
-scale = Vector2(0.3082, 0.3082)
+[node name="Sprite" type="Sprite2D" parent="Room_Playground/Npc_Yuka" unique_id=1184896242]
 texture_filter = 4
+position = Vector2(0, -180)
+scale = Vector2(0.3082, 0.3082)
 texture = ExtResource("char_yuka")
+offset = Vector2(0, -760.35)
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Playground/Npc_Yuka"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Playground/Npc_Yuka" unique_id=1601711813]
 position = Vector2(0, -180)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="NameLabel" type="Label" parent="Room_Playground/Npc_Yuka"]
+[node name="NameLabel" type="Label" parent="Room_Playground/Npc_Yuka" unique_id=1420772364]
 offset_left = -160.1458
 offset_top = -791.5
 offset_right = 160.1458
 offset_bottom = -719.5
 theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
-theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
-theme_override_constants/outline_size = 11
+theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 11
 theme_override_constants/shadow_outline_size = 5
 theme_override_font_sizes/font_size = 36
 text = "小优香"
 horizontal_alignment = 1
 
-[node name="Room_Behind" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+[node name="Room_Behind" type="Node2D" parent="." unique_id=1411477212 node_paths=PackedStringArray("DefaultSpawn")]
+position = Vector2(-1, -2)
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 CameraBounds = Rect2i(0, 0, 3844, 1080)
 
-[node name="Bg" type="TextureRect" parent="Room_Behind"]
+[node name="Bg" type="TextureRect" parent="Room_Behind" unique_id=957520987]
 offset_right = 3843.5
 offset_bottom = 1080.0
 mouse_filter = 2
@@ -185,181 +164,178 @@ texture = ExtResource("bg_playground_back2")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DefaultSpawn" type="Marker2D" parent="Room_Behind"]
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Behind" unique_id=602572863]
 position = Vector2(700.1823, 1008)
 
-[node name="DoorToPlayground" type="Area2D" parent="Room_Behind" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
-position = Vector2(1020, 900)
+[node name="DoorToPlayground" type="Area2D" parent="Room_Behind" unique_id=570892025 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+position = Vector2(105, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Playground")
 TargetSpawn = NodePath("../../Room_Playground/DefaultSpawn")
 TravelMinutes = 10
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Behind/DoorToPlayground"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Behind/DoorToPlayground" unique_id=419386609]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToPlayground"]
+[node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToPlayground" unique_id=226738979]
 visible = false
 offset_left = -80.0208
-offset_top = -180
+offset_top = -180.0
 offset_right = 80.0208
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Behind/DoorToPlayground"]
+[node name="Caption" type="Label" parent="Room_Behind/DoorToPlayground" unique_id=1731786076]
 offset_left = -80.0208
-offset_top = 189
+offset_top = 189.0
 offset_right = 120.0312
-offset_bottom = 261
+offset_bottom = 261.0
 text = "门（操场）"
 
-[node name="DoorToEquipment" type="Area2D" parent="Room_Behind" node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
-position = Vector2(2000.5208, 900)
+[node name="DoorToEquipment" type="Area2D" parent="Room_Behind" unique_id=1278821582 node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
+position = Vector2(1034, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Equipment")
 TargetSpawn = NodePath("../../Room_Equipment/DefaultSpawn")
 RequiredKeyId = "equipment_key"
-TravelMinutes = 5
 LockedHint = NodePath("LockedHint")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Behind/DoorToEquipment"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Behind/DoorToEquipment" unique_id=822322356]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToEquipment"]
+[node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToEquipment" unique_id=569947609]
 visible = false
 offset_left = -80.0208
-offset_top = -180
+offset_top = -180.0
 offset_right = 80.0208
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Behind/DoorToEquipment"]
+[node name="Caption" type="Label" parent="Room_Behind/DoorToEquipment" unique_id=392880807]
 offset_left = -80.0208
-offset_top = 189
+offset_top = 189.0
 offset_right = 120.0312
-offset_bottom = 261
+offset_bottom = 261.0
 text = "门（器材准备室）"
 
-[node name="LockedHint" type="Label" parent="Room_Behind/DoorToEquipment"]
+[node name="LockedHint" type="Label" parent="Room_Behind/DoorToEquipment" unique_id=876456137]
 offset_left = -120.0312
-offset_top = -270
+offset_top = -270.0
 offset_right = 120.0312
-offset_bottom = -198
+offset_bottom = -198.0
 text = "锁着"
 
-[node name="DoorToUnderground" type="Area2D" parent="Room_Behind" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToUnderground" type="Area2D" parent="Room_Behind" unique_id=42534865 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(3297, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Underground")
 TargetSpawn = NodePath("../../Room_Underground/DefaultSpawn")
 RequiredClueId = "underground_access"
-TravelMinutes = 5
 LockedDialogue = ExtResource("19_manhole_locked")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Behind/DoorToUnderground"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Behind/DoorToUnderground" unique_id=1991237688]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToUnderground"]
+[node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToUnderground" unique_id=1169085911]
 visible = false
 offset_left = -80.0208
-offset_top = -180
+offset_top = -180.0
 offset_right = 80.0208
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Behind/DoorToUnderground"]
+[node name="Caption" type="Label" parent="Room_Behind/DoorToUnderground" unique_id=242467601]
 offset_left = -80.0208
-offset_top = 189
+offset_top = 189.0
 offset_right = 120.0312
-offset_bottom = 261
+offset_bottom = 261.0
 text = "井盖"
 
-[node name="Room_Equipment" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+[node name="Room_Equipment" type="Node2D" parent="." unique_id=234881291 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 CameraBounds = Rect2i(0, 0, 3240, 1080)
 
-[node name="Bg" type="TextureRect" parent="Room_Equipment"]
-offset_right = 3240
+[node name="Bg" type="TextureRect" parent="Room_Equipment" unique_id=923604916]
+offset_right = 3240.0
 offset_bottom = 1080.0
 mouse_filter = 2
 texture = ExtResource("bg_equipment_room")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DefaultSpawn" type="Marker2D" parent="Room_Equipment"]
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Equipment" unique_id=1027178491]
 position = Vector2(590.625, 1008)
 
-[node name="DoorToBehind" type="Area2D" parent="Room_Equipment" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToBehind" type="Area2D" parent="Room_Equipment" unique_id=362243308 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(135, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Behind")
 TargetSpawn = NodePath("../../Room_Behind/DefaultSpawn")
-TravelMinutes = 5
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Equipment/DoorToBehind"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Equipment/DoorToBehind" unique_id=89212587]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Equipment/DoorToBehind"]
+[node name="Placeholder" type="ColorRect" parent="Room_Equipment/DoorToBehind" unique_id=1079583129]
 visible = false
 offset_left = -67.5
-offset_top = -180
+offset_top = -180.0
 offset_right = 67.5
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Equipment/DoorToBehind"]
+[node name="Caption" type="Label" parent="Room_Equipment/DoorToBehind" unique_id=1831550503]
 offset_left = -67.5
-offset_top = 189
+offset_top = 189.0
 offset_right = 101.25
-offset_bottom = 261
+offset_bottom = 261.0
 text = "门（操场后）"
 
-[node name="Drink" type="ColorRect" parent="Room_Equipment"]
+[node name="Drink" type="ColorRect" parent="Room_Equipment" unique_id=1240039531]
 visible = false
-offset_left = 1350
-offset_top = 756
-offset_right = 1485
-offset_bottom = 864
+offset_left = 1350.0
+offset_top = 756.0
+offset_right = 1485.0
+offset_bottom = 864.0
 color = Color(0.85, 0.9, 0.95, 1)
 
-[node name="Caption" type="Label" parent="Room_Equipment/Drink"]
-offset_left = 0
-offset_top = 99
+[node name="Caption" type="Label" parent="Room_Equipment/Drink" unique_id=1887907127]
+layout_mode = 0
+offset_top = 99.0
 offset_right = 168.75
-offset_bottom = 171
+offset_bottom = 171.0
 text = "冰饮"
 
-[node name="WaterPipe" type="Area2D" parent="Room_Equipment"]
+[node name="WaterPipe" type="Area2D" parent="Room_Equipment" unique_id=701117897]
 position = Vector2(3000, 900)
 script = ExtResource("13_water")
 Dialogue = ExtResource("16_water_dialogue")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Equipment/WaterPipe"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Equipment/WaterPipe" unique_id=1762642909]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Equipment/WaterPipe"]
+[node name="Placeholder" type="ColorRect" parent="Room_Equipment/WaterPipe" unique_id=994510006]
 visible = false
 offset_left = -67.5
-offset_top = -180
+offset_top = -180.0
 offset_right = 67.5
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.3, 0.55, 0.8, 1)
 
-[node name="Caption" type="Label" parent="Room_Equipment/WaterPipe"]
+[node name="Caption" type="Label" parent="Room_Equipment/WaterPipe" unique_id=1895840194]
 offset_left = -67.5
-offset_top = 189
+offset_top = 189.0
 offset_right = 101.25
-offset_bottom = 261
+offset_bottom = 261.0
 text = "水管"
 
-[node name="Room_Underground" type="Node2D" parent="." node_paths=PackedStringArray("DefaultSpawn")]
+[node name="Room_Underground" type="Node2D" parent="." unique_id=1662053513 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 CameraBounds = Rect2i(0, 0, 3844, 1080)
 StageOnEnter = "bomb_seen"
 
-[node name="Bg" type="TextureRect" parent="Room_Underground"]
+[node name="Bg" type="TextureRect" parent="Room_Underground" unique_id=1333847394]
 offset_right = 3843.5
 offset_bottom = 1080.0
 mouse_filter = 2
@@ -367,59 +343,58 @@ texture = ExtResource("bg_underground")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="DefaultSpawn" type="Marker2D" parent="Room_Underground"]
+[node name="DefaultSpawn" type="Marker2D" parent="Room_Underground" unique_id=1331367390]
 position = Vector2(700.638, 1008)
 
-[node name="DoorToBehind" type="Area2D" parent="Room_Underground" node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToBehind" type="Area2D" parent="Room_Underground" unique_id=503147935 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(160.1458, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Behind")
 TargetSpawn = NodePath("../../Room_Behind/DefaultSpawn")
-TravelMinutes = 5
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Underground/DoorToBehind"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Underground/DoorToBehind" unique_id=13825528]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Underground/DoorToBehind"]
+[node name="Placeholder" type="ColorRect" parent="Room_Underground/DoorToBehind" unique_id=1444440626]
 visible = false
 offset_left = -80.0729
-offset_top = -180
+offset_top = -180.0
 offset_right = 80.0729
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Underground/DoorToBehind"]
+[node name="Caption" type="Label" parent="Room_Underground/DoorToBehind" unique_id=1841098062]
 offset_left = -80.0729
-offset_top = 189
+offset_top = 189.0
 offset_right = 120.1094
-offset_bottom = 261
+offset_bottom = 261.0
 text = "门（操场后）"
 
-[node name="Bomb" type="Area2D" parent="Room_Underground"]
+[node name="Bomb" type="Area2D" parent="Room_Underground" unique_id=1897908319]
 position = Vector2(1920, 900)
 script = ExtResource("12_bomb")
 Dialogue = ExtResource("15_bomb_dialogue")
 EndingDialogue = ExtResource("18_yamada_underground")
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Underground/Bomb"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Underground/Bomb" unique_id=2139803319]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Underground/Bomb"]
+[node name="Placeholder" type="ColorRect" parent="Room_Underground/Bomb" unique_id=808206585]
 visible = false
 offset_left = -80.0729
-offset_top = -180
+offset_top = -180.0
 offset_right = 80.0729
-offset_bottom = 180
+offset_bottom = 180.0
 color = Color(0.35, 0.3, 0.25, 1)
 
-[node name="Caption" type="Label" parent="Room_Underground/Bomb"]
+[node name="Caption" type="Label" parent="Room_Underground/Bomb" unique_id=435020110]
 offset_left = -80.0729
-offset_top = 189
+offset_top = 189.0
 offset_right = 120.1094
-offset_bottom = 261
+offset_bottom = 261.0
 text = "炸药"
 
-[node name="Npc_Yamada" type="Area2D" parent="Room_Underground" node_paths=PackedStringArray("Sprite")]
+[node name="Npc_Yamada" type="Area2D" parent="Room_Underground" unique_id=668567618 node_paths=PackedStringArray("Sprite")]
 position = Vector2(2402.1875, 1083.5)
 script = ExtResource("8_npc")
 NpcId = "playground.yamada"
@@ -428,32 +403,32 @@ Dialogue = ExtResource("18_yamada_underground")
 Frames = [SubResource("NpcStateFrame_yamada_0"), SubResource("NpcStateFrame_yamada_1")]
 Sprite = NodePath("Sprite")
 
-[node name="Sprite" type="Sprite2D" parent="Room_Underground/Npc_Yamada"]
-position = Vector2(0, -180)
-offset = Vector2(0, -622)
-scale = Vector2(0.2798, 0.2798)
+[node name="Sprite" type="Sprite2D" parent="Room_Underground/Npc_Yamada" unique_id=201111420]
 texture_filter = 4
+position = Vector2(0, -180)
+scale = Vector2(0.2798, 0.2798)
 texture = ExtResource("char_yamada")
+offset = Vector2(0, -622)
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Underground/Npc_Yamada"]
+[node name="Shape" type="CollisionShape2D" parent="Room_Underground/Npc_Yamada" unique_id=1030065553]
 position = Vector2(0, -180)
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="NameLabel" type="Label" parent="Room_Underground/Npc_Yamada"]
+[node name="NameLabel" type="Label" parent="Room_Underground/Npc_Yamada" unique_id=1585047819]
 offset_left = -160.1458
 offset_top = -791.5
 offset_right = 160.1458
 offset_bottom = -719.5
 theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
-theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
-theme_override_constants/outline_size = 11
+theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 11
 theme_override_constants/shadow_outline_size = 5
 theme_override_font_sizes/font_size = 36
 text = "山田老师"
 horizontal_alignment = 1
 
-[node name="Player" parent="." instance=ExtResource("7_player")]
+[node name="Player" parent="." unique_id=1036294386 instance=ExtResource("7_player")]
 position = Vector2(350, 1008)

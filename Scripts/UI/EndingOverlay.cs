@@ -16,14 +16,6 @@ public partial class EndingOverlay : CanvasLayer
 		HideAll();
 	}
 
-	/// <summary>真结局尾声开始：黑屏淡入，对话继续。</summary>
-	public void ShowEpilogue()
-	{
-		_black.Show();
-		_black.MouseFilter = Control.MouseFilterEnum.Ignore;
-		FadeTo(1.0f, 1.0f);
-	}
-
 	/// <summary>真结局结束：保持黑屏，显示 The End。</summary>
 	public void ShowTheEnd()
 	{

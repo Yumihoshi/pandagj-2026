@@ -47,6 +47,9 @@ public partial class AudioManager : Node
 	private const string BombSeenStage = "bomb_seen";
 	private const string BombSeenCueId = "rainy";
 
+	/// <summary>尾声远处爆炸的音效。</summary>
+	private const string EndingExplosionPath = "res://Audio/Sfx/爆炸，结尾.wav";
+
 	private string _locationId = "";
 	private string _ambientCueId = "";
 	private string _playingCueId = "";
@@ -113,10 +116,34 @@ public partial class AudioManager : Node
 			return;
 		}
 
+		PlaySfxStream(group[GD.RandRange(0, group.Length - 1)]);
+	}
+
+	/// <summary>播放一段指定音频，占用下一个轮转播放器；适合爆炸这类单次长音效。</summary>
+	public void PlaySfxStream(AudioStream stream)
+	{
+		if (stream == null)
+		{
+			GD.PushError("AudioManager.PlaySfxStream: AudioStream 为空");
+			return;
+		}
+
 		AudioStreamPlayer player = _sfxPlayers[_nextSfxPlayer];
 		_nextSfxPlayer = (_nextSfxPlayer + 1) % _sfxPlayers.Count;
-		player.Stream = group[GD.RandRange(0, group.Length - 1)];
+		player.Stream = stream;
 		player.Play();
+	}
+
+	/// <summary>尾声远处传来的那声爆炸。</summary>
+	public void PlayEndingExplosion()
+	{
+		AudioStream stream = GD.Load<AudioStream>(EndingExplosionPath);
+		if (stream == null)
+		{
+			GD.PushError($"AudioManager.PlayEndingExplosion: 加载失败 {EndingExplosionPath}");
+			return;
+		}
+		PlaySfxStream(stream);
 	}
 
 	/// <summary>播放点击音效。</summary>

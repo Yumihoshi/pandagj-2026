@@ -19,6 +19,9 @@ public partial class Player : CharacterBody2D
 	/// <summary>玩家立绘动画；静止播 idle，移动播 run。</summary>
 	[Export] public AnimatedSprite2D Sprite { get; set; }
 
+	/// <summary>移动时播放的脚步声。</summary>
+	[Export] public AudioStreamPlayer Footsteps { get; set; }
+
 	/// <summary>撞到房间左右边界时，玩家中心与边界保持的距离，避免立绘被屏幕边缘裁掉。</summary>
 	[Export] public float EdgeMargin { get; set; } = 120f;
 
@@ -49,6 +52,16 @@ public partial class Player : CharacterBody2D
 	public override void _Ready()
 	{
 		if (Sprite == null) GD.PushError("Player: Sprite 未设置，移动动画不会播放");
+
+		if (Footsteps == null)
+		{
+			GD.PushError("Player: Footsteps 未设置，跑步音效不会播放");
+			return;
+		}
+		if (Footsteps.Stream == null)
+		{
+			GD.PushError("Player: Footsteps.Stream 未设置，跑步音效不会播放");
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -97,6 +110,13 @@ public partial class Player : CharacterBody2D
 		_backPoseRequestAge = 0f;
 	}
 
+	/// <summary>立刻取消背影立绘、回到正面：对话结束紧接下一段对话时没有解锁帧，靠它手动复位。</summary>
+	public void ClearBackPose()
+	{
+		_backPoseRequested = false;
+		_backPoseActive = false;
+	}
+
 	/// <summary>
 	/// 推进背影立绘的请求 / 激活状态：交互触发对话时输入会被锁住，以此作为「对话已开始」的信号；
 	/// 迟迟不锁输入视为这次交互没有对话，丢弃请求以免在门口闪一下背影。
@@ -132,12 +152,28 @@ public partial class Player : CharacterBody2D
 		{
 			string animation = _backPoseActive ? BackAnimation : IdleAnimation;
 			if (Sprite.Animation != animation) Sprite.Play(animation);
+			UpdateFootsteps(false);
 			return;
 		}
 
 		_backPoseActive = false;
 		Sprite.FlipH = direction > 0f;
 		if (Sprite.Animation != RunAnimation) Sprite.Play(RunAnimation);
+		UpdateFootsteps(true);
+	}
+
+	/// <summary>移动时播脚步声（播完在下一帧自动续上），停下时立刻停住。</summary>
+	private void UpdateFootsteps(bool moving)
+	{
+		if (Footsteps == null || Footsteps.Stream == null) return;
+
+		if (moving)
+		{
+			if (!Footsteps.Playing) Footsteps.Play();
+			return;
+		}
+
+		if (Footsteps.Playing) Footsteps.Stop();
 	}
 
 	/// <summary>

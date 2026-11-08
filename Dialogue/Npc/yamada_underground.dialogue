@@ -76,6 +76,7 @@ do AudioManager.PlayBgmCue("moonlight")
 鸣子: 你把小优香的心意当成什么了啊，你这个笨蛋老师！
 鸣子: 今天我就算把你这家伙的腿打折也要把你带回到小优香的身边
 do AudioManager.PlayBgmCue("rainy")
+do GameState.ShowCharacterPortrait("shinji")
 （此时，我们背后突然传来井盖打开的声音，随即一个身影跳了下来）
 新井: 你们怎么还在这里，我手机上收到的调查报告上的那份解析的化学成分参数有偏差，炸药里有一些杂质遇到水反而会导致化学性质不稳定
 新井: 换句话说就是这里随时可能会爆炸！
@@ -101,6 +102,7 @@ do AudioManager.PlayBgmCue("rainy")
 鸣子: 正因为快开始了所以要放松心情嘛
 （我们默契的没有提及关于山田老师的事情。）
 （时间一分一秒的过去，面前的甜品已经吃掉一半。）
+do AudioManager.PlayEndingExplosion()
 （咚——一声不算大的声响从远处传来。）
 （我和新井对视一眼，艰难的忍住了内心翻涌的巨浪。）
 新井: 其实啊，小优香，山田老师有一件事情托我告诉你呢
@@ -109,6 +111,7 @@ do AudioManager.PlayBgmCue("rainy")
 do AudioManager.PlayBgmCue("cheer")
 （甜品店的大门突然被推开。）
 （一个穿着脏兮兮的、留着物理意义的爆炸头的男性走了进来。）
+do GameState.ShowCharacterPortrait("yamada")
 山田: 是啊，我最近决定……
 山田: 好好请我可爱的学生们吃一顿甜品！
 鸣子＆新井: 你这个笨蛋老师！！！！！！！！！！！

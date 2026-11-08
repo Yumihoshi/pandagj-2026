@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop）叙事游戏（策划案标题：环cycle）。
+Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop）叙事游戏（正式名：今天也准时爆炸，策划案标题：环cycle）。
 
 ## 策划案（唯一需求来源）
 
@@ -21,8 +21,9 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 当前结构
 
-- `Scenes/Root/GameScene.tscn`：主场景（`run/main_scene` 已指向它），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset` 与 `LoopEndReached`（17:30 终末）。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`、`UILayer/TimePanel`（右上角游戏时钟）、`PhoneScreen`（左上角手机）、`EndingOverlay`（真结局黑屏，layer 46）、`LoopEndNotice`（17:30 闪白，layer 90）。
-- `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D` + `InteractionRange`（`PlayerInteractor`）；贴图暂用 `ArtRes/Characters/muriko.png`，`AnimatedSprite2D` scale 0.28。
+- `Scenes/Root/MainMenu.tscn`：主菜单（`run/main_scene` 已指向它）——教室背景 + 径向暗角 + 「今天也准时爆炸」标题 / `cycle` 副题 / 分割线 + 「开始循环」「退出循环」两个按钮；`Scripts/UI/MainMenu.cs` 负责入场淡入上浮、背景缓慢推拉，「开始循环」淡出后 `ChangeSceneToFile` 进 `GameScene.tscn`，「退出循环」淡出后 `GetTree().Quit()`。
+- `Scenes/Root/GameScene.tscn`：游戏主场景（由主菜单切入），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset` 与 `LoopEndReached`（17:30 终末）。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`、`UILayer/TimePanel`（右上角游戏时钟）、`PhoneScreen`（左上角手机）、`EndingOverlay`（真结局黑屏，layer 46）、`LoopEndNotice`（17:30 闪白，layer 90）。
+- `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D` + `InteractionRange`（`PlayerInteractor`）；立绘帧用 `ArtRes/Characters/muriko/muriko_frames.tres`（`idle` 立绘 + `run` 6 帧跑步），`AnimatedSprite2D` scale 0.0822、offset y -810；`Player` 移动时播 `run`、静止播 `idle`，向右移动 `FlipH=true`（跑步帧原图朝左）。
 - `Scenes/Map/MapScreen.tscn`：地图 UI 面板（占位色块 + 地点按钮 `BtnClassroom` / `BtnAdministration` / `BtnPlayground`，竖排在 x=320，y=260/440/620）。
 - `Scenes/Locations/`：`Classroom.tscn`（地点「教室」：教室 / 走廊 / 隔壁班，NPC 小优香 / 山田老师 / 新井次郎）、`Playground.tscn`（地点「操场」：操场 / 操场后 / 器材准备室 / 地下空间，NPC 小优香 / 山田老师）、`Administration.tscn`（地点「行政楼」：入口 / 办公室，NPC 山田老师）。化学实验室已建（`Room_ChemLab`，背景暂用 `next_classroom.png`）；保健室尚未建场景。
 - `Scenes/Dialogue/DialogueBalloon.tscn`：NPC 对话 balloon（从 `ExampleBalloon` 复制改造，`layer = 50`；名字 / 正文 / 选项 / 进度点 / `CopyToast` 复制提示）。
@@ -39,7 +40,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - `Scenes/Phone/PhoneScreen.tscn`：手机（`CanvasLayer.layer=45`）：左上角「手机」按钮、遮罩、重要的事列表 / 阅读 / 记事本面板。
 - `Resources/Documents/`：`DocumentLibrary.tres` 注册表与 9 篇正式条目（`shinji_schedule` / `yuka_secret` / `equipment_room` / `yamada_tracks` / `laptop_password` / `chem_lab` / `bomb_weakness` / `yamada_notebook` / `yamada_nap`）；`club_notice.tres` 保留但不注册。
 - `Dialogue/phone.dialogue`：手机主菜单剧本（重要的事 / 记事本 / 关闭）。
-- `ArtRes/`：临时美术素材 —— `Backgrounds/`（9 张 1920x600 场景背景）、`Characters/`（4 张 240x300 透明立绘）、`CREDITS.md`（来源与许可）；`Source/` 保留原图与裁切源。
+- `ArtRes/`：正式美术（飞书需求表导入）在 `Characters/<角色>/`（muriko / yuka / yamada / shinji，含 `muriko_run_01..06` 跑步帧与 `yamada_sleep`）与 `Backgrounds/<地点>/`（Classroom / Playground / Administration / Ending）；旧占位素材仍在 `Backgrounds/*.png`（9 张 1920x600 场景背景）与 `Characters/*.png`（4 张 240x300 透明立绘），被现有场景按路径引用；导入映射表见 `CREDITS.md`，`Source/` 保留原图与裁切源。
 - `Audio/Sfx/`：Kenney UI Audio 音效，按 `Click`(5) / `Rollover`(6) / `Switch`(38) / `Mouse`(2) 分组，保留 `License.txt`；`Audio/Bgm/` 目前为空。
 - `default_bus_layout.tres`：音频总线 `SFX` / `BGM`（`send = Master`），播放器按总线独立控音量。
 - `addons/dialogue_manager/`：Dialogue Manager 4.2.0；`export_presets.cfg` 已有 Windows Desktop 预设（`export_path` 为空）。

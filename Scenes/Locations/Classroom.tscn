@@ -21,9 +21,9 @@
 [ext_resource type="Texture2D" uid="uid://bxryq0uffuepx" path="res://ArtRes/Backgrounds/classroom.png" id="bg_classroom"]
 [ext_resource type="Texture2D" uid="uid://c7gb0dpx7dobd" path="res://ArtRes/Backgrounds/hallway.png" id="bg_hallway"]
 [ext_resource type="Texture2D" uid="uid://b4tx8uv1evqv3" path="res://ArtRes/Backgrounds/next_classroom.png" id="bg_next_classroom"]
-[ext_resource type="Texture2D" uid="uid://bg8raiix1hesn" path="res://ArtRes/Characters/shinji.png" id="char_shinji"]
-[ext_resource type="Texture2D" uid="uid://csxxahio6eje1" path="res://ArtRes/Characters/yamada.png" id="char_yamada"]
-[ext_resource type="Texture2D" uid="uid://dh00r67jb2iya" path="res://ArtRes/Characters/yuka.png" id="char_yuka"]
+[ext_resource type="Texture2D" uid="uid://kcr7jm0ai2dj" path="res://ArtRes/Characters/shinji/shinji_portrait.png" id="char_shinji"]
+[ext_resource type="Texture2D" uid="uid://8ovy6kduxehn" path="res://ArtRes/Characters/yamada/yamada_portrait.png" id="char_yamada"]
+[ext_resource type="Texture2D" uid="uid://bnanuh10a1ci" path="res://ArtRes/Characters/yuka/yuka_portrait.png" id="char_yuka"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
 size = Vector2(120, 200)
@@ -126,9 +126,11 @@ Frames = [SubResource("NpcStateFrame_yuka_0"), SubResource("NpcStateFrame_yuka_1
 Sprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Yuka" unique_id=1643002108]
+texture_filter = 4
 position = Vector2(0, -100)
-scale = Vector2(0.65, 0.65)
+scale = Vector2(0.0856, 0.0856)
 texture = ExtResource("char_yuka")
+offset = Vector2(0, -188.7)
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Yuka" unique_id=858694304]
 position = Vector2(0, -100)
@@ -160,9 +162,11 @@ Frames = [SubResource("NpcStateFrame_yamada_0"), SubResource("NpcStateFrame_yama
 Sprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Yamada" unique_id=1516865725]
+texture_filter = 4
 position = Vector2(0, -100)
-scale = Vector2(0.65, 0.65)
+scale = Vector2(0.0777, 0.0777)
 texture = ExtResource("char_yamada")
+offset = Vector2(0, 8)
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Yamada" unique_id=1930865771]
 position = Vector2(0, -100)
@@ -376,9 +380,11 @@ PresentLoopFlag = "shinji_analyzing"
 VisibleWhenFlagSet = false
 
 [node name="Sprite" type="Sprite2D" parent="Room_NextClassroom/Npc_Shinji" unique_id=1022534276]
+texture_filter = 4
 position = Vector2(0, -100)
-scale = Vector2(0.65, 0.65)
+scale = Vector2(0.0914, 0.0914)
 texture = ExtResource("char_shinji")
+offset = Vector2(0, 34.5)
 
 [node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/Npc_Shinji" unique_id=1177071336]
 position = Vector2(0, -100)
@@ -451,9 +457,11 @@ Sprite = NodePath("Sprite")
 PresentLoopFlag = "shinji_analyzing"
 
 [node name="Sprite" type="Sprite2D" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=437091534]
+texture_filter = 4
 position = Vector2(0, -100)
-scale = Vector2(0.65, 0.65)
+scale = Vector2(0.0914, 0.0914)
 texture = ExtResource("char_shinji")
+offset = Vector2(0, 34.5)
 
 [node name="Shape" type="CollisionShape2D" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=251163847]
 position = Vector2(0, -100)

@@ -13,8 +13,8 @@
 [ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/playground_back.png" id="bg_playground_back"]
 [ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/equipment_room.png" id="bg_equipment_room"]
 [ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/underground.png" id="bg_underground"]
-[ext_resource type="Texture2D" path="res://ArtRes/Characters/yuka.png" id="char_yuka"]
-[ext_resource type="Texture2D" path="res://ArtRes/Characters/yamada.png" id="char_yamada"]
+[ext_resource type="Texture2D" path="res://ArtRes/Characters/yuka/yuka_portrait.png" id="char_yuka"]
+[ext_resource type="Texture2D" path="res://ArtRes/Characters/yamada/yamada_portrait.png" id="char_yamada"]
 [ext_resource type="Script" path="res://Scripts/Location/BombInteractable.cs" id="12_bomb"]
 [ext_resource type="Script" path="res://Scripts/Location/WaterPipe.cs" id="13_water"]
 [ext_resource type="Resource" path="res://Dialogue/Objects/underground_bomb.dialogue" id="15_bomb_dialogue"]
@@ -144,7 +144,9 @@ Sprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="Room_Playground/Npc_Yuka"]
 position = Vector2(0, -100)
-scale = Vector2(0.65, 0.65)
+offset = Vector2(0, -188.7)
+scale = Vector2(0.0856, 0.0856)
+texture_filter = 4
 texture = ExtResource("char_yuka")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Playground/Npc_Yuka"]
@@ -416,7 +418,9 @@ Sprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="Room_Underground/Npc_Yamada"]
 position = Vector2(0, -100)
-scale = Vector2(0.65, 0.65)
+offset = Vector2(0, 8)
+scale = Vector2(0.0777, 0.0777)
+texture_filter = 4
 texture = ExtResource("char_yamada")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Underground/Npc_Yamada"]

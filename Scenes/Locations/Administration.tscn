@@ -10,7 +10,7 @@
 [ext_resource type="Resource" path="res://Dialogue/Npc/yamada.dialogue" id="10_dialogue"]
 [ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/administration_lobby.png" id="bg_lobby"]
 [ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/office.png" id="bg_office"]
-[ext_resource type="Texture2D" path="res://ArtRes/Characters/yamada.png" id="char_yamada"]
+[ext_resource type="Texture2D" path="res://ArtRes/Characters/yamada/yamada_portrait.png" id="char_yamada"]
 [ext_resource type="Script" path="res://Scripts/Location/OfficeDoor.cs" id="11_office_door"]
 [ext_resource type="Script" path="res://Scripts/Location/KeyedDrawer.cs" id="12_drawer"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/PasswordPanel.tscn" id="13_password"]
@@ -199,7 +199,9 @@ Sprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="Room_Office/Npc_Yamada"]
 position = Vector2(0, -100)
-scale = Vector2(0.65, 0.65)
+offset = Vector2(0, 8)
+scale = Vector2(0.0777, 0.0777)
+texture_filter = 4
 texture = ExtResource("char_yamada")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Office/Npc_Yamada"]

@@ -1,6 +1,33 @@
-# 临时美术素材来源
+# 美术素材来源
 
-这些素材只用于原型占位，正式发布前应替换或确认授权。
+## 正式美术（飞书需求表）
+
+团队自绘素材，2026-11-08 从飞书 Wiki「Panda jam 八岐大蛇」→ 需求表（bitable `R0i1bUzsJaXYv3s5UK1cw4y7npe`，表 `tbl2KmC7jHUJwfQT`）的「图片文件」附件字段导入，按用途重命名并分级归档。
+
+| 素材名 | 原始附件 | 导入路径 |
+|---|---|---|
+| 千原鸣子（立绘） | `女主立绘..png` | `Characters/muriko/muriko_portrait.png` |
+| 千原鸣子（跑步帧 1-6） | `跑步1..png` … `跑步6..png` | `Characters/muriko/muriko_run_01.png` … `muriko_run_06.png` |
+| 小优香（立绘） | `主角立绘 概念 3..png` | `Characters/yuka/yuka_portrait.png` |
+| 山田老师（立绘） | `老师2..png` | `Characters/yamada/yamada_portrait.png` |
+| 山田老师（办公室睡觉） | `jkds..png` | `Characters/yamada/yamada_sleep.png` |
+| 新井次郎（立绘） | `宅男2..png` | `Characters/shinji/shinji_portrait.png` |
+| 教室 | `1794038323143.png` | `Backgrounds/Classroom/classroom.png` |
+| 走廊（三个门） | `教室走廊..png` | `Backgrounds/Classroom/hallway.png` |
+| 化学实验室 | `ChatGPT 图像 2026年11月7日 20_02_00.png` | `Backgrounds/Classroom/chem_lab.png` |
+| 操场 | `1794042626426.png` | `Backgrounds/Playground/playground.png` |
+| 操场后空间 | `IMG_20261107_173416.png` | `Backgrounds/Playground/playground_back.png` |
+| 器材准备室 | `ChatGPT 图像 2026年11月7日 19_33_11.png` | `Backgrounds/Playground/equipment_room.png` |
+| 地下空间（服务器房） | `炸药.(1).png` | `Backgrounds/Playground/underground.png` |
+| 办公楼走廊 | `1794039882721.png` | `Backgrounds/Administration/office_hallway.png` |
+| 办公室 | `1794042177348.png` | `Backgrounds/Administration/office.png` |
+| 甜品店 | `image.png` | `Backgrounds/Ending/dessert_shop.png` |
+
+需求表里尚无附件的条目：大地图、教学楼 UI、行政楼 UI、操场 UI、爆炸 CG、办公室老师办公。
+
+## 临时占位素材
+
+以下素材只用于原型占位，正式发布前应替换或确认授权。
 
 ## 背景
 

@@ -61,7 +61,7 @@ interact={
 
 [internationalization]
 
-locale/translations_pot_files=PackedStringArray("res://Dialogue/day1.dialogue", "res://Dialogue/Npc/student.dialogue", "res://Dialogue/Npc/yuka.dialogue", "res://Dialogue/Npc/yamada.dialogue", "res://Dialogue/Npc/shinji.dialogue", "res://Dialogue/phone.dialogue", "res://Dialogue/Npc/shinji_lab.dialogue", "res://Dialogue/Npc/yamada_underground.dialogue", "res://Dialogue/Objects/classroom_block.dialogue", "res://Dialogue/Objects/classroom_desk.dialogue", "res://Dialogue/Objects/equipment_water.dialogue", "res://Dialogue/Objects/underground_bomb.dialogue", "res://Dialogue/Objects/office_kick_out.dialogue", "res://Dialogue/Objects/manhole_locked.dialogue", "res://Dialogue/Objects/underground_wait.dialogue")
+locale/translations_pot_files=PackedStringArray("res://Dialogue/day1.dialogue", "res://Dialogue/Npc/student.dialogue", "res://Dialogue/Npc/yuka.dialogue", "res://Dialogue/Npc/yamada.dialogue", "res://Dialogue/Npc/shinji.dialogue", "res://Dialogue/phone.dialogue", "res://Dialogue/Npc/shinji_lab.dialogue", "res://Dialogue/Npc/yamada_underground.dialogue", "res://Dialogue/Objects/classroom_block.dialogue", "res://Dialogue/Objects/classroom_desk.dialogue", "res://Dialogue/Objects/equipment_water.dialogue", "res://Dialogue/Objects/underground_bomb.dialogue", "res://Dialogue/Objects/office_kick_out.dialogue", "res://Dialogue/Objects/manhole_locked.dialogue")
 
 [physics]
 

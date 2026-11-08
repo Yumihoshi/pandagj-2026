@@ -264,6 +264,16 @@ public partial class GameScene : Node2D
 		LocationHost.AddChild(location);
 		_currentLocation = location;
 		location.ExitRequested += OnExitRequested;
+
+		if (AudioManager.Instance == null)
+		{
+			GD.PushError("GameScene: AudioManager 未就绪，无法切换 BGM");
+		}
+		else
+		{
+			AudioManager.Instance.PlayLocationBgm(location.Name.ToString().ToLowerInvariant());
+		}
+
 		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 	}
 

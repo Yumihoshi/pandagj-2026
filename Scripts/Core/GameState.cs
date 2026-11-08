@@ -43,6 +43,9 @@ public partial class GameState : Node
 	/// <summary>本轮剧情标记；每轮 ResetLoop 清空，跨循环不保留。</summary>
 	private readonly HashSet<string> _loopFlags = new();
 
+	/// <summary>跨循环保留的剧情阶段；ResetLoop 不清空。</summary>
+	private readonly HashSet<string> _stages = new();
+
 	/// <summary>新井分析完成的循环内分钟；-1 表示本轮没有开始分析。</summary>
 	public int BombAnalysisReadyMinute { get; private set; } = -1;
 
@@ -76,6 +79,7 @@ public partial class GameState : Node
 	[Signal] public delegate void EpilogueStartedEventHandler();
 	[Signal] public delegate void TrueEndingReachedEventHandler();
 	[Signal] public delegate void LoopFailedEventHandler();
+	[Signal] public delegate void StageChangedEventHandler(string stage);
 
 	public override void _Ready()
 	{
@@ -335,6 +339,31 @@ public partial class GameState : Node
 		return _loopFlags.Contains(flag);
 	}
 
+	/// <summary>是否已经达到某个跨循环剧情阶段。</summary>
+	public bool HasStage(string stage)
+	{
+		if (string.IsNullOrEmpty(stage))
+		{
+			GD.PushError("GameState.HasStage: 阶段 id 为空");
+			return false;
+		}
+		return _stages.Contains(stage);
+	}
+
+	/// <summary>记录一个跨循环剧情阶段；重复记录无副作用，并通知订阅者。</summary>
+	public void MarkStage(string stage)
+	{
+		if (string.IsNullOrEmpty(stage))
+		{
+			GD.PushError("GameState.MarkStage: 阶段 id 为空");
+			return;
+		}
+		if (!_stages.Add(stage)) return;
+
+		GD.Print($"[Stage] {stage}");
+		EmitSignal(SignalName.StageChanged, stage);
+	}
+
 	/// <summary>设置本轮剧情标记；重复设置无副作用，并通知按标记显隐的 NPC 刷新。</summary>
 	public void SetLoopFlag(string flag)
 	{
@@ -424,6 +453,7 @@ public partial class GameState : Node
 		_npcLoopStates.Clear();
 		_npcUsedChoices.Clear();
 		_loopFlags.Clear();
+		// 剧情阶段（_stages）跨循环保留，不在此清空。
 
 		GD.Print($"[Loop] 第 {LoopCount} 周目开始");
 		EmitSignal(SignalName.InventoryChanged);

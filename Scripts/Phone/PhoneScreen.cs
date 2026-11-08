@@ -253,6 +253,16 @@ public partial class PhoneScreen : CanvasLayer
 		}
 
 		_open = true;
+
+		if (AudioManager.Instance == null)
+		{
+			GD.PushError("PhoneScreen.Open: AudioManager 未就绪，无法切换 BGM");
+		}
+		else
+		{
+			AudioManager.Instance.PushBgmOverride("moonlight");
+		}
+
 		_player.InputLocked = true;
 		PhoneButton.Hide();
 		KeyRing.SetHudVisible(false);
@@ -368,6 +378,12 @@ public partial class PhoneScreen : CanvasLayer
 		{
 			_player.InputLocked = false;
 		}
+
+		if (AudioManager.Instance != null)
+		{
+			AudioManager.Instance.PopBgmOverride();
+		}
+
 		_closing = false;
 	}
 

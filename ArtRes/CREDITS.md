@@ -25,6 +25,9 @@
 | 千原鸣子（背影） | 2026-11-08 直接提供（需求表暂无同名附件） | `Characters/muriko/muriko_back.png` |
 | 山田老师（办公坐姿背影） | 同上 | `Characters/yamada/yamada_working.png` |
 | 操场后空间（改版，含砖砌井口） | 同上 | `Backgrounds/Playground/playground_back_2.png` |
+| 吉祥物（三只并排，透明底） | 同上，原始白底图留在 `吉祥物.png` | `UI/mascot.png` |
+
+`UI/mascot.png` 由 `吉祥物.png`（白底 1586×892）用「从四边连通区域 Flood fill 抠白 + 边缘反预乘」处理得到，白底变真透明、内部白色部位（猫肚皮、小鸟身体）与黑描边保持不透明，再裁到内容包围盒 1438×568。主菜单右下角引用它。
 
 ### 大地图（2026-11-08，`D:\Downloads\Misc\Playground`）
 

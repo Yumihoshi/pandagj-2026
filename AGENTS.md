@@ -21,7 +21,7 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 当前结构
 
-- `Scenes/Root/MainMenu.tscn`：主菜单（`run/main_scene` 已指向它）——教室背景 + 径向暗角 + 「今天也准时爆炸」标题 / `cycle` 副题 / 分割线 + 「开始循环」「退出循环」两个按钮；`Scripts/UI/MainMenu.cs` 负责入场淡入上浮、背景缓慢推拉，「开始循环」淡出后 `ChangeSceneToFile` 进 `GameScene.tscn`，「退出循环」淡出后 `GetTree().Quit()`。
+- `Scenes/Root/MainMenu.tscn`：主菜单（`run/main_scene` 已指向它）——教室背景 + 径向暗角 + 「今天也准时爆炸」标题 / `cycle` 副题 / 分割线 + 「开始循环」「退出循环」两个按钮；`Scripts/UI/MainMenu.cs` 负责入场淡入上浮、背景缓慢推拉，「开始循环」淡出后 `ChangeSceneToFile` 进 `GameScene.tscn`，「退出循环」淡出后 `GetTree().Quit()`。右下角 `Mascot` 用 `ArtRes/UI/mascot.png`（三只吉祥物并排，透明底，1438×568）贴角摆放（760×300，`stretch_mode = KEEP_ASPECT_CENTERED`、`mouse_filter = IGNORE`），比标题晚 0.35 秒上浮淡入，入场结束后做 5px / 2.5 秒的往复呼吸浮动。
 - `Scenes/Root/GameScene.tscn`：游戏主场景（由主菜单切入），`GameScene.cs` 负责地点装载/卸载、地图显隐、过渡、响应 `LoopReset` 与 `LoopEndReached`（17:30 终末）。节点：`LocationHost`（当前地点挂载点）、`UILayer/MapScreen`、`UILayer/TimePanel`（右上角游戏时钟）、`PhoneScreen`（左上角手机）、`EndingOverlay`（真结局黑屏，layer 46）、`LoopEndNotice`（17:30 爆炸 1/2 轮切 → 爆炸 3 + 震屏，layer 90）。
 - `Scenes/player.tscn`：`CharacterBody2D` + `AnimatedSprite2D` + `CollisionShape2D` + `Camera2D` + `InteractionRange`（`PlayerInteractor`）；立绘帧用 `ArtRes/Characters/muriko/muriko_frames.tres`（`idle` 立绘 + `run` 6 帧跑步 + `back` 背影），`AnimatedSprite2D` scale 0.29592、offset y -1053（脚底落在碰撞体下沿），碰撞 72×144、交互范围 216×216；`Player` 移动时播 `run`、静止播 `idle`，向右移动 `FlipH=true`（跑步帧原图朝左）；与非 NPC 物件交互触发对话时播 `back` 背影 —— `PlayerInteractor` 调 `Player.RequestBackPose()`，`Player` 把「对话锁住输入」当作开始信号、解锁即回 `idle`，0.15 秒内没锁输入就丢弃请求（开门 / 出口不闪背影）。
 - `Scenes/Map/MapScreen.tscn`：大地图（全屏 1920×1080）—— 底层 `MapBase` 是黑白校园平面图 `ArtRes/UI/Map/campus_map_line.png`（1601×900 拉伸铺满），`Highlights` 里三个彩色建筑（`campus_classroom_color` / `campus_administration_color` / `campus_playground_color`）随解锁显隐，所以已解锁地点在地图上显示为彩色、未解锁区域保持黑白线稿；`LocationButtons` 的 `BtnClassroom` / `BtnAdministration` / `BtnPlayground` 是透明按钮，压在各建筑切图的包围盒上（518/118、513/691、979/668）；`MapLocationButton.Highlight` 指向对应高亮，悬停时提亮并播 Rollover。地图不再有标题「学校地图」、底部提示与地点名药丸标签（2026-11-08 移除）。
@@ -121,6 +121,10 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 接口：`AudioManager.Instance.PlayClick()` / `PlayHover()` / `PlaySwitch()` / `PlayMouseClick()` / `PlayMouseRelease()`；通用入口 `PlaySfx(SfxId)`；BGM 用 `PlayBgm(stream, loop: true)` / `StopBgm()`。
 - 音量：`SfxVolumeDb` / `BgmVolumeDb`（分贝，改对应的 `SFX` / `BGM` 总线）。
 - 音效按 `Audio/Sfx/{Click,Rollover,Switch,Mouse}/<name><n>.ogg` 约定加载；增删变体时同步 `AudioManager.LoadSfxGroup` 的数量。
+- BGM：`Audio/Bgm/` 下 7 首 mp3，曲目 id → 路径写在 `AudioManager.BgmCueFiles`（`cheer` 开开心心啦啦啦 / `adventure` 暑假大冒险 / `still` 静止的宇宙 / `moonlight` 浅浅的月光 / `rainy` 雨的恋人们 / `mist` 夏天的雾 / `dream` 梦，`dream` 暂未使用）；播放时统一开 `Loop`，mp3 与 ogg 都支持。
+- BGM 分三层：`PlayLocationBgm(locationId)` 按地点选环境曲（`classroom`→cheer / `playground`→adventure / `administration`→still，`GameScene.LoadLocationAsync` 每次装载地点后调用，地点 id 取 `LocationRoot` 根节点名小写）；`HasStage("bomb_seen")` 为真时环境曲全局改为 `rainy`（跨循环保留）；打开手机时 `PhoneScreen.Open` 调 `PushBgmOverride("moonlight")`、`CloseSession` 调 `PopBgmOverride()` 恢复。同一曲目正在播放时不会重头播。
+- 剧情阶段：`GameState.MarkStage` / `HasStage` / `StageChanged`，`_stages` 跨 `ResetLoop` 保留（与 `_loopFlags` 相反）；`Room.StageOnEnter` 在房间第一次激活时写入阶段，`Playground.tscn` 的 `Room_Underground` 配 `StageOnEnter = "bomb_seen"`。
+- 终局 BGM 由 `Dialogue/Npc/yamada_underground.dialogue` 里的 `do AudioManager.PlayBgmCue(...)` 驱动：老师刚来 `mist` → 开始阐述经历 `moonlight` → 新井来了以后 `rainy` → 甜品店老师来之前 `rainy` → 老师来之后 `cheer`。
 - 资源缺失、分组为空、总线缺失都会 `PushError`，不会静默兜底。
 
 ## 工具链

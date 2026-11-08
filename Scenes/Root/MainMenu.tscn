@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/UI/MainMenu.cs" id="1_menu"]
 [ext_resource type="Texture2D" path="res://ArtRes/Backgrounds/Classroom/classroom.png" id="2_bg"]
+[ext_resource type="Texture2D" path="res://ArtRes/UI/mascot.png" id="3_mascot"]
 
 [sub_resource type="SystemFont" id="SystemFont_serif"]
 font_names = PackedStringArray("Noto Serif SC", "Source Han Serif SC", "Yu Mincho", "MS Mincho", "SimSun")
@@ -125,7 +126,7 @@ Button/styles/hover = SubResource("StyleBoxFlat_btn_hover")
 Button/styles/normal = SubResource("StyleBoxFlat_btn_normal")
 Button/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 
-[node name="MainMenu" type="Control" node_paths=PackedStringArray("Background", "Content", "MenuButtons", "StartButton", "QuitButton")]
+[node name="MainMenu" type="Control" node_paths=PackedStringArray("Background", "Content", "MenuButtons", "StartButton", "QuitButton", "Mascot")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -138,6 +139,7 @@ Content = NodePath("Content")
 MenuButtons = NodePath("Content/Buttons")
 StartButton = NodePath("Content/Buttons/BtnStart")
 QuitButton = NodePath("Content/Buttons/BtnQuit")
+Mascot = NodePath("Mascot")
 
 [node name="Background" type="TextureRect" parent="."]
 modulate = Color(0.8, 0.85098, 0.94902, 1)
@@ -173,6 +175,23 @@ mouse_filter = 2
 texture = SubResource("GradientTexture2D_vignette")
 expand_mode = 1
 stretch_mode = 0
+
+[node name="Mascot" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -760.0
+offset_top = -300.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("3_mascot")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Content" type="VBoxContainer" parent="."]
 layout_mode = 1

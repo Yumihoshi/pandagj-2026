@@ -13,6 +13,9 @@ public partial class Room : Node2D
 	/// <summary>相机限位，本房间局部坐标。</summary>
 	[Export] public Rect2I CameraBounds { get; set; }
 
+	/// <summary>本房间第一次被激活时写入的跨循环剧情阶段（如地下空间 = 见到炸药）；留空表示无。</summary>
+	[Export] public string StageOnEnter { get; set; }
+
 	/// <summary>启用/停用整个房间：可见性、物理碰撞、处理模式一起切。</summary>
 	public void SetActive(bool active)
 	{
@@ -22,6 +25,18 @@ public partial class Room : Node2D
 		foreach (CollisionShape2D shape in FindShapes(this))
 		{
 			shape.SetDeferred("disabled", !active);
+		}
+
+		if (active && !string.IsNullOrEmpty(StageOnEnter))
+		{
+			if (GameState.Instance == null)
+			{
+				GD.PushError($"Room {Name}: GameState 未就绪，无法记录阶段 {StageOnEnter}");
+			}
+			else
+			{
+				GameState.Instance.MarkStage(StageOnEnter);
+			}
 		}
 	}
 

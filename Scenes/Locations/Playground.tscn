@@ -357,6 +357,7 @@ text = "水管"
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 CameraBounds = Rect2i(0, 0, 3844, 1080)
+StageOnEnter = "bomb_seen"
 
 [node name="Bg" type="TextureRect" parent="Room_Underground"]
 offset_right = 3843.5

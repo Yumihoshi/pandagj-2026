@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=8 format=3]
+[gd_resource type="SpriteFrames" load_steps=9 format=3]
 
 [ext_resource type="Texture2D" path="res://ArtRes/Characters/muriko/muriko_portrait.png" id="1_portrait"]
 [ext_resource type="Texture2D" path="res://ArtRes/Characters/muriko/muriko_run_01.png" id="2_run01"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" path="res://ArtRes/Characters/muriko/muriko_run_04.png" id="5_run04"]
 [ext_resource type="Texture2D" path="res://ArtRes/Characters/muriko/muriko_run_05.png" id="6_run05"]
 [ext_resource type="Texture2D" path="res://ArtRes/Characters/muriko/muriko_run_06.png" id="7_run06"]
+[ext_resource type="Texture2D" path="res://ArtRes/Characters/muriko/muriko_back.png" id="8_back"]
 
 [resource]
 animations = [{
@@ -40,4 +41,12 @@ animations = [{
 "loop": true,
 "name": &"run",
 "speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("8_back")
+}],
+"loop": true,
+"name": &"back",
+"speed": 1.0
 }]

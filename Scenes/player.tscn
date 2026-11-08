@@ -6,20 +6,20 @@
 [ext_resource type="PackedScene" path="res://Scenes/UI/InteractPrompt.tscn" id="4_prompt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
-size = Vector2(40, 80)
+size = Vector2(72, 144)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_range"]
-size = Vector2(120, 120)
+size = Vector2(216, 216)
 
 [node name="Player" type="CharacterBody2D" unique_id=1248814557 node_paths=PackedStringArray("Camera", "Sprite")]
 script = ExtResource("1_player")
-MoveSpeed = 500.0
+MoveSpeed = 900.0
 Camera = NodePath("Camera2D")
 Sprite = NodePath("AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1501031974]
-offset = Vector2(0, -810)
-scale = Vector2(0.0822, 0.0822)
+offset = Vector2(0, -1053)
+scale = Vector2(0.29592, 0.29592)
 texture_filter = 4
 sprite_frames = ExtResource("3_frames")
 autoplay = "idle"

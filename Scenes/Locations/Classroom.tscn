@@ -18,15 +18,15 @@
 [ext_resource type="Resource" uid="uid://cwdq4hub4qur7" path="res://Dialogue/Npc/shinji_lab.dialogue" id="18_shinji_lab"]
 [ext_resource type="Script" uid="uid://buaoah2grvxuv" path="res://Scripts/Location/TalkToYukaFirst.cs" id="19_gate"]
 [ext_resource type="Resource" uid="uid://cghj3c7q72yb2" path="res://Dialogue/day1.dialogue" id="20_day1"]
-[ext_resource type="Texture2D" uid="uid://bxryq0uffuepx" path="res://ArtRes/Backgrounds/classroom.png" id="bg_classroom"]
-[ext_resource type="Texture2D" uid="uid://c7gb0dpx7dobd" path="res://ArtRes/Backgrounds/hallway.png" id="bg_hallway"]
-[ext_resource type="Texture2D" uid="uid://b4tx8uv1evqv3" path="res://ArtRes/Backgrounds/next_classroom.png" id="bg_next_classroom"]
+[ext_resource type="Texture2D" uid="uid://dfcepvoopqf2h" path="res://ArtRes/Backgrounds/Classroom/chem_lab.png" id="bg_chem_lab"]
+[ext_resource type="Texture2D" uid="uid://dvtkb6lm3tgve" path="res://ArtRes/Backgrounds/Classroom/hallway.png" id="bg_hallway"]
+[ext_resource type="Texture2D" uid="uid://bnbxuilf2taag" path="res://ArtRes/Backgrounds/Classroom/classroom.png" id="bg_next_classroom"]
 [ext_resource type="Texture2D" uid="uid://kcr7jm0ai2dj" path="res://ArtRes/Characters/shinji/shinji_portrait.png" id="char_shinji"]
 [ext_resource type="Texture2D" uid="uid://8ovy6kduxehn" path="res://ArtRes/Characters/yamada/yamada_portrait.png" id="char_yamada"]
 [ext_resource type="Texture2D" uid="uid://bnanuh10a1ci" path="res://ArtRes/Characters/yuka/yuka_portrait.png" id="char_yuka"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
-size = Vector2(120, 200)
+size = Vector2(216, 360)
 
 [sub_resource type="Resource" id="NpcStateFrame_yuka_0"]
 script = ExtResource("9_frame")
@@ -70,21 +70,21 @@ PlayerNode = NodePath("Player")
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
 FirstLoopSpawn = NodePath("FirstLoopSpawn")
-CameraBounds = Rect2i(0, 0, 1920, 600)
+CameraBounds = Rect2i(0, 0, 3844, 1080)
 
 [node name="Bg" type="TextureRect" parent="Room_Classroom" unique_id=1023548115]
-offset_right = 1920.0
-offset_bottom = 600.0
+offset_right = 3843.5
+offset_bottom = 1080.0
 mouse_filter = 2
-texture = ExtResource("bg_classroom")
+texture = ExtResource("bg_next_classroom")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="DefaultSpawn" type="Marker2D" parent="Room_Classroom" unique_id=867716794]
-position = Vector2(350, 520)
+position = Vector2(700.638, 1008)
 
 [node name="FirstLoopSpawn" type="Marker2D" parent="Room_Classroom" unique_id=1900000011]
-position = Vector2(700, 520)
+position = Vector2(1401.276, 1008)
 
 [node name="TalkToYukaFirst" type="Node" parent="Room_Classroom" unique_id=1900000012]
 script = ExtResource("19_gate")
@@ -92,7 +92,7 @@ RequiredNpcId = "classroom.yuka"
 PromptDialogue = ExtResource("20_day1")
 
 [node name="DoorToHallway" type="Area2D" parent="Room_Classroom" unique_id=838777572 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
-position = Vector2(1800, 500)
+position = Vector2(3603.2813, 900)
 script = ExtResource("13_classroom_door")
 BlockingDialogue = ExtResource("17_block_dialogue")
 TargetRoom = NodePath("../../Room_Hallway")
@@ -103,21 +103,21 @@ TravelMinutes = 15
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Classroom/DoorToHallway" unique_id=1912226257]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
 [node name="Caption" type="Label" parent="Room_Classroom/DoorToHallway" unique_id=1014184792]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
 text = "门（走廊）"
 
 [node name="Npc_Yuka" type="Area2D" parent="Room_Classroom" unique_id=524856633 node_paths=PackedStringArray("Sprite")]
-position = Vector2(500, 520)
+position = Vector2(1000.9115, 1083.5)
 script = ExtResource("8_npc")
 NpcId = "classroom.yuka"
 DisplayName = "小优香"
@@ -127,33 +127,33 @@ Sprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Yuka" unique_id=1643002108]
 texture_filter = 4
-position = Vector2(0, -100)
-scale = Vector2(0.0856, 0.0856)
+position = Vector2(0, -180)
+scale = Vector2(0.3082, 0.3082)
 texture = ExtResource("char_yuka")
-offset = Vector2(0, -188.7)
+offset = Vector2(0, -760.35)
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Yuka" unique_id=858694304]
-position = Vector2(0, -100)
+position = Vector2(0, -180)
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="NameLabel" type="Label" parent="Room_Classroom/Npc_Yuka" unique_id=2070325950]
-offset_left = -80.0
-offset_top = -245.0
-offset_right = 80.0
-offset_bottom = -205.0
+offset_left = -160.1458
+offset_top = -791.5
+offset_right = 160.1458
+offset_bottom = -719.5
 theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
 theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
 theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_constants/outline_size = 6
-theme_override_constants/shadow_outline_size = 3
-theme_override_font_sizes/font_size = 20
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 11
+theme_override_constants/shadow_outline_size = 5
+theme_override_font_sizes/font_size = 36
 text = "小优香"
 horizontal_alignment = 1
 
 [node name="Npc_Yamada" type="Area2D" parent="Room_Classroom" unique_id=2034364836 node_paths=PackedStringArray("Sprite")]
-position = Vector2(1600, 520)
+position = Vector2(3202.9167, 1083.5)
 script = ExtResource("8_npc")
 NpcId = "classroom.yamada"
 DisplayName = "山田老师"
@@ -163,33 +163,33 @@ Sprite = NodePath("Sprite")
 
 [node name="Sprite" type="Sprite2D" parent="Room_Classroom/Npc_Yamada" unique_id=1516865725]
 texture_filter = 4
-position = Vector2(0, -100)
-scale = Vector2(0.0777, 0.0777)
+position = Vector2(0, -180)
+scale = Vector2(0.2798, 0.2798)
 texture = ExtResource("char_yamada")
-offset = Vector2(0, 8)
+offset = Vector2(0, -622)
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Classroom/Npc_Yamada" unique_id=1930865771]
-position = Vector2(0, -100)
+position = Vector2(0, -180)
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="NameLabel" type="Label" parent="Room_Classroom/Npc_Yamada" unique_id=748636972]
-offset_left = -80.0
-offset_top = -245.0
-offset_right = 80.0
-offset_bottom = -205.0
+offset_left = -160.1458
+offset_top = -791.5
+offset_right = 160.1458
+offset_bottom = -719.5
 theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
 theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
 theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_constants/outline_size = 6
-theme_override_constants/shadow_outline_size = 3
-theme_override_font_sizes/font_size = 20
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 11
+theme_override_constants/shadow_outline_size = 5
+theme_override_font_sizes/font_size = 36
 text = "山田老师"
 horizontal_alignment = 1
 
 [node name="BookDesk" type="Area2D" parent="Room_Classroom" unique_id=1602488800]
-position = Vector2(760, 520)
+position = Vector2(1521.3854, 936)
 script = ExtResource("15_desk")
 Dialogue = ExtResource("16_desk_dialogue")
 
@@ -197,58 +197,58 @@ Dialogue = ExtResource("16_desk_dialogue")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Classroom/BookDesk" unique_id=1680321374]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
 color = Color(0.55, 0.45, 0.62, 1)
 
 [node name="Caption" type="Label" parent="Room_Classroom/BookDesk" unique_id=763323604]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
 text = "座位"
 
 [node name="Room_Hallway" type="Node2D" parent="." unique_id=200861915 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
-CameraBounds = Rect2i(0, 0, 1920, 600)
+CameraBounds = Rect2i(0, 0, 3844, 1080)
 
 [node name="Bg" type="TextureRect" parent="Room_Hallway" unique_id=1916759305]
-offset_right = 1920.0
-offset_bottom = 600.0
+offset_right = 3843.5
+offset_bottom = 1080.0
 mouse_filter = 2
 texture = ExtResource("bg_hallway")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="DefaultSpawn" type="Marker2D" parent="Room_Hallway" unique_id=974879950]
-position = Vector2(350, 520)
+position = Vector2(700.638, 1008)
 
 [node name="ExitToMap" type="Area2D" parent="Room_Hallway" unique_id=1947565227]
-position = Vector2(80, 500)
+position = Vector2(60, 900)
 script = ExtResource("4_exit")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Hallway/ExitToMap" unique_id=319266404]
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Hallway/ExitToMap" unique_id=1819771153]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
 color = Color(0.2, 0.5, 0.8, 1)
 
 [node name="Caption" type="Label" parent="Room_Hallway/ExitToMap" unique_id=1726028903]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
 text = "出口"
 
 [node name="DoorToClassroom" type="Area2D" parent="Room_Hallway" unique_id=1765778004 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
-position = Vector2(500, 500)
+position = Vector2(549, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Classroom")
 TargetSpawn = NodePath("../../Room_Classroom/DefaultSpawn")
@@ -258,21 +258,21 @@ TravelMinutes = 15
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToClassroom" unique_id=283509472]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
 [node name="Caption" type="Label" parent="Room_Hallway/DoorToClassroom" unique_id=1996532491]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
 text = "门（教室）"
 
 [node name="DoorToNextClassroom" type="Area2D" parent="Room_Hallway" unique_id=631183918 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
-position = Vector2(1500, 500)
+position = Vector2(1715, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_NextClassroom")
 TargetSpawn = NodePath("../../Room_NextClassroom/DefaultSpawn")
@@ -282,21 +282,21 @@ TravelMinutes = 20
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToNextClassroom" unique_id=184472800]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
 [node name="Caption" type="Label" parent="Room_Hallway/DoorToNextClassroom" unique_id=1353465013]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
 text = "门（隔壁班）"
 
 [node name="DoorToLab" type="Area2D" parent="Room_Hallway" unique_id=947754456 node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
-position = Vector2(1200, 500)
+position = Vector2(2952, 900)
 script = ExtResource("14_lab_door")
 TargetRoom = NodePath("../../Room_ChemLab")
 TargetSpawn = NodePath("../../Room_ChemLab/DefaultSpawn")
@@ -308,44 +308,44 @@ LockedHint = NodePath("LockedHint")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToLab" unique_id=601999748]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
 color = Color(0.35, 0.5, 0.45, 1)
 
 [node name="Caption" type="Label" parent="Room_Hallway/DoorToLab" unique_id=1141619842]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
 text = "门（化学实验室）"
 
 [node name="LockedHint" type="Label" parent="Room_Hallway/DoorToLab" unique_id=1023667460]
-offset_left = -90.0
-offset_top = -150.0
-offset_right = 90.0
-offset_bottom = -110.0
+offset_left = -180.1641
+offset_top = -270.0
+offset_right = 180.1641
+offset_bottom = -198.0
 text = "（化学实验室还进不去）"
 
 [node name="Room_NextClassroom" type="Node2D" parent="." unique_id=873235996 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
-CameraBounds = Rect2i(0, 0, 1920, 600)
+CameraBounds = Rect2i(0, 0, 3844, 1080)
 
 [node name="Bg" type="TextureRect" parent="Room_NextClassroom" unique_id=26889650]
-offset_right = 1920.0
-offset_bottom = 600.0
+offset_right = 3843.5
+offset_bottom = 1080.0
 mouse_filter = 2
 texture = ExtResource("bg_next_classroom")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="DefaultSpawn" type="Marker2D" parent="Room_NextClassroom" unique_id=2004668448]
-position = Vector2(350, 520)
+position = Vector2(700.638, 1008)
 
 [node name="DoorToHallway" type="Area2D" parent="Room_NextClassroom" unique_id=1311367547 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
-position = Vector2(80, 500)
+position = Vector2(160.1458, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Hallway")
 TargetSpawn = NodePath("../../Room_Hallway/DefaultSpawn")
@@ -355,21 +355,21 @@ TravelMinutes = 20
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_NextClassroom/DoorToHallway" unique_id=1349440404]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
 [node name="Caption" type="Label" parent="Room_NextClassroom/DoorToHallway" unique_id=616660094]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
 text = "门（走廊）"
 
 [node name="Npc_Shinji" type="Area2D" parent="Room_NextClassroom" unique_id=1874883470 node_paths=PackedStringArray("Sprite")]
-position = Vector2(1200, 520)
+position = Vector2(2402.1875, 1083.5)
 script = ExtResource("8_npc")
 NpcId = "classroom.shinji"
 DisplayName = "新井次郎"
@@ -381,49 +381,49 @@ VisibleWhenFlagSet = false
 
 [node name="Sprite" type="Sprite2D" parent="Room_NextClassroom/Npc_Shinji" unique_id=1022534276]
 texture_filter = 4
-position = Vector2(0, -100)
-scale = Vector2(0.0914, 0.0914)
+position = Vector2(0, -180)
+scale = Vector2(0.329, 0.329)
 texture = ExtResource("char_shinji")
-offset = Vector2(0, 34.5)
+offset = Vector2(0, -500.75)
 
 [node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/Npc_Shinji" unique_id=1177071336]
-position = Vector2(0, -100)
+position = Vector2(0, -180)
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="NameLabel" type="Label" parent="Room_NextClassroom/Npc_Shinji" unique_id=1814813677]
-offset_left = -80.0
-offset_top = -245.0
-offset_right = 80.0
-offset_bottom = -205.0
+offset_left = -160.1458
+offset_top = -791.5
+offset_right = 160.1458
+offset_bottom = -719.5
 theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
 theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
 theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_constants/outline_size = 6
-theme_override_constants/shadow_outline_size = 3
-theme_override_font_sizes/font_size = 20
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 11
+theme_override_constants/shadow_outline_size = 5
+theme_override_font_sizes/font_size = 36
 text = "新井次郎"
 horizontal_alignment = 1
 
 [node name="Room_ChemLab" type="Node2D" parent="." unique_id=216933270 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
-CameraBounds = Rect2i(0, 0, 1920, 600)
+CameraBounds = Rect2i(0, 0, 3240, 1080)
 
 [node name="Bg" type="TextureRect" parent="Room_ChemLab" unique_id=1962173172]
-offset_right = 1920.0
-offset_bottom = 600.0
+offset_right = 3240.0
+offset_bottom = 1080.0
 mouse_filter = 2
-texture = ExtResource("bg_next_classroom")
+texture = ExtResource("bg_chem_lab")
 expand_mode = 1
 stretch_mode = 6
 
 [node name="DefaultSpawn" type="Marker2D" parent="Room_ChemLab" unique_id=214575002]
-position = Vector2(350, 520)
+position = Vector2(590.625, 1008)
 
 [node name="DoorToHallway" type="Area2D" parent="Room_ChemLab" unique_id=515881135 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
-position = Vector2(80, 500)
+position = Vector2(135, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Hallway")
 TargetSpawn = NodePath("../../Room_Hallway/DefaultSpawn")
@@ -433,21 +433,21 @@ TravelMinutes = 0
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_ChemLab/DoorToHallway" unique_id=1565959013]
-offset_left = -40.0
-offset_top = -100.0
-offset_right = 40.0
-offset_bottom = 100.0
+offset_left = -67.5
+offset_top = -180.0
+offset_right = 67.5
+offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
 [node name="Caption" type="Label" parent="Room_ChemLab/DoorToHallway" unique_id=1066929131]
-offset_left = -40.0
-offset_top = 105.0
-offset_right = 60.0
-offset_bottom = 145.0
+offset_left = -67.5
+offset_top = 189.0
+offset_right = 101.25
+offset_bottom = 261.0
 text = "门（走廊）"
 
 [node name="Npc_ShinjiLab" type="Area2D" parent="Room_ChemLab" unique_id=1492828083 node_paths=PackedStringArray("Sprite")]
-position = Vector2(1200, 520)
+position = Vector2(2025, 1083.5)
 script = ExtResource("8_npc")
 NpcId = "classroom.shinji_lab"
 DisplayName = "新井次郎"
@@ -458,30 +458,30 @@ PresentLoopFlag = "shinji_analyzing"
 
 [node name="Sprite" type="Sprite2D" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=437091534]
 texture_filter = 4
-position = Vector2(0, -100)
-scale = Vector2(0.0914, 0.0914)
+position = Vector2(0, -180)
+scale = Vector2(0.329, 0.329)
 texture = ExtResource("char_shinji")
-offset = Vector2(0, 34.5)
+offset = Vector2(0, -500.75)
 
 [node name="Shape" type="CollisionShape2D" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=251163847]
-position = Vector2(0, -100)
+position = Vector2(0, -180)
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="NameLabel" type="Label" parent="Room_ChemLab/Npc_ShinjiLab" unique_id=1814933870]
-offset_left = -80.0
-offset_top = -245.0
-offset_right = 80.0
-offset_bottom = -205.0
+offset_left = -135.0
+offset_top = -791.5
+offset_right = 135.0
+offset_bottom = -719.5
 theme_override_colors/font_color = Color(1, 0.972549, 0.937255, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.4)
 theme_override_colors/font_outline_color = Color(0.0470588, 0.054902, 0.0745098, 0.9)
 theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 2
-theme_override_constants/outline_size = 6
-theme_override_constants/shadow_outline_size = 3
-theme_override_font_sizes/font_size = 20
+theme_override_constants/shadow_offset_y = 4
+theme_override_constants/outline_size = 11
+theme_override_constants/shadow_outline_size = 5
+theme_override_font_sizes/font_size = 36
 text = "新井次郎"
 horizontal_alignment = 1
 
 [node name="Player" parent="." unique_id=763594586 instance=ExtResource("7_player")]
-position = Vector2(350, 520)
+position = Vector2(350, 1008)

@@ -30,6 +30,12 @@ public partial class Npc : Interactable
 	private bool _present;
 	private string _effectiveStateId = "";
 
+	private Label _nameLabel;
+	private Vector2 _defaultSpriteScale;
+	private Vector2 _defaultSpriteOffset;
+	private float _defaultNameLabelTop;
+	private float _defaultNameLabelHeight;
+
 	public override void _Ready()
 	{
 		if (GameState.Instance == null)
@@ -42,7 +48,13 @@ public partial class Npc : Interactable
 		_valid = Validate();
 		if (!_valid) return;
 
-		GetNode<Label>("NameLabel").Text = DisplayName;
+		_nameLabel = GetNode<Label>("NameLabel");
+		_nameLabel.Text = DisplayName;
+
+		_defaultSpriteScale = Sprite.Scale;
+		_defaultSpriteOffset = Sprite.Offset;
+		_defaultNameLabelTop = _nameLabel.OffsetTop;
+		_defaultNameLabelHeight = _nameLabel.OffsetBottom - _nameLabel.OffsetTop;
 
 		RefreshVisual();
 		GameState.Instance.TimeChanged += OnTimeChanged;
@@ -155,6 +167,14 @@ public partial class Npc : Interactable
 			|| GameState.Instance.HasLoopFlag(PresentLoopFlag) == VisibleWhenFlagSet;
 		_present = frame.Visible && flagSatisfied;
 		Sprite.Texture = textureFrame.Texture;
+
+		bool hasSpriteOverride = textureFrame.SpriteScale != Vector2.Zero;
+		Sprite.Scale = hasSpriteOverride ? textureFrame.SpriteScale : _defaultSpriteScale;
+		Sprite.Offset = hasSpriteOverride ? textureFrame.SpriteOffset : _defaultSpriteOffset;
+
+		_nameLabel.OffsetTop = textureFrame.NameLabelTop == 0f ? _defaultNameLabelTop : textureFrame.NameLabelTop;
+		_nameLabel.OffsetBottom = _nameLabel.OffsetTop + _defaultNameLabelHeight;
+
 		Visible = _present;
 		SetDeferred(Area2D.PropertyName.Monitorable, _present);
 

@@ -22,8 +22,25 @@
 | 办公楼走廊 | `1794039882721.png` | `Backgrounds/Administration/office_hallway.png` |
 | 办公室 | `1794042177348.png` | `Backgrounds/Administration/office.png` |
 | 甜品店 | `image.png` | `Backgrounds/Ending/dessert_shop.png` |
+| 千原鸣子（背影） | 2026-11-08 直接提供（需求表暂无同名附件） | `Characters/muriko/muriko_back.png` |
+| 山田老师（办公坐姿背影） | 同上 | `Characters/yamada/yamada_working.png` |
+| 操场后空间（改版，含砖砌井口） | 同上 | `Backgrounds/Playground/playground_back_2.png` |
 
-需求表里尚无附件的条目：大地图、教学楼 UI、行政楼 UI、操场 UI、爆炸 CG、办公室老师办公。
+### 大地图（2026-11-08，`D:\Downloads\Misc\Playground`）
+
+| 素材名 | 原始文件 | 导入路径 |
+|---|---|---|
+| 大地图 黑白（底图） | `大地图 黑白..png` | `UI/Map/campus_map_line.png` |
+| 大地图 彩色（参考/全解锁） | `大地图 全..png` | `UI/Map/campus_map_color.png` |
+| 建筑黑色剪影版 | `其它2..png` | `UI/Map/campus_map_locked_silhouette.png` |
+| 其它建筑（彩色切图） | `其它..png` | `UI/Map/campus_others.png` |
+| 教学楼（彩色 / 灰色高亮） | `教学楼..png` | `UI/Map/campus_classroom_color.png` / `campus_classroom_gray.png` |
+| 行政楼（彩色 / 灰色高亮） | `行政楼..png` | `UI/Map/campus_administration_color.png` / `campus_administration_gray.png` |
+| 操场（彩色 / 灰色高亮） | `操场..png` | `UI/Map/campus_playground_color.png` / `campus_playground_gray.png` |
+
+灰色高亮版本由彩色切图去色后重映射到 0.45–0.80 亮度区间（保留 alpha），叠在黑白底图上表示「已解锁可前往」。
+
+需求表里尚无附件的条目：教学楼 UI、行政楼 UI、操场 UI、爆炸 CG。
 
 ## 临时占位素材
 

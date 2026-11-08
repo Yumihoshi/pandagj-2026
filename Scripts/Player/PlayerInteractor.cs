@@ -8,7 +8,7 @@ public partial class PlayerInteractor : Area2D
 	[Export] public InteractPrompt Prompt { get; set; }
 
 	/// <summary>算不出碰撞盒时，提示相对目标原点上移的兜底距离。</summary>
-	[Export] public float FallbackHeadOffset { get; set; } = 80f;
+	[Export] public float FallbackHeadOffset { get; set; } = 144f;
 
 	private Interactable _current;
 	private Player _player;
@@ -54,6 +54,9 @@ public partial class PlayerInteractor : Area2D
 			GetViewport().SetInputAsHandled();
 			return;
 		}
+
+		// 与物件（非 NPC）交互时切背影；真正切到背影由 Player 在对话锁住输入时完成。
+		if (_current is not Npc) _player.RequestBackPose();
 
 		_current.Interact();
 		GetViewport().SetInputAsHandled();
@@ -139,3 +142,4 @@ public partial class PlayerInteractor : Area2D
 		return bounds;
 	}
 }
+

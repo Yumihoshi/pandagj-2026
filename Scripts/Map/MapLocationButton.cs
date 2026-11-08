@@ -11,4 +11,26 @@ public partial class MapLocationButton : Button
 
 	/// <summary>前往该地点消耗的分钟数；0 表示免费。</summary>
 	[Export] public int TravelMinutes { get; set; } = 30;
+
+	/// <summary>解锁后叠在地图上的灰色建筑高亮，跟按钮一起显隐。</summary>
+	[Export] public CanvasItem Highlight { get; set; }
+
+	private static readonly Color HoverTint = new(1.12f, 1.12f, 1.12f);
+
+	public override void _Ready()
+	{
+		MouseEntered += OnMouseEntered;
+		MouseExited += OnMouseExited;
+	}
+
+	private void OnMouseEntered()
+	{
+		Modulate = HoverTint;
+		if (AudioManager.Instance != null) AudioManager.Instance.PlayHover();
+	}
+
+	private void OnMouseExited()
+	{
+		Modulate = Colors.White;
+	}
 }

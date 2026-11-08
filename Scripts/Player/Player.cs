@@ -5,6 +5,10 @@ public partial class Player : CharacterBody2D
 {
 	private const string IdleAnimation = "idle";
 	private const string RunAnimation = "run";
+	private const string BackAnimation = "back";
+
+	/// <summary>背影请求的存活时间（秒）：交互后这么久仍未锁输入，说明没有弹出对话，请求作废。</summary>
+	private const float BackPoseRequestTimeout = 0.15f;
 
 	/// <summary>水平移动速度（像素/秒）。</summary>
 	[Export] public float MoveSpeed { get; set; } = 200f;
@@ -16,6 +20,9 @@ public partial class Player : CharacterBody2D
 	[Export] public AnimatedSprite2D Sprite { get; set; }
 
 	private bool _inputLocked;
+	private bool _backPoseActive;
+	private bool _backPoseRequested;
+	private float _backPoseRequestAge;
 
 	/// <summary>对话等 UI 打开时锁住移动与交互；由持有 UI 的一方负责复位。</summary>
 	public bool InputLocked
@@ -41,6 +48,8 @@ public partial class Player : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
+		UpdateBackPoseState((float)delta);
+
 		if (InputLocked)
 		{
 			Velocity = Vector2.Zero;
@@ -54,8 +63,38 @@ public partial class Player : CharacterBody2D
 		UpdateAnimation(direction);
 	}
 
+	/// <summary>请求在接下来的交互对话里显示背影立绘；交互没有触发对话时请求自动作废。</summary>
+	public void RequestBackPose()
+	{
+		_backPoseRequested = true;
+		_backPoseRequestAge = 0f;
+	}
+
 	/// <summary>
-	/// 按移动方向切换立绘：静止播 idle，移动播 run。跑步帧原图朝左，
+	/// 推进背影立绘的请求 / 激活状态：交互触发对话时输入会被锁住，以此作为「对话已开始」的信号；
+	/// 迟迟不锁输入视为这次交互没有对话，丢弃请求以免在门口闪一下背影。
+	/// </summary>
+	private void UpdateBackPoseState(float delta)
+	{
+		if (_backPoseRequested)
+		{
+			if (InputLocked)
+			{
+				_backPoseRequested = false;
+				_backPoseActive = true;
+				return;
+			}
+
+			_backPoseRequestAge += delta;
+			if (_backPoseRequestAge > BackPoseRequestTimeout) _backPoseRequested = false;
+			return;
+		}
+
+		if (_backPoseActive && !InputLocked) _backPoseActive = false;
+	}
+
+	/// <summary>
+	/// 按移动方向切换立绘：静止播 idle（要求背影时播 back），移动播 run。跑步帧原图朝左，
 	/// 所以向右移动时水平镜像。
 	/// </summary>
 	private void UpdateAnimation(float direction)
@@ -64,10 +103,12 @@ public partial class Player : CharacterBody2D
 
 		if (direction == 0f)
 		{
-			if (Sprite.Animation != IdleAnimation) Sprite.Play(IdleAnimation);
+			string animation = _backPoseActive ? BackAnimation : IdleAnimation;
+			if (Sprite.Animation != animation) Sprite.Play(animation);
 			return;
 		}
 
+		_backPoseActive = false;
 		Sprite.FlipH = direction > 0f;
 		if (Sprite.Animation != RunAnimation) Sprite.Play(RunAnimation);
 	}

@@ -28,15 +28,17 @@ public partial class MapScreen : Control
 		Visible = false;
 	}
 
-	/// <summary>按 GameState 的解锁集合刷新每颗按钮的可见性。</summary>
+	/// <summary>按 GameState 的解锁集合刷新每颗按钮的可见性，并同步叠加的灰色建筑。</summary>
 	public void Refresh()
 	{
 		int visibleCount = 0;
 		foreach (MapLocationButton button in Buttons)
 		{
 			if (button == null) continue;
-			button.Visible = GameState.Instance.IsLocationUnlocked(button.LocationId);
-			if (button.Visible) visibleCount++;
+			bool unlocked = GameState.Instance.IsLocationUnlocked(button.LocationId);
+			button.Visible = unlocked;
+			if (button.Highlight != null) button.Highlight.Visible = unlocked;
+			if (unlocked) visibleCount++;
 		}
 
 		if (visibleCount == 0)
@@ -87,6 +89,10 @@ public partial class MapScreen : Control
 			if (!string.IsNullOrEmpty(button.LocationId) && !seen.Add(button.LocationId))
 			{
 				GD.PushError($"MapScreen: LocationId 重复 —— {button.LocationId}");
+			}
+			if (button.Highlight == null)
+			{
+				GD.PushError($"MapScreen: 按钮 {button.Name} 的 Highlight 为空，解锁后不会有灰色建筑");
 			}
 		}
 	}

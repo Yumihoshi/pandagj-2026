@@ -15,4 +15,13 @@ public partial class NpcStateFrame : Resource
 
 	/// <summary>该帧是否在场。</summary>
 	[Export] public bool Visible { get; set; } = true;
+
+	/// <summary>该状态立绘的缩放；为 (0,0) 时沿用 Sprite 节点自身的缩放。</summary>
+	[Export] public Vector2 SpriteScale { get; set; }
+
+	/// <summary>该状态立绘的 offset（贴图内像素，同 Sprite2D.Offset）；只有设置了 SpriteScale 时才生效。</summary>
+	[Export] public Vector2 SpriteOffset { get; set; }
+
+	/// <summary>该状态头顶名字标签的 offset_top；为 0 时沿用节点默认位置。</summary>
+	[Export] public float NameLabelTop { get; set; }
 }

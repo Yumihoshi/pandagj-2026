@@ -19,6 +19,11 @@ public partial class Player : CharacterBody2D
 	/// <summary>玩家立绘动画；静止播 idle，移动播 run。</summary>
 	[Export] public AnimatedSprite2D Sprite { get; set; }
 
+	/// <summary>撞到房间左右边界时，玩家中心与边界保持的距离，避免立绘被屏幕边缘裁掉。</summary>
+	[Export] public float EdgeMargin { get; set; } = 120f;
+
+	private float _minX = float.NegativeInfinity;
+	private float _maxX = float.PositiveInfinity;
 	private bool _inputLocked;
 	private bool _backPoseActive;
 	private bool _backPoseRequested;
@@ -60,7 +65,29 @@ public partial class Player : CharacterBody2D
 		float direction = Input.GetAxis("move_left", "move_right");
 		Velocity = new Vector2(direction * MoveSpeed, 0f);
 		MoveAndSlide();
+		ClampToRoomBounds();
 		UpdateAnimation(direction);
+	}
+
+	/// <summary>设置可移动的水平范围（全局 x，房间左右边缘）；由地点在切换房间时调用。</summary>
+	public void SetHorizontalBounds(float minX, float maxX)
+	{
+		_minX = minX;
+		_maxX = maxX;
+	}
+
+	/// <summary>房间左右边缘的隐形墙：把玩家中心限制在边界内侧 EdgeMargin 处。</summary>
+	private void ClampToRoomBounds()
+	{
+		float left = _minX + EdgeMargin;
+		float right = _maxX - EdgeMargin;
+		if (left > right) return;
+
+		float clampedX = Mathf.Clamp(GlobalPosition.X, left, right);
+		if (Mathf.IsEqualApprox(clampedX, GlobalPosition.X)) return;
+
+		GlobalPosition = new Vector2(clampedX, GlobalPosition.Y);
+		Velocity = new Vector2(0f, Velocity.Y);
 	}
 
 	/// <summary>请求在接下来的交互对话里显示背影立绘；交互没有触发对话时请求自动作废。</summary>

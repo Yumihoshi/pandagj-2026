@@ -119,17 +119,24 @@ public partial class LocationRoot : Node2D
 
 		foreach (Room other in FindAll<Room>(this)) other.SetActive(other == room);
 		PlayerNode.GlobalPosition = spawn.GlobalPosition;
-		ApplyCameraBounds(room.CameraBounds);
+		ApplyRoomBounds(room);
 	}
 
-	private void ApplyCameraBounds(Rect2I bounds)
+	private void ApplyRoomBounds(Room room)
 	{
+		Rect2I bounds = room.CameraBounds;
+		Vector2 origin = room.GlobalPosition;
+		int left = (int)(origin.X + bounds.Position.X);
+		int right = left + bounds.Size.X;
+
 		Camera2D camera = PlayerNode.Camera;
-		camera.LimitLeft = bounds.Position.X;
-		camera.LimitTop = bounds.Position.Y;
-		camera.LimitRight = bounds.Position.X + bounds.Size.X;
-		camera.LimitBottom = bounds.Position.Y + bounds.Size.Y;
+		camera.LimitLeft = left;
+		camera.LimitTop = (int)(origin.Y + bounds.Position.Y);
+		camera.LimitRight = right;
+		camera.LimitBottom = camera.LimitTop + bounds.Size.Y;
 		camera.ResetSmoothing();
+
+		PlayerNode.SetHorizontalBounds(left, right);
 	}
 
 	private static List<T> FindAll<T>(Node root) where T : Node

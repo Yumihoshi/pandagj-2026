@@ -103,6 +103,7 @@ TravelMinutes = 15
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Classroom/DoorToHallway" unique_id=1912226257]
+visible = false
 offset_left = -80.0729
 offset_top = -180.0
 offset_right = 80.0729
@@ -197,6 +198,7 @@ Dialogue = ExtResource("16_desk_dialogue")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Classroom/BookDesk" unique_id=1680321374]
+visible = false
 offset_left = -80.0729
 offset_top = -180.0
 offset_right = 80.0729
@@ -234,6 +236,7 @@ script = ExtResource("4_exit")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Hallway/ExitToMap" unique_id=1819771153]
+visible = false
 offset_left = -80.0729
 offset_top = -180.0
 offset_right = 80.0729
@@ -258,6 +261,7 @@ TravelMinutes = 15
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToClassroom" unique_id=283509472]
+visible = false
 offset_left = -80.0729
 offset_top = -180.0
 offset_right = 80.0729
@@ -282,6 +286,7 @@ TravelMinutes = 20
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToNextClassroom" unique_id=184472800]
+visible = false
 offset_left = -80.0729
 offset_top = -180.0
 offset_right = 80.0729
@@ -308,6 +313,7 @@ LockedHint = NodePath("LockedHint")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Hallway/DoorToLab" unique_id=601999748]
+visible = false
 offset_left = -80.0729
 offset_top = -180.0
 offset_right = 80.0729
@@ -355,6 +361,7 @@ TravelMinutes = 20
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_NextClassroom/DoorToHallway" unique_id=1349440404]
+visible = false
 offset_left = -80.0729
 offset_top = -180.0
 offset_right = 80.0729
@@ -433,6 +440,7 @@ TravelMinutes = 0
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_ChemLab/DoorToHallway" unique_id=1565959013]
+visible = false
 offset_left = -67.5
 offset_top = -180.0
 offset_right = 67.5

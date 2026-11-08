@@ -97,6 +97,7 @@ script = ExtResource("4_exit")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Playground/ExitToMap"]
+visible = false
 offset_left = -80.0729
 offset_top = -180
 offset_right = 80.0729
@@ -121,6 +122,7 @@ TravelMinutes = 10
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Playground/DoorToBehind"]
+visible = false
 offset_left = -80.0729
 offset_top = -180
 offset_right = 80.0729
@@ -197,6 +199,7 @@ TravelMinutes = 10
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToPlayground"]
+visible = false
 offset_left = -80.0208
 offset_top = -180
 offset_right = 80.0208
@@ -223,6 +226,7 @@ LockedHint = NodePath("LockedHint")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToEquipment"]
+visible = false
 offset_left = -80.0208
 offset_top = -180
 offset_right = 80.0208
@@ -256,6 +260,7 @@ LockedDialogue = ExtResource("19_manhole_locked")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Behind/DoorToUnderground"]
+visible = false
 offset_left = -80.0208
 offset_top = -180
 offset_right = 80.0208
@@ -296,6 +301,7 @@ TravelMinutes = 5
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Equipment/DoorToBehind"]
+visible = false
 offset_left = -67.5
 offset_top = -180
 offset_right = 67.5
@@ -310,6 +316,7 @@ offset_bottom = 261
 text = "门（操场后）"
 
 [node name="Drink" type="ColorRect" parent="Room_Equipment"]
+visible = false
 offset_left = 1350
 offset_top = 756
 offset_right = 1485
@@ -332,6 +339,7 @@ Dialogue = ExtResource("16_water_dialogue")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Equipment/WaterPipe"]
+visible = false
 offset_left = -67.5
 offset_top = -180
 offset_right = 67.5
@@ -372,6 +380,7 @@ TravelMinutes = 5
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Underground/DoorToBehind"]
+visible = false
 offset_left = -80.0729
 offset_top = -180
 offset_right = 80.0729
@@ -395,6 +404,7 @@ EndingDialogue = ExtResource("18_yamada_underground")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Underground/Bomb"]
+visible = false
 offset_left = -80.0729
 offset_top = -180
 offset_right = 80.0729

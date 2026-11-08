@@ -105,6 +105,7 @@ script = ExtResource("4_exit")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Lobby/ExitToMap"]
+visible = false
 offset_left = -80.0729
 offset_top = -180
 offset_right = 80.0729
@@ -130,6 +131,7 @@ LockedHint = NodePath("LockedHint")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Lobby/DoorToOffice"]
+visible = false
 offset_left = -80.0729
 offset_top = -180
 offset_right = 80.0729
@@ -177,6 +179,7 @@ TravelMinutes = 5
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Office/DoorToLobby"]
+visible = false
 offset_left = -80.0729
 offset_top = -180
 offset_right = 80.0729
@@ -242,6 +245,7 @@ PasswordPanel = NodePath("../../PasswordPanel")
 shape = SubResource("RectangleShape2D_zone")
 
 [node name="Placeholder" type="ColorRect" parent="Room_Office/KeyedDrawer"]
+visible = false
 offset_left = -80.0729
 offset_top = -180
 offset_right = 80.0729

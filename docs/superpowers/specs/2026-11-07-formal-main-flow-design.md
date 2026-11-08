@@ -96,7 +96,7 @@ graph TD
         Phone["PhoneScreen（layer 45）"]
         Ending["EndingOverlay（layer 46）<br/>黑屏 / The End"]
         Balloon["DialogueBalloon（layer 50）"]
-        LoopEnd["LoopEndNotice（layer 90）<br/>轰——— 闪白"]
+        LoopEnd["LoopEndNotice（layer 90）<br/>爆炸 1/2 轮切 → 3 + 震屏"]
         Fade["ScreenFade（layer 100）"]
     end
 
@@ -145,7 +145,7 @@ graph TD
 | 45 | `PhoneScreen` | 现有手机 |
 | 46 | `EndingOverlay` | 黑屏 + The End；高于手机、低于对话 |
 | 50 | `DialogueBalloon` | NPC 与物体对话、手机主菜单、尾声 |
-| 90 | `LoopEndNotice` | 17:30「轰———」闪白；高于对话，低于黑幕 |
+| 90 | `LoopEndNotice` | 17:30 爆炸 1/2 轮切 → 爆炸 3 + 震屏；高于对话，低于黑幕 |
 | 100 | `ScreenFade` | 过渡时遮挡一切 |
 
 ### 3.2 职责划分
@@ -164,7 +164,7 @@ graph TD
 | `BombInteractable` | 取样、湿炸药、状态文案；湿炸药旁白结束后自动推进到 17:00 并播放山田终局对质 | 结局分支（交给剧本） |
 | `WaterPipe` | 已知炸药解法后接水 | 炸药状态 |
 | `EndingOverlay` | 黑屏、The End、失败黑屏 | 剧情文本 |
-| `LoopEndNotice` | 17:30 闪白与「轰———」 | 重置逻辑 |
+| `LoopEndNotice` | 17:30 爆炸 1/2 轮切 → 爆炸 3 + 震屏 | 重置逻辑 |
 | `GameScene` | 地点装载、地图、过渡、循环重置、结局信号转发 | 剧情内容 |
 | `Dialogue/*.dialogue` | 对白、旁白、选项、条件、文档高亮 | C# 状态与 UI |
 
@@ -778,11 +778,10 @@ EndingOverlay（CanvasLayer, layer = 46, 脚本 EndingOverlay.cs）
 
 ```
 LoopEndNotice（CanvasLayer, layer = 90, 脚本 LoopEndNotice.cs）
-├── Flash（ColorRect, 全屏, white, modulate.a = 0, mouse_filter = IGNORE）
-└── Text（Label「轰———」, 居中, font_size = 72, modulate.a = 0）
+└── Frame（TextureRect, 全屏且四边各外扩 60px, stretch = KEEP_ASPECT_COVERED, mouse_filter = IGNORE）
 ```
 
-`Show()`：Flash alpha 0→0.8→0（0.15s / 0.35s），Text alpha 0→1（0.1s），停留 1.2 秒后淡出。`GameScene.OnLoopEndReached` 等待约 2.0 秒再 `ResetLoop()`。
+`PlayAsync()`：爆炸 1 起手 → 爆炸 1 / 2 每 0.07 秒轮切一次、共 6 次 → 切到爆炸 3 → 震屏一次（`CanvasLayer.Offset` 随机偏移 26px 衰减，0.45 秒）→ 停留 1.0 秒 → 0.3 秒淡出，共约 2.0 秒。`GameScene.OnLoopEndReached` 等 `PlayAsync()` 结束再 `ResetLoop()`。
 
 ### 4.7 文档资源
 

@@ -169,8 +169,7 @@ public partial class GameScene : Node2D
 		}
 
 		GD.Print("[Loop] 17:30 爆炸");
-		LoopEndNotice.Show();
-		await ToSignal(GetTree().CreateTimer(2.0), Timer.SignalName.Timeout);
+		await LoopEndNotice.PlayAsync();
 
 		GameState.Instance.ResetLoop();
 		_loopEnding = false;

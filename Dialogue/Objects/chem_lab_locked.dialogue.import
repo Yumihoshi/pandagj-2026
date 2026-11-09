@@ -1,0 +1,16 @@
+[remap]
+
+importer="dialogue_manager"
+importer_version=18
+type="Resource"
+uid="uid://bpdpe2v4r2v5j"
+path="res://.godot/imported/chem_lab_locked.dialogue-ac28f91fee9fe3b2bd1cf54ea6a7c539.tres"
+
+[deps]
+
+source_file="res://Dialogue/Objects/chem_lab_locked.dialogue"
+dest_files=["res://.godot/imported/chem_lab_locked.dialogue-ac28f91fee9fe3b2bd1cf54ea6a7c539.tres"]
+
+[params]
+
+defaults=true

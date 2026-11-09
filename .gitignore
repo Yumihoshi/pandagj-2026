@@ -26,3 +26,7 @@ mono_crash.*.json
 
 # my custom
 opencode.json
+AGENTS.md
+.cortexkit
+.vscode
+.mcp.json

@@ -18,6 +18,7 @@
 [ext_resource type="Resource" uid="uid://cwdq4hub4qur7" path="res://Dialogue/Npc/shinji_lab.dialogue" id="18_shinji_lab"]
 [ext_resource type="Script" uid="uid://buaoah2grvxuv" path="res://Scripts/Location/TalkToYukaFirst.cs" id="19_gate"]
 [ext_resource type="Resource" uid="uid://cghj3c7q72yb2" path="res://Dialogue/day1.dialogue" id="20_day1"]
+[ext_resource type="Resource" uid="uid://bpdpe2v4r2v5j" path="res://Dialogue/Objects/chem_lab_locked.dialogue" id="21_chem_lab_locked"]
 [ext_resource type="Texture2D" uid="uid://dfcepvoopqf2h" path="res://ArtRes/Backgrounds/Classroom/chem_lab.png" id="bg_chem_lab"]
 [ext_resource type="Texture2D" uid="uid://dvtkb6lm3tgve" path="res://ArtRes/Backgrounds/Classroom/hallway.png" id="bg_hallway"]
 [ext_resource type="Texture2D" uid="uid://bnbxuilf2taag" path="res://ArtRes/Backgrounds/Classroom/classroom.png" id="bg_next_classroom"]
@@ -329,14 +330,14 @@ offset_right = 120.1094
 offset_bottom = 261.0
 text = "门（隔壁班）"
 
-[node name="DoorToLab" type="Area2D" parent="Room_Hallway" unique_id=947754456 node_paths=PackedStringArray("TargetRoom", "TargetSpawn", "LockedHint")]
+[node name="DoorToLab" type="Area2D" parent="Room_Hallway" unique_id=947754456 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(2952, 900)
 script = ExtResource("14_lab_door")
 TargetRoom = NodePath("../../Room_ChemLab")
 TargetSpawn = NodePath("../../Room_ChemLab/SpawnFromHallway")
 RequiredClueId = "chem_lab_unlocked"
 TravelMinutes = 0
-LockedHint = NodePath("LockedHint")
+LockedDialogue = ExtResource("21_chem_lab_locked")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToLab" unique_id=1599966807]
 shape = SubResource("RectangleShape2D_zone")
@@ -355,13 +356,6 @@ offset_top = 189.0
 offset_right = 120.1094
 offset_bottom = 261.0
 text = "门（化学实验室）"
-
-[node name="LockedHint" type="Label" parent="Room_Hallway/DoorToLab" unique_id=1023667460]
-offset_left = -180.1641
-offset_top = -270.0
-offset_right = 180.1641
-offset_bottom = -198.0
-text = "（化学实验室还进不去）"
 
 [node name="SpawnFromClassroom" type="Marker2D" parent="Room_Hallway" unique_id=276876541]
 position = Vector2(549, 1008)

@@ -605,8 +605,12 @@ sequenceDiagram
             L->>L: 切房间 + 玩家落点
             L->>F: 淡入
         end
-    else 没钥匙
-        D-->>U: LockedHint 显示 1.5s
+    else 未解锁
+        alt LockedDialogue 非空
+            D-->>U: 播锁定对话
+        else
+            D-->>U: LockedHint 显示 1.5s
+        end
     end
 ```
 

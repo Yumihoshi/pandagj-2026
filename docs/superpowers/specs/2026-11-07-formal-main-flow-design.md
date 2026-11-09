@@ -437,18 +437,20 @@ private void OnLoopFlagsChanged() => RefreshVisual();
 
 `Interact()` 顺序：
 
-1. `RequiredClueId` 非空且 `!GameState.HasClue(...)` → 显示 `LockedHint`，1.5 秒后隐藏，返回。
-2. `RequiredKeyId` 非空且 `!GameState.HasItem(...)` → 显示 `LockedHint`，返回。
+1. `RequiredClueId` 非空且 `!GameState.HasClue(...)` → 锁定处理，返回。
+2. `RequiredKeyId` 非空且 `!GameState.HasItem(...)` → 锁定处理，返回。
 3. `base.Interact()` 发 `Interacted`，由 `LocationRoot` 切房间。
 
-`_Ready()` 校验增加：`RequiredClueId` 非空且 `LockedHint` 为空 → `PushError`。
+锁定处理：`LockedDialogue` 非空时播该对话，否则 `LockedHint` 显示 1.5 秒后隐藏。
+
+`_Ready()` 校验增加：已上锁且 `LockedHint` 与 `LockedDialogue` 都为空 → `PushError`。
 
 各门配置：
 
 | 门 | 所在房间 | 目标 | 锁 |
 |---|---|---|---|
-| `DoorToHallway`（教室） | Room_Classroom | Room_Hallway | `ClassroomDoor`；一周目始终播 BL 独白 |
-| `DoorToLab` | Room_Hallway | Room_ChemLab | `LabDoor`；`RequiredClueId = chem_lab_unlocked`；`TravelMinutes = 0` |
+| `DoorToHallwayLeft` / `DoorToHallwayRight`（教室） | Room_Classroom | Room_Hallway | `ClassroomDoor`；一周目始终播 BL 独白 |
+| `DoorToLab` | Room_Hallway | Room_ChemLab | `LabDoor`；`RequiredClueId = chem_lab_unlocked`，锁定播 `chem_lab_locked.dialogue`；`TravelMinutes = 0` |
 | `DoorToHallway`（实验室） | Room_ChemLab | Room_Hallway | `TravelMinutes = 0` |
 | `DoorToEquipment` | Room_Behind | Room_Equipment | `RequiredKeyId = equipment_key`（现有） |
 | `DoorToUnderground` | Room_Behind | Room_Underground | `RequiredClueId = underground_access` |
@@ -914,7 +916,7 @@ flowchart TD
    - `do GameState.AddClue("chem_lab_unlocked")`。
    - 教室新井因 `PresentLoopFlag` 立刻消失；实验室新井出现。
 2. `DoorToLab`（`LabDoor`）：
-   - 有 `chem_lab_unlocked` 才开；否则显示「（化学实验室还进不去）」。
+   - 有 `chem_lab_unlocked` 才开；否则播 `Dialogue/Objects/chem_lab_locked.dialogue`（鸣子：化学实验室还进不去）。
    - 若 `shinji_analyzing` 且 `now < BombAnalysisReadyMinute`：`AdvanceTime(ready - now)`；到 17:30 则中止，不切房间。
    - 否则正常切房间；`TravelMinutes = 0`。
 3. 实验室新井只有 `shinji_analyzing` 时在场；`shinji_lab.dialogue`：
@@ -1335,7 +1337,7 @@ flowchart LR
 | `GameState` 未就绪 | 现有 `Npc` / `GameScene` / `DialogueBalloon` 的 `PushError` 逻辑保留 |
 | `PresentLoopFlag` 为空 | 不按标记过滤，行为与现在一致 |
 | `PresentLoopFlag` 指向从未设置的标记 | NPC 按 `VisibleWhenFlagSet` 决定在场；不报错（这是条件，不是配置错误） |
-| `RoomDoor.RequiredClueId` 非空但 `LockedHint` 为空 | `_Ready` `PushError`；门仍可按线索逻辑拦截 |
+| `RoomDoor.RequiredClueId` 非空但 `LockedHint` 与 `LockedDialogue` 都为空 | `_Ready` `PushError`；门仍可按线索逻辑拦截 |
 | `ClassroomDoor.BlockingDialogue` 为空 | 交互时 `PushError`，不切房间 |
 | `BookDesk.Dialogue` 为空 | 交互时 `PushError`，不推进时间 |
 | `BombInteractable/WaterPipe` 的 `Dialogue` 为空 | 交互时 `PushError`，状态变更前先校验，避免只改状态不播文本 |

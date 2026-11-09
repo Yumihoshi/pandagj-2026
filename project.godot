@@ -22,6 +22,7 @@ GameState="*res://Scripts/Core/GameState.cs"
 ScreenFade="*res://Scripts/Core/ScreenFade.cs"
 AudioManager="*res://Scripts/Audio/AudioManager.cs"
 MCPRuntimeServer="*res://addons/godot_mcp_toolkit/runtime/mcp_runtime_server.gd"
+FullscreenToggle="*res://Scripts/UI/FullscreenToggle.cs"
 
 [dialogue_manager]
 
@@ -31,8 +32,10 @@ runtime/advanced/uses_dotnet=true
 
 window/size/viewport_width=1920
 window/size/viewport_height=1080
+window/size/mode=3
+window/size/window_width_override=1600
+window/size/window_height_override=900
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
 
 [dotnet]
 

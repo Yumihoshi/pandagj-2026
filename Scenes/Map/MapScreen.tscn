@@ -1,14 +1,14 @@
-[gd_scene load_steps=10 format=3 uid="uid://bcnarhamwoeds"]
+[gd_scene format=3 uid="uid://bcnarhamwoeds"]
 
 [ext_resource type="Script" uid="uid://038l35i70lxd" path="res://Scripts/Map/MapScreen.cs" id="1_screen"]
 [ext_resource type="Script" uid="uid://dw7jdfrxvptsa" path="res://Scripts/Map/MapLocationButton.cs" id="2_button"]
 [ext_resource type="PackedScene" uid="uid://47uoowgt8ywv" path="res://Scenes/Locations/Classroom.tscn" id="3_classroom"]
-[ext_resource type="PackedScene" path="res://Scenes/Locations/Playground.tscn" id="4_playground"]
-[ext_resource type="PackedScene" path="res://Scenes/Locations/Administration.tscn" id="5_administration"]
-[ext_resource type="Texture2D" path="res://ArtRes/UI/Map/campus_map_line.png" id="6_base"]
-[ext_resource type="Texture2D" path="res://ArtRes/UI/Map/campus_classroom_color.png" id="7_hi_classroom"]
-[ext_resource type="Texture2D" path="res://ArtRes/UI/Map/campus_administration_color.png" id="8_hi_administration"]
-[ext_resource type="Texture2D" path="res://ArtRes/UI/Map/campus_playground_color.png" id="9_hi_playground"]
+[ext_resource type="PackedScene" uid="uid://gaty11pj75n4" path="res://Scenes/Locations/Playground.tscn" id="4_playground"]
+[ext_resource type="PackedScene" uid="uid://bu3sbq005u2nl" path="res://Scenes/Locations/Administration.tscn" id="5_administration"]
+[ext_resource type="Texture2D" uid="uid://bfduxh1ej7mhh" path="res://ArtRes/UI/Map/campus_map_line.png" id="6_base"]
+[ext_resource type="Texture2D" uid="uid://b2b04fgcam2bl" path="res://ArtRes/UI/Map/campus_classroom_color.png" id="7_hi_classroom"]
+[ext_resource type="Texture2D" uid="uid://b4ckf0w222pdy" path="res://ArtRes/UI/Map/campus_administration_color.png" id="8_hi_administration"]
+[ext_resource type="Texture2D" uid="uid://nu1qybbw6ths" path="res://ArtRes/UI/Map/campus_playground_color.png" id="9_hi_playground"]
 
 [node name="MapScreen" type="Control" unique_id=1234144408 node_paths=PackedStringArray("Buttons")]
 layout_mode = 3
@@ -32,7 +32,7 @@ texture = ExtResource("6_base")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="Highlights" type="Control" parent="."]
+[node name="Highlights" type="Control" parent="." unique_id=63084076]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -41,7 +41,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="HighlightClassroom" type="TextureRect" parent="Highlights"]
+[node name="HighlightClassroom" type="TextureRect" parent="Highlights" unique_id=1156598373]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -54,7 +54,7 @@ texture = ExtResource("7_hi_classroom")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="HighlightAdministration" type="TextureRect" parent="Highlights"]
+[node name="HighlightAdministration" type="TextureRect" parent="Highlights" unique_id=1175317895]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -67,7 +67,7 @@ texture = ExtResource("8_hi_administration")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="HighlightPlayground" type="TextureRect" parent="Highlights"]
+[node name="HighlightPlayground" type="TextureRect" parent="Highlights" unique_id=613071427]
 visible = false
 layout_mode = 1
 anchors_preset = 15

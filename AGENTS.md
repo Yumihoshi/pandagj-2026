@@ -117,6 +117,13 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 跨轮线索：`yuka_likes_yamada` / `saw_laptop` / `laptop_password` / `chem_lab_unlocked` / `bomb_weakness` / `underground_access`。
 - 9 篇重要的事的高亮语法与位置见 `docs/superpowers/specs/2026-11-07-formal-main-flow-design.md` §7。
 
+## 显示与窗口
+
+- 默认全屏启动：`display/window/size/mode=3`（普通全屏，不用独占全屏），基准分辨率 1920×1080；窗口化初始尺寸 1600×900（`window_width_override` / `window_height_override`）。
+- 缩放用 `canvas_items` + `keep`：全屏或缩放窗口时整张画面等比缩放并居中，16:9（1920×1080 / 2560×1440 / 3840×2160）完全铺满，非 16:9 屏幕留黑边，避免地图按钮、UI 与背景错位。2560×1440 全屏下画布缩放为 1.333。
+- 全屏 UI 都按锚点自适应（`anchor_right=1` / `anchor_bottom=1`），背景 TextureRect 用 `KEEP_ASPECT_COVERED`；房间背景铺满 1080 世界高度，缩放时不会露底。
+- `Scripts/UI/FullscreenToggle.cs` 注册为 autoload `FullscreenToggle`：任意场景按 F11 在「全屏 ↔ 1600×900 窗口化」之间切换，窗口化时在当前屏幕可用区域居中；不需要在各场景重复挂脚本。
+
 ## 音频
 
 - autoload `AudioManager`（`Scripts/Audio/AudioManager.cs`）：8 个 `AudioStreamPlayer` 轮转池，同组多个 ogg 随机播放，可叠加不互相打断。
@@ -154,4 +161,4 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 - 空引用、资源缺失要显式报错，禁止用默认值或空实现静默兜底。
 - git 只读：禁止 commit / branch / checkout / push（用户明确要求）。
 - 外部修改 `project.godot`（输入映射 / autoload / POT / 渲染设置等）前，先确认没有 Godot 编辑器进程打开本项目；编辑器保存时会把内存中的 `ProjectSettings` 整文件写回，覆盖外部改动。
-- 这是 2D 项目，但 `project.godot` 仍是 Forward Plus + d3d12、拉伸 `canvas_items/expand`；没有明确需要不要改渲染设置。
+- 这是 2D 项目，但 `project.godot` 仍是 Forward Plus + d3d12、拉伸 `canvas_items/keep`；没有明确需要不要改渲染设置。

@@ -91,18 +91,18 @@ script = ExtResource("19_gate")
 RequiredNpcId = "classroom.yuka"
 PromptDialogue = ExtResource("20_day1")
 
-[node name="DoorToHallway" type="Area2D" parent="Room_Classroom" unique_id=838777572 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
-position = Vector2(3603.2813, 900)
+[node name="DoorToHallwayRight" type="Area2D" parent="Room_Classroom" unique_id=838777572 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+position = Vector2(3710, 900)
 script = ExtResource("13_classroom_door")
 BlockingDialogue = ExtResource("17_block_dialogue")
 TargetRoom = NodePath("../../Room_Hallway")
-TargetSpawn = NodePath("../../Room_Hallway/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Hallway/SpawnFromClassroom")
 TravelMinutes = 15
 
-[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/DoorToHallway" unique_id=2131311619]
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/DoorToHallwayRight" unique_id=2131311619]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_Classroom/DoorToHallway" unique_id=1912226257]
+[node name="Placeholder" type="ColorRect" parent="Room_Classroom/DoorToHallwayRight" unique_id=1912226257]
 visible = false
 offset_left = -80.0729
 offset_top = -180.0
@@ -110,7 +110,7 @@ offset_right = 80.0729
 offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_Classroom/DoorToHallway" unique_id=1014184792]
+[node name="Caption" type="Label" parent="Room_Classroom/DoorToHallwayRight" unique_id=1014184792]
 offset_left = -80.0729
 offset_top = 189.0
 offset_right = 120.1094
@@ -212,6 +212,35 @@ offset_right = 120.1094
 offset_bottom = 261.0
 text = "座位"
 
+[node name="SpawnFromHallway" type="Marker2D" parent="Room_Classroom" unique_id=2133697039]
+position = Vector2(480, 1008)
+
+[node name="DoorToHallwayLeft" type="Area2D" parent="Room_Classroom" unique_id=895389552 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+position = Vector2(140, 900)
+script = ExtResource("13_classroom_door")
+BlockingDialogue = ExtResource("17_block_dialogue")
+TargetRoom = NodePath("../../Room_Hallway")
+TargetSpawn = NodePath("../../Room_Hallway/SpawnFromClassroom")
+TravelMinutes = 15
+
+[node name="Shape" type="CollisionShape2D" parent="Room_Classroom/DoorToHallwayLeft" unique_id=135304269]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_Classroom/DoorToHallwayLeft" unique_id=826695178]
+visible = false
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
+color = Color(0.45, 0.3, 0.2, 1)
+
+[node name="Caption" type="Label" parent="Room_Classroom/DoorToHallwayLeft" unique_id=2042461049]
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
+text = "门（走廊）"
+
 [node name="Room_Hallway" type="Node2D" parent="." unique_id=200861915 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
@@ -254,7 +283,7 @@ text = "出口"
 position = Vector2(549, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Classroom")
-TargetSpawn = NodePath("../../Room_Classroom/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Classroom/SpawnFromHallway")
 TravelMinutes = 15
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToClassroom" unique_id=663163850]
@@ -279,7 +308,7 @@ text = "门（教室）"
 position = Vector2(1715, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_NextClassroom")
-TargetSpawn = NodePath("../../Room_NextClassroom/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_NextClassroom/SpawnFromHallway")
 TravelMinutes = 20
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Hallway/DoorToNextClassroom" unique_id=1711712136]
@@ -304,7 +333,7 @@ text = "门（隔壁班）"
 position = Vector2(2952, 900)
 script = ExtResource("14_lab_door")
 TargetRoom = NodePath("../../Room_ChemLab")
-TargetSpawn = NodePath("../../Room_ChemLab/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_ChemLab/SpawnFromHallway")
 RequiredClueId = "chem_lab_unlocked"
 TravelMinutes = 0
 LockedHint = NodePath("LockedHint")
@@ -334,6 +363,15 @@ offset_right = 180.1641
 offset_bottom = -198.0
 text = "（化学实验室还进不去）"
 
+[node name="SpawnFromClassroom" type="Marker2D" parent="Room_Hallway" unique_id=276876541]
+position = Vector2(549, 1008)
+
+[node name="SpawnFromNextClassroom" type="Marker2D" parent="Room_Hallway" unique_id=2073321688]
+position = Vector2(1715, 1008)
+
+[node name="SpawnFromLab" type="Marker2D" parent="Room_Hallway" unique_id=714400302]
+position = Vector2(2952, 1008)
+
 [node name="Room_NextClassroom" type="Node2D" parent="." unique_id=873235996 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
@@ -350,17 +388,17 @@ stretch_mode = 6
 [node name="DefaultSpawn" type="Marker2D" parent="Room_NextClassroom" unique_id=2004668448]
 position = Vector2(700.638, 1008)
 
-[node name="DoorToHallway" type="Area2D" parent="Room_NextClassroom" unique_id=1311367547 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+[node name="DoorToHallwayLeft" type="Area2D" parent="Room_NextClassroom" unique_id=1311367547 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
 position = Vector2(160.1458, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Hallway")
-TargetSpawn = NodePath("../../Room_Hallway/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Hallway/SpawnFromNextClassroom")
 TravelMinutes = 20
 
-[node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/DoorToHallway" unique_id=738305875]
+[node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/DoorToHallwayLeft" unique_id=738305875]
 shape = SubResource("RectangleShape2D_zone")
 
-[node name="Placeholder" type="ColorRect" parent="Room_NextClassroom/DoorToHallway" unique_id=1349440404]
+[node name="Placeholder" type="ColorRect" parent="Room_NextClassroom/DoorToHallwayLeft" unique_id=1349440404]
 visible = false
 offset_left = -80.0729
 offset_top = -180.0
@@ -368,7 +406,32 @@ offset_right = 80.0729
 offset_bottom = 180.0
 color = Color(0.45, 0.3, 0.2, 1)
 
-[node name="Caption" type="Label" parent="Room_NextClassroom/DoorToHallway" unique_id=616660094]
+[node name="Caption" type="Label" parent="Room_NextClassroom/DoorToHallwayLeft" unique_id=616660094]
+offset_left = -80.0729
+offset_top = 189.0
+offset_right = 120.1094
+offset_bottom = 261.0
+text = "门（走廊）"
+
+[node name="DoorToHallwayRight" type="Area2D" parent="Room_NextClassroom" unique_id=1311367548 node_paths=PackedStringArray("TargetRoom", "TargetSpawn")]
+position = Vector2(3710, 900)
+script = ExtResource("3_door")
+TargetRoom = NodePath("../../Room_Hallway")
+TargetSpawn = NodePath("../../Room_Hallway/SpawnFromNextClassroom")
+TravelMinutes = 20
+
+[node name="Shape" type="CollisionShape2D" parent="Room_NextClassroom/DoorToHallwayRight" unique_id=738305876]
+shape = SubResource("RectangleShape2D_zone")
+
+[node name="Placeholder" type="ColorRect" parent="Room_NextClassroom/DoorToHallwayRight" unique_id=1349440405]
+visible = false
+offset_left = -80.0729
+offset_top = -180.0
+offset_right = 80.0729
+offset_bottom = 180.0
+color = Color(0.45, 0.3, 0.2, 1)
+
+[node name="Caption" type="Label" parent="Room_NextClassroom/DoorToHallwayRight" unique_id=616660095]
 offset_left = -80.0729
 offset_top = 189.0
 offset_right = 120.1094
@@ -413,6 +476,9 @@ theme_override_font_sizes/font_size = 36
 text = "新井次郎"
 horizontal_alignment = 1
 
+[node name="SpawnFromHallway" type="Marker2D" parent="Room_NextClassroom" unique_id=575349584]
+position = Vector2(380, 1008)
+
 [node name="Room_ChemLab" type="Node2D" parent="." unique_id=216933270 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
@@ -433,7 +499,7 @@ position = Vector2(590.625, 1008)
 position = Vector2(135, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Hallway")
-TargetSpawn = NodePath("../../Room_Hallway/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Hallway/SpawnFromLab")
 TravelMinutes = 0
 
 [node name="Shape" type="CollisionShape2D" parent="Room_ChemLab/DoorToHallway" unique_id=175668393]
@@ -490,6 +556,9 @@ theme_override_constants/shadow_outline_size = 5
 theme_override_font_sizes/font_size = 36
 text = "新井次郎"
 horizontal_alignment = 1
+
+[node name="SpawnFromHallway" type="Marker2D" parent="Room_ChemLab" unique_id=109998567]
+position = Vector2(355, 1008)
 
 [node name="Player" parent="." unique_id=763594586 instance=ExtResource("7_player")]
 position = Vector2(350, 1008)

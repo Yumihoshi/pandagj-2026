@@ -108,7 +108,7 @@ graph TD
     Location --> RoomB["Room (Node2D) + Room.cs"]
     Location --> PlayerNode["Player + Camera2D"]
     PlayerNode --> Interactor["PlayerInteractor<br/>门禁拦截 → Interact()"]
-    RoomB --> Spawn["DefaultSpawn / FirstLoopSpawn (Marker2D)"]
+    RoomB --> Spawn["DefaultSpawn / FirstLoopSpawn / SpawnFrom&lt;来源&gt; (Marker2D)"]
     RoomB --> Gate["TalkToYukaFirst (Node)<br/>一周目开场门禁<br/>组 talk_to_yuka_first"]
     RoomB --> Door["RoomDoor (Area2D)"]
     RoomB --> Exit["LocationExit (Area2D)"]
@@ -243,7 +243,7 @@ Scripts/
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
-| `DefaultSpawn` | `Marker2D` | 玩家进入本房间的默认落点 |
+| `DefaultSpawn` | `Marker2D` | 地点首次载入（从地图进入 / 循环开始）的默认落点；房间之间切换由门的 `TargetSpawn` 决定 |
 | `FirstLoopSpawn` | `Marker2D` | 地点载入时的起始落点（如教室座位）；留空则沿用默认落点 |
 | `CameraBounds` | `Rect2I` | 相机限位，房间局部坐标 |
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 /// <summary>地点内的一个房间。同一时刻只有一个房间处于激活状态。</summary>
 public partial class Room : Node2D
 {
-	/// <summary>玩家进入本房间时的默认落点。</summary>
+	/// <summary>地点首次载入时的默认落点：从地图进入，或循环开始但未配 FirstLoopSpawn；房间之间切换由各扇门的 TargetSpawn 决定。</summary>
 	[Export] public Marker2D DefaultSpawn { get; set; }
 
 	/// <summary>循环开始时的落点（如教室座位）；留空则沿用默认落点。</summary>

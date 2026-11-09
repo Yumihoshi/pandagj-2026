@@ -93,7 +93,7 @@ text = "出口"
 position = Vector2(3733, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Behind")
-TargetSpawn = NodePath("../../Room_Behind/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Behind/SpawnFromPlayground")
 TravelMinutes = 10
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Playground/DoorToBehind" unique_id=467145841]
@@ -150,6 +150,9 @@ theme_override_font_sizes/font_size = 36
 text = "小优香"
 horizontal_alignment = 1
 
+[node name="SpawnFromBehind" type="Marker2D" parent="Room_Playground" unique_id=1659091693]
+position = Vector2(3700, 1008)
+
 [node name="Room_Behind" type="Node2D" parent="." unique_id=1411477212 node_paths=PackedStringArray("DefaultSpawn")]
 position = Vector2(-1, -2)
 script = ExtResource("2_room")
@@ -171,7 +174,7 @@ position = Vector2(700.1823, 1008)
 position = Vector2(105, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Playground")
-TargetSpawn = NodePath("../../Room_Playground/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Playground/SpawnFromBehind")
 TravelMinutes = 10
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Behind/DoorToPlayground" unique_id=419386609]
@@ -196,7 +199,7 @@ text = "门（操场）"
 position = Vector2(1034, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Equipment")
-TargetSpawn = NodePath("../../Room_Equipment/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Equipment/SpawnFromBehind")
 RequiredKeyId = "equipment_key"
 LockedHint = NodePath("LockedHint")
 
@@ -229,7 +232,7 @@ text = "锁着"
 position = Vector2(3297, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Underground")
-TargetSpawn = NodePath("../../Room_Underground/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Underground/SpawnFromBehind")
 RequiredClueId = "underground_access"
 LockedDialogue = ExtResource("19_manhole_locked")
 
@@ -251,6 +254,15 @@ offset_right = 120.0312
 offset_bottom = 261.0
 text = "井盖"
 
+[node name="SpawnFromPlayground" type="Marker2D" parent="Room_Behind" unique_id=1636984068]
+position = Vector2(330, 1008)
+
+[node name="SpawnFromEquipment" type="Marker2D" parent="Room_Behind" unique_id=1406831821]
+position = Vector2(1200, 1008)
+
+[node name="SpawnFromUnderground" type="Marker2D" parent="Room_Behind" unique_id=1974133665]
+position = Vector2(3150, 1008)
+
 [node name="Room_Equipment" type="Node2D" parent="." unique_id=234881291 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
@@ -271,7 +283,7 @@ position = Vector2(590.625, 1008)
 position = Vector2(135, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Behind")
-TargetSpawn = NodePath("../../Room_Behind/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Behind/SpawnFromEquipment")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Equipment/DoorToBehind" unique_id=89212587]
 shape = SubResource("RectangleShape2D_zone")
@@ -329,6 +341,9 @@ offset_right = 101.25
 offset_bottom = 261.0
 text = "水管"
 
+[node name="SpawnFromBehind" type="Marker2D" parent="Room_Equipment" unique_id=903044107]
+position = Vector2(360, 1008)
+
 [node name="Room_Underground" type="Node2D" parent="." unique_id=1662053513 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
@@ -350,7 +365,7 @@ position = Vector2(700.638, 1008)
 position = Vector2(160.1458, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Behind")
-TargetSpawn = NodePath("../../Room_Behind/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Behind/SpawnFromUnderground")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Underground/DoorToBehind" unique_id=13825528]
 shape = SubResource("RectangleShape2D_zone")
@@ -429,6 +444,9 @@ theme_override_constants/shadow_outline_size = 5
 theme_override_font_sizes/font_size = 36
 text = "山田老师"
 horizontal_alignment = 1
+
+[node name="SpawnFromBehind" type="Marker2D" parent="Room_Underground" unique_id=178581055]
+position = Vector2(385, 1008)
 
 [node name="Player" parent="." unique_id=1036294386 instance=ExtResource("7_player")]
 position = Vector2(350, 1008)

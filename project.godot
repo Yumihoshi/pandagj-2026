@@ -21,6 +21,7 @@ DialogueManager="*uid://c3rodes2l3gxb"
 GameState="*res://Scripts/Core/GameState.cs"
 ScreenFade="*res://Scripts/Core/ScreenFade.cs"
 AudioManager="*res://Scripts/Audio/AudioManager.cs"
+MCPRuntimeServer="*res://addons/godot_mcp_toolkit/runtime/mcp_runtime_server.gd"
 
 [dialogue_manager]
 
@@ -39,7 +40,7 @@ project/assembly_name="pandagj-2026"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg")
+enabled=PackedStringArray("res://addons/dialogue_manager/plugin.cfg", "res://addons/godot_mcp_toolkit/plugin.cfg")
 
 [input]
 

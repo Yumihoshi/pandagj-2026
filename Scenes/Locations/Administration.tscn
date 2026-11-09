@@ -16,8 +16,8 @@
 [ext_resource type="Texture2D" uid="uid://inwf6o2kqrs6" path="res://ArtRes/Backgrounds/Administration/office_hallway.png" id="bg_lobby"]
 [ext_resource type="Texture2D" uid="uid://bi1sekwd1b8vd" path="res://ArtRes/Backgrounds/Administration/office.png" id="bg_office"]
 [ext_resource type="Texture2D" uid="uid://8ovy6kduxehn" path="res://ArtRes/Characters/yamada/yamada_portrait.png" id="char_yamada"]
-[ext_resource type="Texture2D" uid="uid://v4oym1o7umla" path="res://ArtRes/Characters/yamada/yamada_working.png" id="char_yamada_working"]
 [ext_resource type="Texture2D" uid="uid://bvadrjf2f3clt" path="res://ArtRes/Characters/yamada/yamada_sleep.png" id="char_yamada_sleep"]
+[ext_resource type="Texture2D" uid="uid://v4oym1o7umla" path="res://ArtRes/Characters/yamada/yamada_working.png" id="char_yamada_working"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_zone"]
 size = Vector2(216, 360)
@@ -106,7 +106,7 @@ text = "出口"
 position = Vector2(1730, 900)
 script = ExtResource("11_office_door")
 TargetRoom = NodePath("../../Room_Office")
-TargetSpawn = NodePath("../../Room_Office/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Office/SpawnFromLobby")
 LockedHint = NodePath("LockedHint")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Lobby/DoorToOffice" unique_id=1627719148]
@@ -134,6 +134,9 @@ offset_right = 240.2188
 offset_bottom = -198.0
 text = "（办公室的门关着。晚点再来吧。）"
 
+[node name="SpawnFromOffice" type="Marker2D" parent="Room_Lobby" unique_id=1358563539]
+position = Vector2(1560, 1008)
+
 [node name="Room_Office" type="Node2D" parent="." unique_id=1377220907 node_paths=PackedStringArray("DefaultSpawn")]
 script = ExtResource("2_room")
 DefaultSpawn = NodePath("DefaultSpawn")
@@ -154,7 +157,7 @@ position = Vector2(700.638, 1008)
 position = Vector2(160.1458, 900)
 script = ExtResource("3_door")
 TargetRoom = NodePath("../../Room_Lobby")
-TargetSpawn = NodePath("../../Room_Lobby/DefaultSpawn")
+TargetSpawn = NodePath("../../Room_Lobby/SpawnFromOffice")
 
 [node name="Shape" type="CollisionShape2D" parent="Room_Office/DoorToLobby" unique_id=113193333]
 shape = SubResource("RectangleShape2D_zone")
@@ -245,6 +248,9 @@ offset_top = -270.0
 offset_right = 120.1094
 offset_bottom = -198.0
 text = "（抽屉锁着）"
+
+[node name="SpawnFromLobby" type="Marker2D" parent="Room_Office" unique_id=653231254]
+position = Vector2(330, 1008)
 
 [node name="PasswordPanel" parent="." unique_id=375826730 instance=ExtResource("13_password")]
 

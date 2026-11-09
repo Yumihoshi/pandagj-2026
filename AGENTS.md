@@ -99,7 +99,8 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
 
 ## 一周目开场（出生在座位 + 先找小优香）
 
-- 出生点：`LocationRoot` 的两个导出房间决定落点 —— `StartingRoom`（从地图进入时激活，教室为 `Room_Hallway` 走廊，落 `DefaultSpawn` = `(350, 520)`）与 `LoopStartRoom`（循环重置时激活，教室为 `Room_Classroom`，落 `FirstLoopSpawn` = `(700, 520)` 座位、留空回落 `DefaultSpawn`）；`LoopStartRoom` 留空时循环开始也用 `StartingRoom`。两者由 `GameScene.LoadLocationAsync(scene, loopStart)` 通过 `LocationRoot.IsLoopStart` 在挂入场景树前指定：`_Ready` 与 `OnLoopReset` 传 `true`，地图进入不传。所以从大地图回教室落在走廊，每周目循环重置后在座位上醒来。
+- 出生点（地点入口 / 循环开始）：`LocationRoot` 的两个导出房间决定落点 —— `StartingRoom`（从地图进入时激活，教室为 `Room_Hallway` 走廊，落 `DefaultSpawn` = `(700.638, 1008)`）与 `LoopStartRoom`（循环重置时激活，教室为 `Room_Classroom`，落 `FirstLoopSpawn` = `(1401.276, 1008)` 座位、留空回落 `DefaultSpawn`）；`LoopStartRoom` 留空时循环开始也用 `StartingRoom`。两者由 `GameScene.LoadLocationAsync(scene, loopStart)` 通过 `LocationRoot.IsLoopStart` 在挂入场景树前指定：`_Ready` 与 `OnLoopReset` 传 `true`，地图进入不传。所以从大地图回教室落在走廊，每周目循环重置后在座位上醒来。
+- 房间之间的落点：每扇 `RoomDoor` 的 `TargetSpawn` 指向目标房间内与来源对应的 `Marker2D`（命名 `SpawnFrom<来源>`，如 `Room_Hallway/SpawnFromNextClassroom`、`Room_Behind/SpawnFromEquipment`），玩家从哪扇门进来、返回时就落在同一扇门旁边，不再统一回到目标房间的 `DefaultSpawn`。教室 `Room_Classroom` 左右各有一扇 `ClassroomDoor`（`DoorToHallwayLeft` x=140 / `DoorToHallwayRight` x=3710），两侧都能进走廊，且都落回 `Room_Hallway/SpawnFromClassroom`（x=549，即走廊那扇教室门）；隔壁班 `Room_NextClassroom` 同样左右各一扇 `RoomDoor`（`DoorToHallwayLeft` x=160.1458 / `DoorToHallwayRight` x=3710），都回 `Room_Hallway/SpawnFromNextClassroom`（x=1715）。
 - 开场剧情：`GameScene.OpeningNarration`（`Dialogue/day1.dialogue`）在淡入后按周目播放：一周目播 `start` cue；二周目起播 `phone_vibrate` cue（「手机在震动。」），对话结束后 `PhoneScreen.OpenNotebookWithNote` 自动打开手机记事本并把「下午出去转转吧」追加到 `GameState.NotebookText`（已有这句则不重复，否则换行追加）。`GameScene._Ready` 与 `OnLoopReset` 末尾都调 `ShowLoopStartIntro`；对话与手机界面期间 `Player.InputLocked` 锁住移动与交互。
 - 门禁：`TalkToYukaFirst`（`Scripts/Location/TalkToYukaFirst.cs`）挂在 `Room_Classroom` 下，加入组 `talk_to_yuka_first`；`PlayerInteractor` 在 `_current.Interact()` 之前调 `TryInterceptAny`（排在 `OfficeKickOut` 之后）。判定顺序：本房间（`_room.IsAncestorOf`）→ 目标不是 `RequiredNpcId` 本人 → `IsArmed()`（一周目且无 `yuka_briefed`）；命中就播 `day1.dialogue` 的 `talk_first` 并中止本体逻辑。
 - `yuka_briefed` 由 `yuka.dialogue` 的 `choose_read` / `choose_out` 写入，所以「谈过话」= 走完开场对话并做出选择；`ResetLoop` 后 `LoopCount` 变 2，门禁自动失效、开场旁白不再播。
@@ -138,7 +139,11 @@ Godot 4.7.2 (mono) + C# 的 48 小时 Game Jam 项目：2D 时间循环（loop�
   - 无头跑主场景并立刻退出：`& $godot --headless --path . --quit-after 120`（需先在项目设置指定主场景）
 - `*.csproj` / `*.sln` 已存在且可编译；它们由 Godot 首次创建 C# 脚本时生成。
 - `.vscode/settings.json`：已把 `.godot/`、`*.import`、`*.uid`、`*.translation`、`bin/`、`obj/`、`mono_crash.*.json` 从资源管理器与搜索中排除，并跳过 `.godot`/`bin`/`obj` 的文件监听；仅隐藏，不影响 git 与 Godot。
-- godot MCP 已配在 `opencode.json`（`mcp.servers.godot`，源码构建于 `%USERPROFILE%\.local\share\godot-mcp`）；`GODOT_PATH` 当前指向 `F:\SteamLibrary\steamapps\common\Godot Engine\godot.windows.opt.tools.64.exe`（同为 4.7.2 mono），命令行验证用上面的 D: 副本。优先用它做反馈闭环：`launch_editor`、`run_project` + `get_debug_output`、`stop_project`；项目相关工具要传绝对 `projectPath`。场景用 `create_scene` / `add_node` / `save_scene` 生成，手写 `.tscn` 容易破坏资源引用。
+- godot MCP 用 **Godot MCP Toolkit v1.1.2**（编辑器内插件，不是外部 CLI）：插件在 `addons/godot_mcp_toolkit/`、已写进 `project.godot` 的 `[editor_plugins] enabled`（`res://addons/godot_mcp_toolkit/plugin.cfg`）；npm 桥 `@npgamedev/godot-mcp-server@1.1.2` 全局安装于 `C:\Users\starrysky\AppData\Roaming\npm\node_modules\`，DSH 侧注册为 `mcp-godot`（机器级 `cordis.patch.yml`，工具前缀 `mcp__godot__*`）。**编辑器开着就能用**，不需要关编辑器或另起 headless：插件在编辑器进程内监听 `127.0.0.1:6550`（6550-6560 顺延），token 落在 `user://addons/godot_mcp_toolkit/project_instance_*/mcp_token`，桥按项目注册表自动发现端口。
+- 桥的 `env` 必须带 `GODOT_MCP_PROJECT_PATH` 指向项目根：否则它以 cwd（DSH 的 profile 目录）查注册表，报 `no registry entry ... code AUTH_FAILED`。
+- 核心 36 个工具常驻，其余工具按组用 `discover_tools` 激活（`scene_advanced` / `tilemap` / `runtime_advanced` 等，一次别开超过 5 组）。
+- 场景用 `scene_create` / `scene_create_node` / `node_set_property` / `editor_save_scene` 生成，手写 `.tscn` 容易破坏资源引用。常用闭环：`script_write` → `script_check`（离线 GDScript 诊断）→ `dotnet build`；跑游戏用 `game_start` + `debugger_get_log` / `editor_get_console` + `runtime_screenshot` + `game_stop`。
+- 注意：agent 写盘会覆盖你未保存的同名脚本缓冲区；agent 重挂 / 删除你正在拖拽的节点，会让那一次拖拽变成空操作。
 
 ## 开发约定（48h jam）
 
